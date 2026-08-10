@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using InventorySystem.Application.Common.Interfaces;
 
 namespace InventorySystem.Infrastructure.Persistence.Contexts;
+
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -12,6 +13,21 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public DbSet<Store> Stores => Set<Store>();
     public DbSet<Branch> Branches => Set<Branch>();
+    public DbSet<Category> Categories => Set<Category>();
+
+    public DbSet<Unit> Units => Set<Unit>();
+
+    public DbSet<Item> Items => Set<Item>();
+
+    public DbSet<ItemLocation> ItemLocations => Set<ItemLocation>();
+
+    public DbSet<ItemPrice> ItemPrices => Set<ItemPrice>();
+
+    public DbSet<ItemPriceHistory> ItemPriceHistories => Set<ItemPriceHistory>();
+
+    public DbSet<InventorySession> InventorySessions => Set<InventorySession>();
+
+    public DbSet<InventoryDetail> InventoryDetails => Set<InventoryDetail>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
