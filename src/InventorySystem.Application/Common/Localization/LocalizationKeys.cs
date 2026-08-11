@@ -20,4 +20,11 @@ public static class LocalizationKeys
     public const string NewlyCounted = "NewlyCounted";
     public const string FullyDepleted = "FullyDepleted";
     public const string PriceChanged = "PriceChanged";
+    public const string BranchRequired = "BranchRequired";
+
+    public const string MultipleBranches = "MultipleBranches";
+
+    public const string StoreRequired = "StoreRequired";
+
+    public const string MultipleStores = "MultipleStores";
 }

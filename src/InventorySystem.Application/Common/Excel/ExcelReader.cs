@@ -11,7 +11,8 @@ public static class ExcelReader
         var worksheet = workbook.Worksheets.FirstOrDefault();
 
         if (worksheet == null)
-            throw new InvalidOperationException("ملف Excel لا يحتوي على أي Sheet.");
+            throw new InvalidOperationException(
+                "ملف Excel لا يحتوي على أي Sheet.");
 
         var (headerRow, columns) =
             ExcelHeaderDetector.Detect(worksheet);
@@ -25,8 +26,6 @@ public static class ExcelReader
              rowNumber <= lastRow;
              rowNumber++)
         {
-            var row = worksheet.Row(rowNumber);
-
             var itemCode = GetValue(
                 worksheet,
                 rowNumber,
@@ -35,6 +34,10 @@ public static class ExcelReader
 
             // Ignore completely empty rows
             if (string.IsNullOrWhiteSpace(itemCode))
+                continue;
+
+            // Ignore total / footer / non-item rows
+            if (!IsValidItemCode(itemCode))
                 continue;
 
             var itemName1 = GetValue(
@@ -102,14 +105,33 @@ public static class ExcelReader
         return rows;
     }
 
+    private static bool IsValidItemCode(string itemCode)
+    {
+        if (string.IsNullOrWhiteSpace(itemCode))
+            return false;
+
+        var value = itemCode.Trim();
+
+        // Item codes must contain digits only.
+        // This excludes rows such as:
+        // المجموع
+        // Total
+        // الإجمالي
+        return value.All(char.IsDigit);
+    }
+
     private static string? GetValue(
         IXLWorksheet worksheet,
         int rowNumber,
         Dictionary<string, int> columns,
         string columnName)
     {
-        if (!columns.TryGetValue(columnName, out var columnNumber))
+        if (!columns.TryGetValue(
+                columnName,
+                out var columnNumber))
+        {
             return null;
+        }
 
         var value = worksheet
             .Cell(rowNumber, columnNumber)
@@ -127,18 +149,29 @@ public static class ExcelReader
         Dictionary<string, int> columns,
         string columnName)
     {
-        if (!columns.TryGetValue(columnName, out var columnNumber))
+        if (!columns.TryGetValue(
+                columnName,
+                out var columnNumber))
+        {
             return null;
+        }
 
-        var cell = worksheet.Cell(rowNumber, columnNumber);
+        var cell = worksheet.Cell(
+            rowNumber,
+            columnNumber);
 
         if (cell.IsEmpty())
             return null;
 
-        if (cell.TryGetValue<decimal>(out var numericValue))
+        if (cell.TryGetValue<decimal>(
+                out var numericValue))
+        {
             return numericValue;
+        }
 
-        var text = cell.GetString().Trim();
+        var text = cell
+            .GetString()
+            .Trim();
 
         if (string.IsNullOrWhiteSpace(text))
             return null;

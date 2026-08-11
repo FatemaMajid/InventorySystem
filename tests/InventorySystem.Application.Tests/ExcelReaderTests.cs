@@ -106,6 +106,103 @@ public class ExcelReaderTests
         Assert.True(result.IsValid);
     }
 
+    [Fact]
+    public void ValidateLocation_AmiriyaInventoryFile_ShouldHaveOneBranchAndOneStore()
+    {
+        var filePath = GetTestFilePath();
+
+        Assert.True(
+            File.Exists(filePath),
+            "ملف اختبار الجرد غير موجود.");
+
+        using var stream = File.OpenRead(filePath);
+
+        var rows = ExcelReader.Read(stream);
+
+        Assert.NotEmpty(rows);
+
+        using var workbook = new XLWorkbook(filePath);
+
+        var worksheet = workbook.Worksheets.First();
+
+        var (headerRow, _) =
+            ExcelHeaderDetector.Detect(worksheet);
+
+        var result = InventoryLocationValidator.Validate(
+            rows,
+            headerRow);
+
+        Console.WriteLine(
+            "========== LOCATION VALIDATION ==========");
+
+        Console.WriteLine(
+            $"Header Row: {headerRow}");
+
+        Console.WriteLine(
+            $"Total Rows: {result.TotalRows}");
+
+        Console.WriteLine(
+            $"Valid Rows: {result.ValidRows}");
+
+        Console.WriteLine(
+            $"Errors: {result.Errors.Count}");
+
+        var branches = rows
+            .Where(x => !string.IsNullOrWhiteSpace(x.Branch))
+            .Select(x => x.Branch!.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        var stores = rows
+            .Where(x => !string.IsNullOrWhiteSpace(x.Store))
+            .Select(x => x.Store!.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+
+        Console.WriteLine(
+            $"Branches: {branches.Count}");
+
+        foreach (var branch in branches)
+        {
+            Console.WriteLine(
+                $"Branch: [{branch}]");
+        }
+
+        Console.WriteLine(
+            $"Stores: {stores.Count}");
+
+        foreach (var store in stores)
+        {
+            Console.WriteLine(
+                $"Store: [{store}]");
+        }
+
+        foreach (var error in result.Errors)
+        {
+            Console.WriteLine(
+                $"Row: {error.RowNumber} | " +
+                $"Key: {error.MessageKey}");
+
+            Console.WriteLine(
+                $"AR: {LocalizationService.Get(
+                    error.MessageKey,
+                    "ar")}");
+
+            Console.WriteLine(
+                $"EN: {LocalizationService.Get(
+                    error.MessageKey,
+                    "en")}");
+        }
+
+        Console.WriteLine(
+            "=========================================");
+
+        Assert.True(result.IsValid);
+
+        Assert.Single(branches);
+        Assert.Single(stores);
+    }
+
     private static string GetTestFilePath()
     {
         return Path.Combine(

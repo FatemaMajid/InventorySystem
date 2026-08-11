@@ -51,6 +51,18 @@ public static class EnglishResources
                 "Fully Depleted",
 
             [LocalizationKeys.PriceChanged] =
-                "Price Changed"
+                "Price Changed",
+
+            [LocalizationKeys.BranchRequired] =
+                "Branch is required.",
+
+            [LocalizationKeys.MultipleBranches] =
+                "The file contains more than one branch.",
+
+            [LocalizationKeys.StoreRequired] =
+                "Store is required.",
+
+            [LocalizationKeys.MultipleStores] =
+                "The file contains more than one store.",
         };
 }

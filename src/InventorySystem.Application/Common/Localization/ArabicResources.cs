@@ -51,6 +51,18 @@ public static class ArabicResources
                 "نفد بالكامل",
 
             [LocalizationKeys.PriceChanged] =
-                "تغير السعر"
+                "تغير السعر",
+
+            [LocalizationKeys.BranchRequired] =
+                "الفرع مفقود.",
+
+            [LocalizationKeys.MultipleBranches] =
+                "الملف يحتوي على أكثر من فرع.",
+
+            [LocalizationKeys.StoreRequired] =
+                "المستودع مفقود.",
+
+            [LocalizationKeys.MultipleStores] =
+                "الملف يحتوي على أكثر من مستودع.",
         };
 }
