@@ -2,9 +2,8 @@ namespace InventorySystem.Application.Common.Localization;
 
 public static class LocalizationService
 {
-    public static string Get(
-        string key,
-        string language = "ar")
+    // Get a localized message by key
+    public static string Get(string key, string language = "ar")
     {
         var resources = language.ToLowerInvariant() switch
         {
