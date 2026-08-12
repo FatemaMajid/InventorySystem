@@ -15,10 +15,10 @@ public class InventoryDetail : BaseAuditableEntity
 
     public decimal? QuantityDifference { get; set; }
 
-    // Prices - Customer Price is used for inventory valuation
-    public decimal? CustomerPriceBefore { get; set; }
+    // Prices - Consumer Price is used for inventory valuation
+    public decimal? ConsumerPriceBefore { get; set; }
 
-    public decimal? CustomerPriceAfter { get; set; }
+    public decimal? ConsumerPriceAfter { get; set; }
 
     // Values
     public decimal? BeforeValue { get; set; }

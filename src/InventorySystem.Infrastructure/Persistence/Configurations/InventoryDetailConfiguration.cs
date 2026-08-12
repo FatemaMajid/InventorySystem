@@ -22,11 +22,11 @@ public class InventoryDetailConfiguration : IEntityTypeConfiguration<InventoryDe
         builder.Property(x => x.QuantityDifference)
             .HasPrecision(18, 3);
 
-        // Customer Prices
-        builder.Property(x => x.CustomerPriceBefore)
+        // Consumer Prices
+        builder.Property(x => x.ConsumerPriceBefore)
             .HasPrecision(18, 2);
 
-        builder.Property(x => x.CustomerPriceAfter)
+        builder.Property(x => x.ConsumerPriceAfter)
             .HasPrecision(18, 2);
 
         // Values

@@ -21,7 +21,7 @@ public class ItemConfiguration : IEntityTypeConfiguration<Item>
             .HasMaxLength(300);
 
         builder.Property(x => x.ItemName2)
-            .IsRequired()
+            .IsRequired(false)
             .HasMaxLength(300);
 
         builder.Property(x => x.IsActive)

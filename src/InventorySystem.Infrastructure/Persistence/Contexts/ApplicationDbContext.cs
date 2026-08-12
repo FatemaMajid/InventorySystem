@@ -1,6 +1,7 @@
 using InventorySystem.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using InventorySystem.Application.Common.Interfaces;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace InventorySystem.Infrastructure.Persistence.Contexts;
 
@@ -29,6 +30,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public DbSet<InventoryDetail> InventoryDetails => Set<InventoryDetail>();
 
+    public new DatabaseFacade Database => base.Database;
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
