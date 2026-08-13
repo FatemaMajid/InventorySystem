@@ -2,6 +2,7 @@ using InventorySystem.Application.Common.Excel;
 using InventorySystem.Application.Common.Interfaces;
 using InventorySystem.Domain.Entities;
 using InventorySystem.Domain.Enums;
+using InventorySystem.Application.Common.Localization;
 using DomainUnit = InventorySystem.Domain.Entities.Unit;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -40,20 +41,7 @@ public class ConfirmInventoryImportCommandHandler
             _context.InventorySessions.Add(session);
 
             foreach (var row in request.Rows)
-            {
-                await AddRow(
-                    session,
-                    request,
-                    row.ItemCode.Trim(),
-                    row.ItemName1?.Trim() ?? string.Empty,
-                    row.ItemName2?.Trim() ?? string.Empty,
-                    row.Category?.Trim() ?? string.Empty,
-                    row.Unit?.Trim() ?? string.Empty,
-                    row.Quantity ?? 0m,
-                    row.Price ?? 0m,
-                    cancellationToken
-                );
-            }
+                await AddRow(session, request, row, cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
@@ -67,109 +55,151 @@ public class ConfirmInventoryImportCommandHandler
         }
     }
 
+    // Validate import data
     private async Task ValidateRequest(
         ConfirmInventoryImportCommand request,
         CancellationToken ct)
     {
-        if (request.Rows == null || request.Rows.Count == 0)
-            throw new InvalidOperationException("لا توجد بيانات للاستيراد.");
+        if (request.Rows.Count == 0)
+            throw new InvalidOperationException(
+                LocalizationKeys.Inventory.NoData);
 
         if (request.BranchId <= 0)
-            throw new InvalidOperationException("الفرع غير صالح.");
+            throw new InvalidOperationException(
+                LocalizationKeys.Branch.Required);
 
         if (request.StoreId <= 0)
-            throw new InvalidOperationException("المخزن غير صالح.");
+            throw new InvalidOperationException(
+                LocalizationKeys.Store.Required);
 
         if (string.IsNullOrWhiteSpace(request.SessionNumber))
-            throw new InvalidOperationException("رقم جلسة الجرد مطلوب.");
+            throw new InvalidOperationException(
+                LocalizationKeys.Inventory.SessionNumberRequired);
 
         if (request.InventoryType != InventoryType.SemiAnnual &&
             request.InventoryType != InventoryType.Annual)
-            throw new InvalidOperationException("نوع الجرد غير صالح.");
+            throw new InvalidOperationException(
+                LocalizationKeys.Inventory.InvalidType);
 
         var branch = await _context.Branches
             .FirstOrDefaultAsync(x => x.Id == request.BranchId, ct);
 
         if (branch == null)
-            throw new InvalidOperationException("الفرع المحدد غير موجود.");
+            throw new InvalidOperationException(
+                LocalizationKeys.Branch.NotFound);
 
         var store = await _context.Stores
             .FirstOrDefaultAsync(x => x.Id == request.StoreId, ct);
 
         if (store == null)
-            throw new InvalidOperationException("المخزن المحدد غير موجود.");
+            throw new InvalidOperationException(
+                LocalizationKeys.Store.NotFound);
 
         if (!string.Equals(
                 store.BranchCode?.Trim(),
                 branch.BranchCode?.Trim(),
                 StringComparison.OrdinalIgnoreCase))
+        {
             throw new InvalidOperationException(
-                "المخزن المحدد لا يتبع الفرع المحدد.");
+                LocalizationKeys.Store.NotBelongToBranch);
+        }
 
         var sessionNumber = request.SessionNumber.Trim();
 
         if (await _context.InventorySessions.AnyAsync(
                 x => x.SessionNumber == sessionNumber, ct))
+        {
             throw new InvalidOperationException(
-                "رقم جلسة الجرد مستخدم مسبقًا.");
+                LocalizationKeys.Inventory.SessionExists);
+        }
 
-        var duplicateCodes = request.Rows
+        ValidateDuplicateItems(request.Rows);
+        ValidateRows(request.Rows);
+    }
+
+    private static void ValidateDuplicateItems(
+        IReadOnlyList<InventoryExcelRow> rows)
+    {
+        var duplicates = rows
             .Where(x => !string.IsNullOrWhiteSpace(x.ItemCode))
-            .GroupBy(x => x.ItemCode.Trim(), StringComparer.OrdinalIgnoreCase)
+            .GroupBy(
+                x => x.ItemCode.Trim(),
+                StringComparer.OrdinalIgnoreCase)
             .Where(g => g.Count() > 1)
             .Select(g => g.Key)
             .ToList();
 
-        if (duplicateCodes.Count > 0)
+        if (duplicates.Count > 0)
             throw new InvalidOperationException(
-                "يوجد تكرار في رموز الأصناف داخل ملف Excel: " +
-                string.Join(", ", duplicateCodes));
+                LocalizationKeys.DuplicateItemCode);
+    }
 
-        foreach (var row in request.Rows)
+    private static void ValidateRows(
+        IReadOnlyList<InventoryExcelRow> rows)
+    {
+        foreach (var row in rows)
         {
             if (string.IsNullOrWhiteSpace(row.ItemCode))
-                throw new InvalidOperationException("يوجد صف بدون كود صنف.");
+                throw new InvalidOperationException(
+                    LocalizationKeys.ItemCodeRequired);
 
             if (string.IsNullOrWhiteSpace(row.ItemName1))
                 throw new InvalidOperationException(
-                    $"الصنف {row.ItemCode} لا يحتوي على الاسم الأول.");
+                    LocalizationKeys.ItemNameRequired);
 
             if (string.IsNullOrWhiteSpace(row.Category))
                 throw new InvalidOperationException(
-                    $"الصنف {row.ItemCode} لا يحتوي على تصنيف.");
+                    LocalizationKeys.Category.Required);
 
             if (string.IsNullOrWhiteSpace(row.Unit))
                 throw new InvalidOperationException(
-                    $"الصنف {row.ItemCode} لا يحتوي على وحدة.");
+                    LocalizationKeys.Unit.Required);
         }
     }
 
     private async Task AddRow(
         InventorySession session,
         ConfirmInventoryImportCommand request,
-        string code,
-        string name1,
-        string name2,
-        string categoryName,
-        string unitName,
-        decimal quantity,
-        decimal price,
+        InventoryExcelRow row,
         CancellationToken ct)
     {
+        var code = row.ItemCode.Trim();
+        var name1 = row.ItemName1?.Trim() ?? string.Empty;
+        var name2 = row.ItemName2?.Trim() ?? string.Empty;
+        var categoryName = row.Category?.Trim() ?? string.Empty;
+        var unitName = row.Unit?.Trim() ?? string.Empty;
+        var quantity = row.Quantity ?? 0m;
+        var price = row.Price ?? 0m;
+
         var category = await GetOrCreateCategory(categoryName, ct);
         var unit = await GetUnit(unitName, ct);
 
         var item = await GetOrCreateItem(
-            code, name1, name2, category.Id, unit.Id, ct);
+            code,
+            name1,
+            name2,
+            category.Id,
+            unit.Id,
+            ct);
 
         await EnsureLocation(item, request, ct);
         await UpdatePrice(item, price, ct);
 
-        var previous = await GetPreviousDetail(item.Id, request, ct);
+        var previous = await GetPreviousDetail(
+            item.Id,
+            request,
+            ct);
+
         session.Details.Add(
-            CreateDetail(session, item, quantity, price, previous));
+            CreateDetail(
+                session,
+                item,
+                quantity,
+                price,
+                previous));
     }
 
+    // Get existing item or create a new one
     private async Task<Item> GetOrCreateItem(
         string code,
         string name1,
@@ -207,6 +237,7 @@ public class ConfirmInventoryImportCommandHandler
         return item;
     }
 
+    // Ensure item is assigned to the branch and store
     private async Task EnsureLocation(
         Item item,
         ConfirmInventoryImportCommand request,
@@ -229,6 +260,7 @@ public class ConfirmInventoryImportCommandHandler
         }
     }
 
+    // Update current price and save price history
     private async Task UpdatePrice(
         Item item,
         decimal price,
@@ -267,6 +299,7 @@ public class ConfirmInventoryImportCommandHandler
         itemPrice.ConsumerPrice = price;
     }
 
+    // Get the latest previous inventory for this item
     private async Task<InventoryDetail?> GetPreviousDetail(
         int itemId,
         ConfirmInventoryImportCommand request,
@@ -285,35 +318,36 @@ public class ConfirmInventoryImportCommandHandler
             .FirstOrDefaultAsync(ct);
     }
 
+    // Calculate inventory comparison
     private static InventoryDetail CreateDetail(
-        InventorySession session,
-        Item item,
-        decimal? quantityAfter,
-        decimal priceAfter,
-        InventoryDetail? previous)
+    InventorySession session,
+    Item item,
+    decimal? quantityAfter,
+    decimal priceAfter,
+    InventoryDetail? previous)
     {
-        decimal? quantityBefore = previous?.QuantityAfter;
-        decimal? priceBefore = previous?.ConsumerPriceAfter;
+        var quantityBefore = previous?.QuantityAfter;
+        var priceBefore = previous?.ConsumerPriceAfter;
 
-        decimal? beforeValue =
-            quantityBefore.HasValue && priceBefore.HasValue
-                ? quantityBefore.Value * priceBefore.Value
-                : null;
+        decimal? beforeValue = null;
 
-        decimal? afterValue =
-            quantityAfter.HasValue
-                ? quantityAfter.Value * priceAfter
-                : null;
+        if (quantityBefore.HasValue && priceBefore.HasValue)
+            beforeValue = quantityBefore.Value * priceBefore.Value;
 
-        decimal? quantityDifference =
-            quantityBefore.HasValue && quantityAfter.HasValue
-                ? quantityAfter.Value - quantityBefore.Value
-                : null;
+        decimal? afterValue = null;
 
-        decimal? valueDifference =
-            beforeValue.HasValue
-                ? afterValue - beforeValue.Value
-                : null;
+        if (quantityAfter.HasValue)
+            afterValue = quantityAfter.Value * priceAfter;
+
+        decimal? quantityDifference = null;
+
+        if (quantityBefore.HasValue && quantityAfter.HasValue)
+            quantityDifference = quantityAfter.Value - quantityBefore.Value;
+
+        decimal? valueDifference = null;
+
+        if (beforeValue.HasValue && afterValue.HasValue)
+            valueDifference = afterValue.Value - beforeValue.Value;
 
         var status = !quantityBefore.HasValue
             ? "FirstInventory"
@@ -335,28 +369,26 @@ public class ConfirmInventoryImportCommandHandler
             BeforeValue = beforeValue,
             AfterValue = afterValue,
             ValueDifference = valueDifference,
-            Status = status,
-            Description = null
+            Status = status
         };
     }
-
     private async Task<Category> GetOrCreateCategory(
         string name,
         CancellationToken ct)
     {
         var category = await _context.Categories
             .FirstOrDefaultAsync(
-                x => x.CategoryNameArabic == name, ct);
+                x => x.CategoryNameArabic == name,
+                ct);
 
         if (category != null)
             return category;
 
         category = new Category
         {
-            CategoryCode = "CAT-" +
-                Guid.NewGuid().ToString("N")[..8].ToUpperInvariant(),
+            CategoryCode =
+                $"CAT-{Guid.NewGuid().ToString("N")[..8].ToUpperInvariant()}",
             CategoryNameArabic = name,
-            CategoryNameEnglish = null,
             IsActive = true
         };
 
@@ -365,17 +397,14 @@ public class ConfirmInventoryImportCommandHandler
     }
 
     private async Task<DomainUnit> GetUnit(
-    string name,
-    CancellationToken ct)
+        string name,
+        CancellationToken ct)
     {
         var normalized = name.Trim();
 
         if (normalized != "قطعة" && normalized != "درزن")
-        {
             throw new InvalidOperationException(
-                $"الوحدة غير مدعومة: {name}. " +
-                "الوحدات المسموحة هي: قطعة أو درزن.");
-        }
+                LocalizationKeys.Unit.Unsupported);
 
         var unit = await _context.Units
             .FirstOrDefaultAsync(
@@ -383,10 +412,8 @@ public class ConfirmInventoryImportCommandHandler
                 ct);
 
         if (unit == null)
-        {
             throw new InvalidOperationException(
-                $"الوحدة '{normalized}' غير موجودة في النظام.");
-        }
+                LocalizationKeys.Unit.NotFound);
 
         return unit;
     }

@@ -7,6 +7,5 @@ public class ExcelValidationResult
     public List<ExcelValidationError> Errors { get; } = new();
 
     public int ValidRows { get; set; }
-
     public int TotalRows { get; set; }
 }

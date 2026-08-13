@@ -1,6 +1,9 @@
+using ClosedXML.Excel;
+using InventorySystem.Domain.Entities;
 using InventorySystem.Application.Common.Excel;
 using InventorySystem.Application.Common.Excel.Validation;
 using InventorySystem.Application.Common.Interfaces;
+using InventorySystem.Application.Common.Localization;
 using InventorySystem.Application.Features.InventorySessions.Commands.ConfirmInventoryImport;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -26,117 +29,40 @@ public class InventoryImportConfirmService
     {
         ValidateFile(request);
 
-        // Read Excel
-        request.FileStream.Position = 0;
-
-        var rows = ExcelReader.Read(request.FileStream);
+        var rows = ReadExcel(request.FileStream);
 
         if (rows.Count == 0)
             throw new InvalidOperationException(
-                "ملف Excel لا يحتوي على بيانات.");
+                LocalizationKeys.Excel.EmptyFile);
 
-        // Detect header
-        request.FileStream.Position = 0;
+        var headerRow = DetectHeader(request.FileStream);
 
-        using var workbook =
-            new ClosedXML.Excel.XLWorkbook(request.FileStream);
+        ValidateExcelRows(rows, headerRow);
 
-        var worksheet =
-            workbook.Worksheets.FirstOrDefault();
+        var (branch, store) = await GetLocationAsync(
+            rows,
+            cancellationToken);
 
-        if (worksheet == null)
-            throw new InvalidOperationException(
-                "ملف Excel لا يحتوي على أي Sheet.");
-
-        var (headerRow, _) =
-            ExcelHeaderDetector.Detect(worksheet);
-
-        // Validate rows
-        var validation =
-            ExcelValidator.Validate(
-                rows,
-                headerRow);
-
-        if (!validation.IsValid)
-            throw new InvalidOperationException(
-                "ملف Excel يحتوي على أخطاء في بيانات الأصناف.");
-
-        // Validate locations
-        var locationValidation =
-            InventoryLocationValidator.Validate(
-                rows,
-                headerRow);
-
-        if (!locationValidation.IsValid)
-            throw new InvalidOperationException(
-                "ملف Excel يحتوي على أخطاء في الفرع أو المستودع.");
-
-        // Get branch/store from Excel
-        var branchName =
-            rows.First().Branch?.Trim();
-
-        var storeName =
-            rows.First().Store?.Trim();
-
-        if (string.IsNullOrWhiteSpace(branchName))
-            throw new InvalidOperationException(
-                "الفرع غير موجود في ملف Excel.");
-
-        if (string.IsNullOrWhiteSpace(storeName))
-            throw new InvalidOperationException(
-                "المستودع غير موجود في ملف Excel.");
-
-        var branch =
-            await _context.Branches
-                .FirstOrDefaultAsync(
-                    x => x.BranchNameArabic == branchName,
-                    cancellationToken);
-
-        if (branch == null)
-            throw new InvalidOperationException(
-                $"الفرع '{branchName}' غير موجود في النظام.");
-
-        var store =
-            await _context.Stores
-                .FirstOrDefaultAsync(
-                    x =>
-                        x.StoreNameArabic == storeName &&
-                        x.BranchCode == branch.BranchCode,
-                    cancellationToken);
-
-        if (store == null)
-            throw new InvalidOperationException(
-                $"المستودع '{storeName}' غير موجود تحت الفرع '{branchName}'.");
-
-        // Generate session number
         var sessionNumber =
-            await GenerateSessionNumberAsync(
-                cancellationToken);
+            await GenerateSessionNumberAsync(cancellationToken);
 
-        // Send command to Handler
-        var sessionId =
-            await _mediator.Send(
-                new ConfirmInventoryImportCommand(
-                    rows,
-                    branch.Id,
-                    store.Id,
-                    DateTime.UtcNow,
-                    sessionNumber,
-                    request.InventoryType),
-                cancellationToken);
+        var sessionId = await _mediator.Send(
+            new ConfirmInventoryImportCommand(
+                rows,
+                branch.Id,
+                store.Id,
+                DateTime.UtcNow,
+                sessionNumber,
+                request.InventoryType),
+            cancellationToken);
 
         return new InventoryImportConfirmResponse
         {
             IsSuccess = true,
-
             InventorySessionId = sessionId,
-
             SessionNumber = sessionNumber,
-
             TotalItems = rows.Count,
-
-            Message =
-                $"تم استيراد الجرد بنجاح. رقم الجلسة: {sessionNumber}"
+            Message = LocalizationKeys.Inventory.ImportSuccess
         };
     }
 
@@ -147,31 +73,123 @@ public class InventoryImportConfirmService
             throw new ArgumentNullException(
                 nameof(request.FileStream));
 
-        if (!request.FileStream.CanRead)
+        if (!request.FileStream.CanRead ||
+            !request.FileStream.CanSeek ||
+            request.FileStream.Length == 0)
+        {
             throw new InvalidOperationException(
-                "ملف Excel غير قابل للقراءة.");
+                LocalizationKeys.Excel.InvalidFile);
+        }
+    }
 
-        if (!request.FileStream.CanSeek)
-            throw new InvalidOperationException(
-                "Stream الخاص بملف Excel يجب أن يكون قابلًا للبحث.");
+    private static List<InventoryExcelRow> ReadExcel(
+        Stream stream)
+    {
+        stream.Position = 0;
+        return ExcelReader.Read(stream);
+    }
 
-        if (request.FileStream.Length == 0)
+    private static int DetectHeader(Stream stream)
+    {
+        stream.Position = 0;
+
+        using var workbook = new XLWorkbook(stream);
+        var worksheet = workbook.Worksheets.FirstOrDefault();
+
+        if (worksheet == null)
             throw new InvalidOperationException(
-                "ملف Excel فارغ.");
+                LocalizationKeys.Excel.NoWorksheet);
+
+        var (headerRow, _) =
+            ExcelHeaderDetector.Detect(worksheet);
+
+        return headerRow;
+    }
+
+    private static void ValidateExcelRows(
+        IReadOnlyList<InventoryExcelRow> rows,
+        int headerRow)
+    {
+        var validation = ExcelValidator.Validate(
+            rows,
+            headerRow);
+
+        if (!validation.IsValid)
+            throw new InvalidOperationException(
+                LocalizationKeys.Excel.InvalidHeaders);
+
+        var locationValidation =
+            InventoryLocationValidator.Validate(
+                rows,
+                headerRow);
+
+        if (!locationValidation.IsValid)
+            throw new InvalidOperationException(
+                LocalizationKeys.Excel.InvalidFile);
+    }
+
+    private async Task<(Branch Branch, Store Store)> GetLocationAsync(
+        IReadOnlyList<InventoryExcelRow> rows,
+        CancellationToken cancellationToken)
+    {
+        var branchName = rows.First().Branch?.Trim();
+        var storeName = rows.First().Store?.Trim();
+
+        if (string.IsNullOrWhiteSpace(branchName))
+            throw new InvalidOperationException(
+                LocalizationKeys.Branch.Required);
+
+        if (string.IsNullOrWhiteSpace(storeName))
+            throw new InvalidOperationException(
+                LocalizationKeys.Store.Required);
+
+        var branch = await _context.Branches
+            .FirstOrDefaultAsync(
+                x => x.BranchNameArabic == branchName,
+                cancellationToken);
+
+        if (branch == null)
+            throw new InvalidOperationException(
+                LocalizationKeys.Branch.NotFound);
+
+        var store = await _context.Stores
+            .FirstOrDefaultAsync(
+                x =>
+                    x.StoreNameArabic == storeName &&
+                    x.BranchCode == branch.BranchCode,
+                cancellationToken);
+
+        if (store == null)
+            throw new InvalidOperationException(
+                LocalizationKeys.Store.NotFound);
+
+        return (branch, store);
     }
 
     private async Task<string> GenerateSessionNumberAsync(
         CancellationToken cancellationToken)
     {
-        var prefix =
-            $"INV-{DateTime.UtcNow:yyyyMMdd}";
+        var prefix = $"INV-{DateTime.UtcNow:yyyyMMdd}";
 
-        var count =
-            await _context.InventorySessions
-                .CountAsync(
-                    x => x.SessionNumber.StartsWith(prefix),
-                    cancellationToken);
+        var lastSession = await _context.InventorySessions
+            .Where(x => x.SessionNumber.StartsWith(prefix))
+            .OrderByDescending(x => x.SessionNumber)
+            .Select(x => x.SessionNumber)
+            .FirstOrDefaultAsync(cancellationToken);
 
-        return $"{prefix}-{count + 1:D4}";
+        var nextNumber = 1;
+
+        if (!string.IsNullOrWhiteSpace(lastSession))
+        {
+            var parts = lastSession.Split('-');
+
+            if (parts.Length == 3 &&
+                int.TryParse(parts[2], out var number))
+            {
+                nextNumber = number + 1;
+            }
+        }
+
+        return $"{prefix}-{nextNumber:D4}";
     }
 }

@@ -1,48 +1,39 @@
-// ============================================================
-// Project      : Inventory System
-// Layer        : Application
-// Feature      : Stores
-// File         : UpdateStoreCommandValidator.cs
-// Description  : Validates store update requests.
-// Author       : Fatema Majid
-// ============================================================
-
 using FluentValidation;
+using InventorySystem.Application.Common.Localization;
 
 namespace InventorySystem.Application.Features.Stores.Commands.UpdateStore;
 
-/// <summary>
-/// Validates the UpdateStoreCommand.
-/// </summary>
-public class UpdateStoreCommandValidator
-    : AbstractValidator<UpdateStoreCommand>
+public class UpdateStoreCommandValidator : AbstractValidator<UpdateStoreCommand>
 {
     public UpdateStoreCommandValidator()
     {
+        // Store identity
         RuleFor(x => x.Id)
             .GreaterThan(0)
-            .WithMessage("Store ID must be greater than zero.");
+            .WithMessage(LocalizationKeys.Common.Invalid);
 
+        // Store information
         RuleFor(x => x.Store.StoreCode)
             .NotEmpty()
-            .WithMessage("Store code is required.")
+            .WithMessage(LocalizationKeys.Store.Required)
             .MaximumLength(20)
-            .WithMessage("Store code must not exceed 20 characters.");
+            .WithMessage(LocalizationKeys.Common.Invalid);
 
         RuleFor(x => x.Store.StoreNameArabic)
             .NotEmpty()
-            .WithMessage("Store Arabic name is required.")
+            .WithMessage(LocalizationKeys.Store.Required)
             .MaximumLength(100)
-            .WithMessage("Store Arabic name must not exceed 100 characters.");
+            .WithMessage(LocalizationKeys.Common.Invalid);
 
         RuleFor(x => x.Store.StoreNameEnglish)
             .MaximumLength(100)
-            .WithMessage("Store English name must not exceed 100 characters.");
+            .WithMessage(LocalizationKeys.Common.Invalid);
 
+        // Branch relationship
         RuleFor(x => x.Store.BranchCode)
             .NotEmpty()
-            .WithMessage("Branch code is required.")
+            .WithMessage(LocalizationKeys.Branch.Required)
             .MaximumLength(20)
-            .WithMessage("Branch code must not exceed 20 characters.");
+            .WithMessage(LocalizationKeys.Common.Invalid);
     }
 }

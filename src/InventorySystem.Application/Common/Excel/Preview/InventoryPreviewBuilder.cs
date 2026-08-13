@@ -13,93 +13,78 @@ public static class InventoryPreviewBuilder
         var preview = new InventoryImportPreview
         {
             TotalRows = rows.Count,
-
             ValidRows = validationResult.ValidRows,
-
             ErrorRows =
                 validationResult.Errors.Count +
                 locationValidationResult.Errors.Count
         };
 
-        // Get the single branch from the file.
-        preview.Branch = rows
-            .Where(x => !string.IsNullOrWhiteSpace(x.Branch))
-            .Select(x => x.Branch!.Trim())
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .SingleOrDefault();
+        preview.Branch = GetSingleValue(
+            rows.Select(x => x.Branch));
 
-        // Get the single store from the file.
-        preview.Store = rows
-            .Where(x => !string.IsNullOrWhiteSpace(x.Store))
-            .Select(x => x.Store!.Trim())
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .SingleOrDefault();
+        preview.Store = GetSingleValue(
+            rows.Select(x => x.Store));
 
-        // Build preview rows.
         for (var index = 0; index < rows.Count; index++)
         {
             var row = rows[index];
-
-            var excelRowNumber =
-                headerRow + index + 1;
+            var excelRowNumber = headerRow + index + 1;
 
             var rowErrors = validationResult.Errors
-                .Where(x =>
-                    x.RowNumber == excelRowNumber)
+                .Where(x => x.RowNumber == excelRowNumber)
                 .Select(x => x.MessageKey)
                 .ToList();
 
-            // Total value = Quantity × Price
-            decimal? totalValue = null;
+            var totalValue = CalculateTotalValue(
+                row.Quantity,
+                row.Price);
 
-            if (row.Quantity.HasValue &&
-                row.Price.HasValue)
+            preview.Rows.Add(new InventoryImportPreviewRow
             {
-                totalValue =
-                    row.Quantity.Value *
-                    row.Price.Value;
-            }
-
-            preview.Rows.Add(
-                new InventoryImportPreviewRow
-                {
-                    RowNumber = excelRowNumber,
-
-                    ItemCode = row.ItemCode,
-
-                    ItemName1 = row.ItemName1,
-
-                    ItemName2 = row.ItemName2,
-
-                    Category = row.Category,
-
-                    Unit = row.Unit,
-
-                    Branch = row.Branch,
-
-                    Store = row.Store,
-
-                    Quantity = row.Quantity,
-
-                    Price = row.Price,
-
-                    TotalValue = totalValue,
-
-                    IsValid = rowErrors.Count == 0,
-
-                    Errors = rowErrors
-                });
+                RowNumber = excelRowNumber,
+                ItemCode = row.ItemCode,
+                ItemName1 = row.ItemName1,
+                ItemName2 = row.ItemName2,
+                Category = row.Category,
+                Unit = row.Unit,
+                Branch = row.Branch,
+                Store = row.Store,
+                Quantity = row.Quantity,
+                Price = row.Price,
+                TotalValue = totalValue,
+                IsValid =
+                    rowErrors.Count == 0 &&
+                    locationValidationResult.IsValid,
+                Errors = rowErrors
+            });
 
             if (totalValue.HasValue)
             {
-                preview.TotalQuantity +=
-                    row.Quantity ?? 0;
-
-                preview.TotalValue +=
-                    totalValue.Value;
+                preview.TotalQuantity += row.Quantity ?? 0;
+                preview.TotalValue += totalValue.Value;
             }
         }
 
         return preview;
+    }
+
+    private static string? GetSingleValue(
+        IEnumerable<string?> values)
+    {
+        return values
+            .Where(x => !string.IsNullOrWhiteSpace(x))
+            .Select(x => x!.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .SingleOrDefault();
+    }
+
+    private static decimal? CalculateTotalValue(
+        decimal? quantity,
+        decimal? price)
+    {
+        if (!quantity.HasValue || !price.HasValue)
+            return null;
+
+        return quantity.Value * price.Value;
     }
 }

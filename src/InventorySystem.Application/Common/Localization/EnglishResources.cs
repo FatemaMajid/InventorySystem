@@ -35,6 +35,16 @@ public static class EnglishResources
         [LocalizationKeys.Branch.Deleted] = "Branch deleted successfully.",
         [LocalizationKeys.Branch.CannotDelete] = "The branch cannot be deleted because it has related data.",
 
+        // Branch validation
+        [LocalizationKeys.Branch.CodeRequired] = "Branch code is required.",
+        [LocalizationKeys.Branch.CodeMaxLength] = "Branch code must not exceed 20 characters.",
+        [LocalizationKeys.Branch.ArabicNameRequired] = "Branch Arabic name is required.",
+        [LocalizationKeys.Branch.ArabicNameMaxLength] = "Branch Arabic name must not exceed 100 characters.",
+        [LocalizationKeys.Branch.EnglishNameMaxLength] = "Branch English name must not exceed 100 characters.",
+        [LocalizationKeys.Branch.AddressMaxLength] = "Address must not exceed 200 characters.",
+        [LocalizationKeys.Branch.PhoneMaxLength] = "Phone number must not exceed 20 characters.",
+        [LocalizationKeys.Branch.InvalidId] = "Branch ID must be greater than zero.",
+        
         // Store
         [LocalizationKeys.Store.Required] = "Store is required.",
         [LocalizationKeys.Store.NotFound] = "Store not found.",
@@ -45,6 +55,15 @@ public static class EnglishResources
         [LocalizationKeys.Store.Updated] = "Store updated successfully.",
         [LocalizationKeys.Store.Deleted] = "Store deleted successfully.",
         [LocalizationKeys.Store.CannotDelete] = "The store cannot be deleted because it has related data.",
+
+        // Store validation
+        [LocalizationKeys.Store.CodeRequired] = "Store code is required.",
+        [LocalizationKeys.Store.CodeMaxLength] = "Store code must not exceed 20 characters.",
+        [LocalizationKeys.Store.ArabicNameRequired] = "Store Arabic name is required.",
+        [LocalizationKeys.Store.ArabicNameMaxLength] = "Store Arabic name must not exceed 100 characters.",
+        [LocalizationKeys.Store.EnglishNameMaxLength] = "Store English name must not exceed 100 characters.",
+        [LocalizationKeys.Store.BranchCodeRequired] = "Branch code is required.",
+        [LocalizationKeys.Store.BranchCodeMaxLength] = "Branch code must not exceed 20 characters.",
 
         // Category
         [LocalizationKeys.Category.Required] = "Category is required.",

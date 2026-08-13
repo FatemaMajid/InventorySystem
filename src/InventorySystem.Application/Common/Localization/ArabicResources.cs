@@ -35,6 +35,16 @@ public static class ArabicResources
         [LocalizationKeys.Branch.Deleted] = "تم حذف الفرع بنجاح.",
         [LocalizationKeys.Branch.CannotDelete] = "لا يمكن حذف الفرع لوجود بيانات مرتبطة به.",
 
+        // Branch validation
+        [LocalizationKeys.Branch.CodeRequired] = "رمز الفرع مطلوب.",
+        [LocalizationKeys.Branch.CodeMaxLength] = "رمز الفرع يجب ألا يتجاوز 20 حرفًا.",
+        [LocalizationKeys.Branch.ArabicNameRequired] = "اسم الفرع بالعربية مطلوب.",
+        [LocalizationKeys.Branch.ArabicNameMaxLength] = "اسم الفرع بالعربية يجب ألا يتجاوز 100 حرف.",
+        [LocalizationKeys.Branch.EnglishNameMaxLength] = "اسم الفرع بالإنجليزية يجب ألا يتجاوز 100 حرف.",
+        [LocalizationKeys.Branch.AddressMaxLength] = "العنوان يجب ألا يتجاوز 200 حرف.",
+        [LocalizationKeys.Branch.PhoneMaxLength] = "رقم الهاتف يجب ألا يتجاوز 20 حرفًا.",
+        [LocalizationKeys.Branch.InvalidId] = "معرف الفرع غير صالح.",
+
         // Store
         [LocalizationKeys.Store.Required] = "المستودع مطلوب.",
         [LocalizationKeys.Store.NotFound] = "المستودع غير موجود.",
@@ -46,6 +56,14 @@ public static class ArabicResources
         [LocalizationKeys.Store.Deleted] = "تم حذف المستودع بنجاح.",
         [LocalizationKeys.Store.CannotDelete] = "لا يمكن حذف المستودع لوجود بيانات مرتبطة به.",
 
+        // Store validation
+        [LocalizationKeys.Store.CodeRequired] = "رمز المستودع مطلوب.",
+        [LocalizationKeys.Store.CodeMaxLength] = "رمز المستودع يجب ألا يتجاوز 20 حرفًا.",
+        [LocalizationKeys.Store.ArabicNameRequired] = "اسم المستودع بالعربية مطلوب.",
+        [LocalizationKeys.Store.ArabicNameMaxLength] = "اسم المستودع بالعربية يجب ألا يتجاوز 100 حرف.",
+        [LocalizationKeys.Store.EnglishNameMaxLength] = "اسم المستودع بالإنجليزية يجب ألا يتجاوز 100 حرف.",
+        [LocalizationKeys.Store.BranchCodeRequired] = "رمز الفرع مطلوب.",
+        [LocalizationKeys.Store.BranchCodeMaxLength] = "رمز الفرع يجب ألا يتجاوز 20 حرفًا.",
         // Category
         [LocalizationKeys.Category.Required] = "التصنيف مطلوب.",
         [LocalizationKeys.Category.NotFound] = "التصنيف غير موجود.",
@@ -120,6 +138,7 @@ public static class ArabicResources
         [LocalizationKeys.Report.NoData] = "لا توجد بيانات لعرض التقرير.",
         [LocalizationKeys.Report.GenerationFailed] = "فشل إنشاء التقرير.",
         [LocalizationKeys.Report.Generated] = "تم إنشاء التقرير بنجاح.",
+        
 
         // Roles
         [LocalizationKeys.Role.Required] = "الدور مطلوب.",

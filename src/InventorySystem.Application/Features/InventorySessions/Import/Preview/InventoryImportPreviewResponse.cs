@@ -6,6 +6,5 @@ public class InventoryImportPreviewResponse
 {
     public bool IsValid { get; set; }
 
-    public InventoryImportPreview Preview { get; set; } =
-        new();
+    public InventoryImportPreview Preview { get; set; } = new();
 }

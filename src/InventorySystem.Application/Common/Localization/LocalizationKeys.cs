@@ -40,6 +40,15 @@ public static class LocalizationKeys
         public const string Updated = "Branch.Updated";
         public const string Deleted = "Branch.Deleted";
         public const string CannotDelete = "Branch.CannotDelete";
+
+        public const string CodeRequired = "Branch.CodeRequired";
+        public const string CodeMaxLength = "Branch.CodeMaxLength";
+        public const string ArabicNameRequired = "Branch.ArabicNameRequired";
+        public const string ArabicNameMaxLength = "Branch.ArabicNameMaxLength";
+        public const string EnglishNameMaxLength = "Branch.EnglishNameMaxLength";
+        public const string AddressMaxLength = "Branch.AddressMaxLength";
+        public const string PhoneMaxLength = "Branch.PhoneMaxLength";
+        public const string InvalidId = "Branch.InvalidId";
     }
 
     // Store
@@ -54,6 +63,14 @@ public static class LocalizationKeys
         public const string Updated = "Store.Updated";
         public const string Deleted = "Store.Deleted";
         public const string CannotDelete = "Store.CannotDelete";
+
+        public const string CodeRequired = "Store.CodeRequired";
+        public const string CodeMaxLength = "Store.CodeMaxLength";
+        public const string ArabicNameRequired = "Store.ArabicNameRequired";
+        public const string ArabicNameMaxLength = "Store.ArabicNameMaxLength";
+        public const string EnglishNameMaxLength = "Store.EnglishNameMaxLength";
+        public const string BranchCodeRequired = "Store.BranchCodeRequired";
+        public const string BranchCodeMaxLength = "Store.BranchCodeMaxLength";
     }
 
     // Category
@@ -145,6 +162,11 @@ public static class LocalizationKeys
         public const string ImportSuccess = "Excel.ImportSuccess";
         public const string ImportFailed = "Excel.ImportFailed";
         public const string UnsupportedFormat = "Excel.UnsupportedFormat";
+        public const string ImportCompleted = "ImportCompleted";
+        public const string InvalidExcelFile = "InvalidExcelFile";
+        public const string InvalidLocationData = "InvalidLocationData";
+        public const string BranchNotFound = "BranchNotFound";
+        public const string StoreNotFound = "StoreNotFound";
     }
 
     // Reports

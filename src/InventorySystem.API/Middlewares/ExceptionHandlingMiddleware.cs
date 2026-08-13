@@ -85,7 +85,7 @@ public class ExceptionHandlingMiddleware
     }
 
     private static async Task WriteResponse(
-        HttpContext context,
+        HttpContext context,                   
         HttpStatusCode statusCode,
         string message,
         object? errors = null)

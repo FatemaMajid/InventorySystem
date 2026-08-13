@@ -1,35 +1,34 @@
 using FluentValidation;
+using InventorySystem.Application.Common.Localization;
 
 namespace InventorySystem.Application.Features.Stores.Commands.CreateStore;
 
-/// <summary>
-/// Validates store creation requests.
-/// </summary>
-public class CreateStoreCommandValidator
-    : AbstractValidator<CreateStoreCommand>
+public class CreateStoreCommandValidator : AbstractValidator<CreateStoreCommand>
 {
     public CreateStoreCommandValidator()
     {
+        // Store information
         RuleFor(x => x.Store.StoreCode)
             .NotEmpty()
-            .WithMessage("Store code is required.")
+            .WithMessage(LocalizationKeys.Store.CodeRequired)
             .MaximumLength(20)
-            .WithMessage("Store code must not exceed 20 characters.");
+            .WithMessage(LocalizationKeys.Store.CodeMaxLength);
 
         RuleFor(x => x.Store.StoreNameArabic)
             .NotEmpty()
-            .WithMessage("Store Arabic name is required.")
+            .WithMessage(LocalizationKeys.Store.ArabicNameRequired)
             .MaximumLength(100)
-            .WithMessage("Store Arabic name must not exceed 100 characters.");
+            .WithMessage(LocalizationKeys.Store.ArabicNameMaxLength);
 
         RuleFor(x => x.Store.StoreNameEnglish)
             .MaximumLength(100)
-            .WithMessage("Store English name must not exceed 100 characters.");
+            .WithMessage(LocalizationKeys.Store.EnglishNameMaxLength);
 
+        // Branch relationship
         RuleFor(x => x.Store.BranchCode)
             .NotEmpty()
-            .WithMessage("Branch code is required.")
+            .WithMessage(LocalizationKeys.Store.BranchCodeRequired)
             .MaximumLength(20)
-            .WithMessage("Branch code must not exceed 20 characters.");
+            .WithMessage(LocalizationKeys.Store.BranchCodeMaxLength);
     }
 }
