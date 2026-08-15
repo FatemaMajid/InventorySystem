@@ -84,6 +84,7 @@ public static class ArabicResources
         [LocalizationKeys.Unit.Deleted] = "تم حذف الوحدة بنجاح.",
         [LocalizationKeys.Unit.Piece] = "قطعة",
         [LocalizationKeys.Unit.Dozen] = "درزن",
+        [LocalizationKeys.Unit.FirstUnitNotDefined] = "الوحدة الأولى غير معرفة.",
 
         // Item
         [LocalizationKeys.Item.Required] = "الصنف مطلوب.",

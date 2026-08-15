@@ -1,11 +1,13 @@
 using InventorySystem.Application.Common.Excel;
+using InventorySystem.Application.Common.Excel.Normalization;
 using InventorySystem.Application.Common.Interfaces;
+using InventorySystem.Application.Common.Localization;
 using InventorySystem.Domain.Entities;
 using InventorySystem.Domain.Enums;
-using InventorySystem.Application.Common.Localization;
-using DomainUnit = InventorySystem.Domain.Entities.Unit;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+
+using DomainUnit = InventorySystem.Domain.Entities.Unit;
 
 namespace InventorySystem.Application.Features.InventorySessions.Commands.ConfirmInventoryImport;
 
@@ -14,8 +16,11 @@ public class ConfirmInventoryImportCommandHandler
 {
     private readonly IApplicationDbContext _context;
 
-    public ConfirmInventoryImportCommandHandler(IApplicationDbContext context)
-        => _context = context;
+    public ConfirmInventoryImportCommandHandler(
+        IApplicationDbContext context)
+    {
+        _context = context;
+    }
 
     public async Task<int> Handle(
         ConfirmInventoryImportCommand request,
@@ -41,7 +46,13 @@ public class ConfirmInventoryImportCommandHandler
             _context.InventorySessions.Add(session);
 
             foreach (var row in request.Rows)
-                await AddRow(session, request, row, cancellationToken);
+            {
+                await AddRow(
+                    session,
+                    request,
+                    row,
+                    cancellationToken);
+            }
 
             await _context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
@@ -55,7 +66,6 @@ public class ConfirmInventoryImportCommandHandler
         }
     }
 
-    // Validate import data
     private async Task ValidateRequest(
         ConfirmInventoryImportCommand request,
         CancellationToken ct)
@@ -82,14 +92,18 @@ public class ConfirmInventoryImportCommandHandler
                 LocalizationKeys.Inventory.InvalidType);
 
         var branch = await _context.Branches
-            .FirstOrDefaultAsync(x => x.Id == request.BranchId, ct);
+            .FirstOrDefaultAsync(
+                x => x.Id == request.BranchId,
+                ct);
 
         if (branch == null)
             throw new InvalidOperationException(
                 LocalizationKeys.Branch.NotFound);
 
         var store = await _context.Stores
-            .FirstOrDefaultAsync(x => x.Id == request.StoreId, ct);
+            .FirstOrDefaultAsync(
+                x => x.Id == request.StoreId,
+                ct);
 
         if (store == null)
             throw new InvalidOperationException(
@@ -99,19 +113,16 @@ public class ConfirmInventoryImportCommandHandler
                 store.BranchCode?.Trim(),
                 branch.BranchCode?.Trim(),
                 StringComparison.OrdinalIgnoreCase))
-        {
             throw new InvalidOperationException(
                 LocalizationKeys.Store.NotBelongToBranch);
-        }
 
         var sessionNumber = request.SessionNumber.Trim();
 
         if (await _context.InventorySessions.AnyAsync(
-                x => x.SessionNumber == sessionNumber, ct))
-        {
+                x => x.SessionNumber == sessionNumber,
+                ct))
             throw new InvalidOperationException(
                 LocalizationKeys.Inventory.SessionExists);
-        }
 
         ValidateDuplicateItems(request.Rows);
         ValidateRows(request.Rows);
@@ -150,10 +161,6 @@ public class ConfirmInventoryImportCommandHandler
             if (string.IsNullOrWhiteSpace(row.Category))
                 throw new InvalidOperationException(
                     LocalizationKeys.Category.Required);
-
-            if (string.IsNullOrWhiteSpace(row.Unit))
-                throw new InvalidOperationException(
-                    LocalizationKeys.Unit.Required);
         }
     }
 
@@ -167,116 +174,147 @@ public class ConfirmInventoryImportCommandHandler
         var name1 = row.ItemName1?.Trim() ?? string.Empty;
         var name2 = row.ItemName2?.Trim() ?? string.Empty;
         var categoryName = row.Category?.Trim() ?? string.Empty;
-        var unitName = row.Unit?.Trim() ?? string.Empty;
+        var unitName = row.Unit?.Trim();
         var quantity = row.Quantity ?? 0m;
         var price = row.Price ?? 0m;
 
-        var category = await GetOrCreateCategory(categoryName, ct);
-        var unit = await GetUnit(unitName, ct);
+        var category = await GetOrCreateCategory(
+            categoryName,
+            ct);
 
+        var unit = await GetUnit(
+            unitName,
+            ct);
+
+        // var item = await GetOrCreateItem(
+        //     code,
+        //     name1,
+        //     name2,
+        //     category.Id,
+        //     unit?.Id,
+        //     ct);
         var item = await GetOrCreateItem(
             code,
             name1,
             name2,
-            category.Id,
-            unit.Id,
+            category,
+            unit,
             ct);
 
-        await EnsureLocation(item, request, ct);
-        await UpdatePrice(item, price, ct);
+        await EnsureLocation(
+            item,
+            request,
+            ct);
+
+        await UpdatePrice(
+            item,
+            price,
+            ct);
 
         var previous = await GetPreviousDetail(
             item.Id,
             request,
             ct);
 
+        var warning = unit == null
+            ? LocalizationKeys.Unit.FirstUnitNotDefined
+            : null;
+            
         session.Details.Add(
             CreateDetail(
                 session,
                 item,
                 quantity,
                 price,
-                previous));
+                previous,
+                warning));
     }
 
-    // Get existing item or create a new one
     private async Task<Item> GetOrCreateItem(
-        string code,
-        string name1,
-        string name2,
-        int categoryId,
-        int unitId,
-        CancellationToken ct)
+    string code,
+    string name1,
+    string name2,
+    Category category,
+    DomainUnit? unit,
+    CancellationToken ct)
+{
+    var item = await _context.Items
+        .FirstOrDefaultAsync(
+            x => x.ItemCode == code,
+            ct);
+
+    if (item == null)
     {
-        var item = await _context.Items
-            .FirstOrDefaultAsync(x => x.ItemCode == code, ct);
-
-        if (item == null)
+        item = new Item
         {
-            item = new Item
-            {
-                ItemCode = code,
-                ItemName1 = name1,
-                ItemName2 = name2,
-                CategoryId = categoryId,
-                UnitId = unitId,
-                IsActive = true
-            };
+            ItemCode = code,
+            ItemName1 = name1,
+            ItemName2 = name2,
+            Category = category,
+            Unit = unit,
+            IsActive = true
+        };
 
-            _context.Items.Add(item);
-        }
-        else
-        {
-            item.ItemName1 = name1;
-            item.ItemName2 = name2;
-            item.CategoryId = categoryId;
-            item.UnitId = unitId;
-            item.IsActive = true;
-        }
+        _context.Items.Add(item);
+    }
+    else
+    {
+        item.ItemName1 = name1;
+        item.ItemName2 = name2;
+        item.Category = category;
 
-        return item;
+        if (unit != null)
+            item.Unit = unit;
+
+        item.IsActive = true;
     }
 
-    // Ensure item is assigned to the branch and store
+    return item;
+}
+
     private async Task EnsureLocation(
         Item item,
         ConfirmInventoryImportCommand request,
         CancellationToken ct)
     {
         var exists = await _context.ItemLocations.AnyAsync(
-            x => x.ItemId == item.Id &&
-                 x.BranchId == request.BranchId &&
-                 x.StoreId == request.StoreId,
+            x =>
+                x.ItemId == item.Id &&
+                x.BranchId == request.BranchId &&
+                x.StoreId == request.StoreId,
             ct);
 
         if (!exists)
         {
-            _context.ItemLocations.Add(new ItemLocation
-            {
-                Item = item,
-                BranchId = request.BranchId,
-                StoreId = request.StoreId
-            });
+            _context.ItemLocations.Add(
+                new ItemLocation
+                {
+                    Item = item,
+                    BranchId = request.BranchId,
+                    StoreId = request.StoreId
+                });
         }
     }
 
-    // Update current price and save price history
     private async Task UpdatePrice(
         Item item,
         decimal price,
         CancellationToken ct)
     {
         var itemPrice = await _context.ItemPrices
-            .FirstOrDefaultAsync(x => x.ItemId == item.Id, ct);
+            .FirstOrDefaultAsync(
+                x => x.ItemId == item.Id,
+                ct);
 
         if (itemPrice == null)
         {
-            _context.ItemPrices.Add(new ItemPrice
-            {
-                Item = item,
-                CustomerPrice = 0m,
-                ConsumerPrice = price
-            });
+            _context.ItemPrices.Add(
+                new ItemPrice
+                {
+                    Item = item,
+                    CustomerPrice = 0m,
+                    ConsumerPrice = price
+                });
 
             return;
         }
@@ -284,22 +322,22 @@ public class ConfirmInventoryImportCommandHandler
         if (itemPrice.ConsumerPrice == price)
             return;
 
-        _context.ItemPriceHistories.Add(new ItemPriceHistory
-        {
-            ItemPrice = itemPrice,
-            OldCustomerPrice = itemPrice.CustomerPrice,
-            NewCustomerPrice = itemPrice.CustomerPrice,
-            OldConsumerPrice = itemPrice.ConsumerPrice,
-            NewConsumerPrice = price,
-            ChangedAt = DateTime.UtcNow,
-            ChangedBy = "Excel Import",
-            Source = "Excel Import"
-        });
+        _context.ItemPriceHistories.Add(
+            new ItemPriceHistory
+            {
+                ItemPrice = itemPrice,
+                OldCustomerPrice = itemPrice.CustomerPrice,
+                NewCustomerPrice = itemPrice.CustomerPrice,
+                OldConsumerPrice = itemPrice.ConsumerPrice,
+                NewConsumerPrice = price,
+                ChangedAt = DateTime.UtcNow,
+                ChangedBy = "Excel Import",
+                Source = "Excel Import"
+            });
 
         itemPrice.ConsumerPrice = price;
     }
 
-    // Get the latest previous inventory for this item
     private async Task<InventoryDetail?> GetPreviousDetail(
         int itemId,
         ConfirmInventoryImportCommand request,
@@ -307,31 +345,35 @@ public class ConfirmInventoryImportCommandHandler
     {
         return await _context.InventoryDetails
             .Include(x => x.InventorySession)
-            .Where(x =>
-                x.ItemId == itemId &&
-                x.InventorySession != null &&
-                x.InventorySession.BranchId == request.BranchId &&
-                x.InventorySession.StoreId == request.StoreId &&
-                x.InventorySession.InventoryDate < request.InventoryDate)
-            .OrderByDescending(x => x.InventorySession!.InventoryDate)
-            .ThenByDescending(x => x.Id)
+            .Where(
+                x =>
+                    x.ItemId == itemId &&
+                    x.InventorySession != null &&
+                    x.InventorySession.BranchId == request.BranchId &&
+                    x.InventorySession.StoreId == request.StoreId &&
+                    x.InventorySession.InventoryDate < request.InventoryDate)
+            .OrderByDescending(
+                x => x.InventorySession!.InventoryDate)
+            .ThenByDescending(
+                x => x.Id)
             .FirstOrDefaultAsync(ct);
     }
 
-    // Calculate inventory comparison
     private static InventoryDetail CreateDetail(
-    InventorySession session,
-    Item item,
-    decimal? quantityAfter,
-    decimal priceAfter,
-    InventoryDetail? previous)
+        InventorySession session,
+        Item item,
+        decimal? quantityAfter,
+        decimal priceAfter,
+        InventoryDetail? previous,
+        string? warning)
     {
         var quantityBefore = previous?.QuantityAfter;
         var priceBefore = previous?.ConsumerPriceAfter;
 
         decimal? beforeValue = null;
 
-        if (quantityBefore.HasValue && priceBefore.HasValue)
+        if (quantityBefore.HasValue &&
+            priceBefore.HasValue)
             beforeValue = quantityBefore.Value * priceBefore.Value;
 
         decimal? afterValue = null;
@@ -341,13 +383,17 @@ public class ConfirmInventoryImportCommandHandler
 
         decimal? quantityDifference = null;
 
-        if (quantityBefore.HasValue && quantityAfter.HasValue)
-            quantityDifference = quantityAfter.Value - quantityBefore.Value;
+        if (quantityBefore.HasValue &&
+            quantityAfter.HasValue)
+            quantityDifference =
+                quantityAfter.Value - quantityBefore.Value;
 
         decimal? valueDifference = null;
 
-        if (beforeValue.HasValue && afterValue.HasValue)
-            valueDifference = afterValue.Value - beforeValue.Value;
+        if (beforeValue.HasValue &&
+            afterValue.HasValue)
+            valueDifference =
+                afterValue.Value - beforeValue.Value;
 
         var status = !quantityBefore.HasValue
             ? "FirstInventory"
@@ -369,9 +415,11 @@ public class ConfirmInventoryImportCommandHandler
             BeforeValue = beforeValue,
             AfterValue = afterValue,
             ValueDifference = valueDifference,
-            Status = status
+            Status = status,
+            Description = warning
         };
     }
+
     private async Task<Category> GetOrCreateCategory(
         string name,
         CancellationToken ct)
@@ -393,23 +441,48 @@ public class ConfirmInventoryImportCommandHandler
         };
 
         _context.Categories.Add(category);
+
         return category;
     }
 
-    private async Task<DomainUnit> GetUnit(
-        string name,
+    private async Task<DomainUnit?> GetUnit(
+        string? name,
         CancellationToken ct)
     {
-        var normalized = name.Trim();
+        var normalized = UnitNormalizer.Normalize(name);
 
-        if (normalized != "قطعة" && normalized != "درزن")
-            throw new InvalidOperationException(
-                LocalizationKeys.Unit.Unsupported);
+        if (normalized == null)
+            return null;
 
-        var unit = await _context.Units
-            .FirstOrDefaultAsync(
-                x => x.UnitNameArabic == normalized,
-                ct);
+        var supportedUnits = new HashSet<string>(
+            StringComparer.OrdinalIgnoreCase)
+        {
+            "قطعة",
+            "درزن",
+            "سيت",
+            "غم",
+            "سم",
+            "كغم",
+            "علبة"
+        };
+
+        // if (!supportedUnits.Contains(normalized))
+        //     throw new InvalidOperationException(
+        //         LocalizationKeys.Unit.Unsupported);
+        if (!supportedUnits.Contains(normalized))
+{
+    throw new InvalidOperationException(
+        $"الوحدة غير مدعومة: '{name}'");
+}
+
+        var units = await _context.Units
+            .ToListAsync(ct);
+
+        var unit = units.FirstOrDefault(
+            x => string.Equals(
+                UnitNormalizer.Normalize(x.UnitNameArabic),
+                normalized,
+                StringComparison.OrdinalIgnoreCase));
 
         if (unit == null)
             throw new InvalidOperationException(

@@ -98,6 +98,7 @@ public static class LocalizationKeys
         public const string Deleted = "Unit.Deleted";
         public const string Piece = "Unit.Piece";
         public const string Dozen = "Unit.Dozen";
+        public const string FirstUnitNotDefined = "Unit.FirstUnitNotDefined";
     }
 
     // Item

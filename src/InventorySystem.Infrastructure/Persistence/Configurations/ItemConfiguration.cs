@@ -28,35 +28,24 @@ public class ItemConfiguration : IEntityTypeConfiguration<Item>
             .IsRequired()
             .HasDefaultValue(true);
 
-        // Item Code must be unique
         builder.HasIndex(x => x.ItemCode)
             .IsUnique();
 
-        // Category relationship
         builder.HasOne(x => x.Category)
             .WithMany(x => x.Items)
             .HasForeignKey(x => x.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Unit relationship
         builder.HasOne(x => x.Unit)
             .WithMany(x => x.Items)
             .HasForeignKey(x => x.UnitId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // Item Locations
         builder.HasMany(x => x.ItemLocations)
             .WithOne(x => x.Item)
             .HasForeignKey(x => x.ItemId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        // // Price
-        // builder.HasMany(x => x.PriceHistory)
-        //     .WithOne(x => x.ItemPrice)
-        //     .HasForeignKey(x => x.ItemPriceId)
-        //     .OnDelete(DeleteBehavior.Restrict);
-
-        // Inventory Details
         builder.HasMany(x => x.InventoryDetails)
             .WithOne(x => x.Item)
             .HasForeignKey(x => x.ItemId)

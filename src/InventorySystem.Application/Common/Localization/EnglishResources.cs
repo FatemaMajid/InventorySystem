@@ -85,6 +85,7 @@ public static class EnglishResources
         [LocalizationKeys.Unit.Deleted] = "Unit deleted successfully.",
         [LocalizationKeys.Unit.Piece] = "Piece",
         [LocalizationKeys.Unit.Dozen] = "Dozen",
+        [LocalizationKeys.Unit.FirstUnitNotDefined] = "The first unit is not defined.",
 
         // Item
         [LocalizationKeys.Item.Required] = "Item is required.",
