@@ -34,6 +34,8 @@ public static class ArabicResources
         [LocalizationKeys.Branch.Updated] = "تم تعديل الفرع بنجاح.",
         [LocalizationKeys.Branch.Deleted] = "تم حذف الفرع بنجاح.",
         [LocalizationKeys.Branch.CannotDelete] = "لا يمكن حذف الفرع لوجود بيانات مرتبطة به.",
+        [LocalizationKeys.Branch.NotMatch] = "الفرع في ملف قبل الجرد لا يطابق الفرع في ملف بعد الجرد",
+
 
         // Branch validation
         [LocalizationKeys.Branch.CodeRequired] = "رمز الفرع مطلوب.",
@@ -55,6 +57,7 @@ public static class ArabicResources
         [LocalizationKeys.Store.Updated] = "تم تعديل المستودع بنجاح.",
         [LocalizationKeys.Store.Deleted] = "تم حذف المستودع بنجاح.",
         [LocalizationKeys.Store.CannotDelete] = "لا يمكن حذف المستودع لوجود بيانات مرتبطة به.",
+        [LocalizationKeys.Store.NotMatch] = "المستودع في ملف قبل الجرد لا يطابق المستودع في ملف بعد الجرد",
 
         // Store validation
         [LocalizationKeys.Store.CodeRequired] = "رمز المستودع مطلوب.",
@@ -125,6 +128,8 @@ public static class ArabicResources
         [LocalizationKeys.Inventory.NewlyCounted] = "ظهر بعد الجرد",
         [LocalizationKeys.Inventory.FullyDepleted] = "نفد بالكامل",
         [LocalizationKeys.Inventory.PriceChanged] = "تغير السعر",
+        [LocalizationKeys.Inventory.ItemExistsBeforeOnly] = "موجود قبل الجرد وغير موجود بعد الجرد",
+        [LocalizationKeys.Inventory.ItemExistsAfterOnly] = "موجود بعد الجرد غير موجود قبل الجرد",
 
         // Excel
         [LocalizationKeys.Excel.EmptyFile] = "ملف Excel فارغ.",

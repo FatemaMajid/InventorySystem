@@ -49,6 +49,7 @@ public static class LocalizationKeys
         public const string AddressMaxLength = "Branch.AddressMaxLength";
         public const string PhoneMaxLength = "Branch.PhoneMaxLength";
         public const string InvalidId = "Branch.InvalidId";
+        public const string NotMatch = "Branch.NotMatch";
     }
 
     // Store
@@ -71,6 +72,7 @@ public static class LocalizationKeys
         public const string EnglishNameMaxLength = "Store.EnglishNameMaxLength";
         public const string BranchCodeRequired = "Store.BranchCodeRequired";
         public const string BranchCodeMaxLength = "Store.BranchCodeMaxLength";
+        public const string NotMatch = "Store.NotMatch";
     }
 
     // Category
@@ -151,6 +153,8 @@ public static class LocalizationKeys
         public const string NewlyCounted = "NewlyCounted";
         public const string FullyDepleted = "FullyDepleted";
         public const string PriceChanged = "PriceChanged";
+        public const string ItemExistsBeforeOnly = "Inventory.ItemExistsBeforeOnly";
+        public const string ItemExistsAfterOnly = "Inventory.ItemExistsAfterOnly";
     }
 
     // Excel

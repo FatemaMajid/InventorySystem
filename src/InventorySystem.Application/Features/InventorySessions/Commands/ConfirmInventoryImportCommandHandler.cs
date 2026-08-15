@@ -16,8 +16,7 @@ public class ConfirmInventoryImportCommandHandler
 {
     private readonly IApplicationDbContext _context;
 
-    public ConfirmInventoryImportCommandHandler(
-        IApplicationDbContext context)
+    public ConfirmInventoryImportCommandHandler(IApplicationDbContext context)
     {
         _context = context;
     }
@@ -40,17 +39,39 @@ public class ConfirmInventoryImportCommandHandler
                 InventoryDate = request.InventoryDate,
                 BranchId = request.BranchId,
                 StoreId = request.StoreId,
+                BeforeFileName = request.BeforeFileName,
+                AfterFileName = request.AfterFileName,
                 Status = "Completed"
             };
 
             _context.InventorySessions.Add(session);
 
-            foreach (var row in request.Rows)
+            var beforeRows = request.BeforeRows
+                .Where(x => !string.IsNullOrWhiteSpace(x.ItemCode))
+                .ToDictionary(
+                    x => x.ItemCode.Trim(),
+                    StringComparer.OrdinalIgnoreCase);
+
+            var afterRows = request.AfterRows
+                .Where(x => !string.IsNullOrWhiteSpace(x.ItemCode))
+                .ToDictionary(
+                    x => x.ItemCode.Trim(),
+                    StringComparer.OrdinalIgnoreCase);
+
+            var codes = beforeRows.Keys
+                .Union(afterRows.Keys, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            foreach (var code in codes)
             {
-                await AddRow(
+                beforeRows.TryGetValue(code, out var beforeRow);
+                afterRows.TryGetValue(code, out var afterRow);
+
+                await AddComparisonRow(
                     session,
                     request,
-                    row,
+                    beforeRow,
+                    afterRow,
                     cancellationToken);
             }
 
@@ -70,7 +91,11 @@ public class ConfirmInventoryImportCommandHandler
         ConfirmInventoryImportCommand request,
         CancellationToken ct)
     {
-        if (request.Rows.Count == 0)
+        if (request.BeforeRows.Count == 0)
+            throw new InvalidOperationException(
+                LocalizationKeys.Inventory.NoData);
+
+        if (request.AfterRows.Count == 0)
             throw new InvalidOperationException(
                 LocalizationKeys.Inventory.NoData);
 
@@ -124,8 +149,11 @@ public class ConfirmInventoryImportCommandHandler
             throw new InvalidOperationException(
                 LocalizationKeys.Inventory.SessionExists);
 
-        ValidateDuplicateItems(request.Rows);
-        ValidateRows(request.Rows);
+        ValidateDuplicateItems(request.BeforeRows);
+        ValidateDuplicateItems(request.AfterRows);
+
+        ValidateRows(request.BeforeRows);
+        ValidateRows(request.AfterRows);
     }
 
     private static void ValidateDuplicateItems(
@@ -164,19 +192,20 @@ public class ConfirmInventoryImportCommandHandler
         }
     }
 
-    private async Task AddRow(
+    private async Task AddComparisonRow(
         InventorySession session,
         ConfirmInventoryImportCommand request,
-        InventoryExcelRow row,
+        InventoryExcelRow? beforeRow,
+        InventoryExcelRow? afterRow,
         CancellationToken ct)
     {
-        var code = row.ItemCode.Trim();
-        var name1 = row.ItemName1?.Trim() ?? string.Empty;
-        var name2 = row.ItemName2?.Trim() ?? string.Empty;
-        var categoryName = row.Category?.Trim() ?? string.Empty;
-        var unitName = row.Unit?.Trim();
-        var quantity = row.Quantity ?? 0m;
-        var price = row.Price ?? 0m;
+        var sourceRow = afterRow ?? beforeRow!;
+
+        var code = sourceRow.ItemCode.Trim();
+        var name1 = sourceRow.ItemName1?.Trim() ?? string.Empty;
+        var name2 = sourceRow.ItemName2?.Trim() ?? string.Empty;
+        var categoryName = sourceRow.Category?.Trim() ?? string.Empty;
+        var unitName = sourceRow.Unit?.Trim();
 
         var category = await GetOrCreateCategory(
             categoryName,
@@ -186,13 +215,6 @@ public class ConfirmInventoryImportCommandHandler
             unitName,
             ct);
 
-        // var item = await GetOrCreateItem(
-        //     code,
-        //     name1,
-        //     name2,
-        //     category.Id,
-        //     unit?.Id,
-        //     ct);
         var item = await GetOrCreateItem(
             code,
             name1,
@@ -206,71 +228,97 @@ public class ConfirmInventoryImportCommandHandler
             request,
             ct);
 
-        await UpdatePrice(
-            item,
-            price,
-            ct);
+        var quantityBefore = beforeRow?.Quantity;
+        var quantityAfter = afterRow?.Quantity;
 
-        var previous = await GetPreviousDetail(
-            item.Id,
-            request,
-            ct);
+        var priceBefore = beforeRow?.Price;
+        var priceAfter = afterRow?.Price;
 
-        var warning = unit == null
-            ? LocalizationKeys.Unit.FirstUnitNotDefined
-            : null;
-            
+        if (afterRow != null)
+        {
+            await UpdatePrice(
+                item,
+                priceAfter ?? 0m,
+                ct);
+        }
+        else if (beforeRow != null)
+        {
+            await UpdatePrice(
+                item,
+                priceBefore ?? 0m,
+                ct);
+        }
+
+        string? description = null;
+
+        if (beforeRow != null && afterRow == null)
+        {
+            description =
+                LocalizationKeys.Inventory.ItemExistsBeforeOnly;
+        }
+        else if (beforeRow == null && afterRow != null)
+        {
+            description =
+                LocalizationKeys.Inventory.ItemExistsAfterOnly;
+        }
+        else if (unit == null)
+        {
+            description =
+                LocalizationKeys.Unit.FirstUnitNotDefined;
+        }
+
         session.Details.Add(
             CreateDetail(
                 session,
                 item,
-                quantity,
-                price,
-                previous,
-                warning));
+                quantityBefore,
+                quantityAfter,
+                priceBefore,
+                priceAfter,
+                description));
     }
 
     private async Task<Item> GetOrCreateItem(
-    string code,
-    string name1,
-    string name2,
-    Category category,
-    DomainUnit? unit,
-    CancellationToken ct)
-{
-    var item = await _context.Items
-        .FirstOrDefaultAsync(
-            x => x.ItemCode == code,
-            ct);
-
-    if (item == null)
+        string code,
+        string name1,
+        string name2,
+        Category category,
+        DomainUnit? unit,
+        CancellationToken ct)
     {
-        item = new Item
+        var item = await _context.Items
+            .FirstOrDefaultAsync(
+                x => x.ItemCode == code,
+                ct);
+
+        if (item == null)
         {
-            ItemCode = code,
-            ItemName1 = name1,
-            ItemName2 = name2,
-            Category = category,
-            Unit = unit,
-            IsActive = true
-        };
+            item = new Item
+            {
+                ItemCode = code,
+                ItemName1 = name1,
+                ItemName2 = name2,
+                Category = category,
+                Unit = unit,
+                IsActive = true
+            };
 
-        _context.Items.Add(item);
+            _context.Items.Add(item);
+        }
+        else
+        {
+            item.ItemName1 = name1;
+            item.ItemName2 = name2;
+            item.Category = category;
+
+            if (unit != null)
+                item.Unit = unit;
+
+            item.IsActive = true;
+        }
+
+        return item;
     }
-    else
-    {
-        item.ItemName1 = name1;
-        item.ItemName2 = name2;
-        item.Category = category;
-
-        if (unit != null)
-            item.Unit = unit;
-
-        item.IsActive = true;
-    }
-
-    return item;
-}
 
     private async Task EnsureLocation(
         Item item,
@@ -338,48 +386,28 @@ public class ConfirmInventoryImportCommandHandler
         itemPrice.ConsumerPrice = price;
     }
 
-    private async Task<InventoryDetail?> GetPreviousDetail(
-        int itemId,
-        ConfirmInventoryImportCommand request,
-        CancellationToken ct)
-    {
-        return await _context.InventoryDetails
-            .Include(x => x.InventorySession)
-            .Where(
-                x =>
-                    x.ItemId == itemId &&
-                    x.InventorySession != null &&
-                    x.InventorySession.BranchId == request.BranchId &&
-                    x.InventorySession.StoreId == request.StoreId &&
-                    x.InventorySession.InventoryDate < request.InventoryDate)
-            .OrderByDescending(
-                x => x.InventorySession!.InventoryDate)
-            .ThenByDescending(
-                x => x.Id)
-            .FirstOrDefaultAsync(ct);
-    }
-
     private static InventoryDetail CreateDetail(
         InventorySession session,
         Item item,
+        decimal? quantityBefore,
         decimal? quantityAfter,
-        decimal priceAfter,
-        InventoryDetail? previous,
-        string? warning)
+        decimal? priceBefore,
+        decimal? priceAfter,
+        string? description)
     {
-        var quantityBefore = previous?.QuantityAfter;
-        var priceBefore = previous?.ConsumerPriceAfter;
-
         decimal? beforeValue = null;
 
         if (quantityBefore.HasValue &&
             priceBefore.HasValue)
-            beforeValue = quantityBefore.Value * priceBefore.Value;
+            beforeValue =
+                quantityBefore.Value * priceBefore.Value;
 
         decimal? afterValue = null;
 
-        if (quantityAfter.HasValue)
-            afterValue = quantityAfter.Value * priceAfter;
+        if (quantityAfter.HasValue &&
+            priceAfter.HasValue)
+            afterValue =
+                quantityAfter.Value * priceAfter.Value;
 
         decimal? quantityDifference = null;
 
@@ -395,13 +423,16 @@ public class ConfirmInventoryImportCommandHandler
             valueDifference =
                 afterValue.Value - beforeValue.Value;
 
-        var status = !quantityBefore.HasValue
-            ? "FirstInventory"
-            : quantityDifference == 0
-                ? "NoDifference"
-                : quantityDifference > 0
-                    ? "Increase"
-                    : "Decrease";
+        var status =
+            beforeValue == null && quantityBefore == null
+                ? "AfterOnly"
+                : afterValue == null && quantityAfter == null
+                    ? "BeforeOnly"
+                    : quantityDifference == 0
+                        ? "NoDifference"
+                        : quantityDifference > 0
+                            ? "Increase"
+                            : "Decrease";
 
         return new InventoryDetail
         {
@@ -416,7 +447,7 @@ public class ConfirmInventoryImportCommandHandler
             AfterValue = afterValue,
             ValueDifference = valueDifference,
             Status = status,
-            Description = warning
+            Description = description
         };
     }
 
@@ -466,14 +497,9 @@ public class ConfirmInventoryImportCommandHandler
             "علبة"
         };
 
-        // if (!supportedUnits.Contains(normalized))
-        //     throw new InvalidOperationException(
-        //         LocalizationKeys.Unit.Unsupported);
         if (!supportedUnits.Contains(normalized))
-{
-    throw new InvalidOperationException(
-        $"الوحدة غير مدعومة: '{name}'");
-}
+            throw new InvalidOperationException(
+                $"الوحدة غير مدعومة: '{name}'");
 
         var units = await _context.Units
             .ToListAsync(ct);

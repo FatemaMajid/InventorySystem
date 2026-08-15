@@ -34,6 +34,7 @@ public static class EnglishResources
         [LocalizationKeys.Branch.Updated] = "Branch updated successfully.",
         [LocalizationKeys.Branch.Deleted] = "Branch deleted successfully.",
         [LocalizationKeys.Branch.CannotDelete] = "The branch cannot be deleted because it has related data.",
+        [LocalizationKeys.Branch.NotMatch] = "The branch in the before-inventory file does not match the branch in the after-inventory file",
 
         // Branch validation
         [LocalizationKeys.Branch.CodeRequired] = "Branch code is required.",
@@ -55,6 +56,8 @@ public static class EnglishResources
         [LocalizationKeys.Store.Updated] = "Store updated successfully.",
         [LocalizationKeys.Store.Deleted] = "Store deleted successfully.",
         [LocalizationKeys.Store.CannotDelete] = "The store cannot be deleted because it has related data.",
+        [LocalizationKeys.Store.NotMatch] = "The store in the before-inventory file does not match the store in the after-inventory file",
+
 
         // Store validation
         [LocalizationKeys.Store.CodeRequired] = "Store code is required.",
@@ -126,6 +129,8 @@ public static class EnglishResources
         [LocalizationKeys.Inventory.NewlyCounted] = "Newly Counted",
         [LocalizationKeys.Inventory.FullyDepleted] = "Fully Depleted",
         [LocalizationKeys.Inventory.PriceChanged] = "Price Changed",
+        [LocalizationKeys.Inventory.ItemExistsBeforeOnly] = "Exists before inventory and does not exist after inventory",
+        [LocalizationKeys.Inventory.ItemExistsAfterOnly] = "Exists after inventory and does not exist before inventory",
 
         // Excel
         [LocalizationKeys.Excel.EmptyFile] = "The Excel file is empty.",

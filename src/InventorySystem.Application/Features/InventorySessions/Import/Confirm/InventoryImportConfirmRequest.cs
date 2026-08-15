@@ -4,9 +4,11 @@ namespace InventorySystem.Application.Features.InventorySessions.Import.Confirm;
 
 public class InventoryImportConfirmRequest
 {
-    public Stream FileStream { get; set; } = Stream.Null;
+    public Stream BeforeFileStream { get; set; } = Stream.Null;
+    public string? BeforeFileName { get; set; }
 
-    public string? FileName { get; set; }
+    public Stream AfterFileStream { get; set; } = Stream.Null;
+    public string? AfterFileName { get; set; }
 
     public InventoryType InventoryType { get; set; }
 }

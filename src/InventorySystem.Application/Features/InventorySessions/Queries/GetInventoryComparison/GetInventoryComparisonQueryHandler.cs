@@ -62,12 +62,21 @@ public class GetInventoryComparisonQueryHandler
                 QuantityAfter = x.QuantityAfter,
                 QuantityDifference = x.QuantityDifference,
 
+                DifferencePercentage =
+                x.QuantityBefore.HasValue &&
+                x.QuantityBefore.Value != 0 &&
+                x.QuantityDifference.HasValue
+                ? x.QuantityDifference.Value / x.QuantityBefore.Value * 100
+                : null,
+
                 ConsumerPriceBefore = x.ConsumerPriceBefore,
                 ConsumerPriceAfter = x.ConsumerPriceAfter,
 
                 BeforeValue = x.BeforeValue,
                 AfterValue = x.AfterValue,
                 ValueDifference = x.ValueDifference,
+
+                UnitNotDefined = !x.Item!.UnitId.HasValue,
 
                 Status = x.Status,
                 Description = x.Description

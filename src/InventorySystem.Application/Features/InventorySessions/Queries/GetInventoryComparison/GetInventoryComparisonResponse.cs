@@ -42,6 +42,8 @@ public class InventoryComparisonItem
     public decimal? AfterValue { get; init; }
     public decimal? ValueDifference { get; init; }
 
+    public decimal? DifferencePercentage { get; init; }
+    public bool UnitNotDefined { get; init; }
     public string Status { get; init; } = string.Empty;
     public string? Description { get; init; }
 }
