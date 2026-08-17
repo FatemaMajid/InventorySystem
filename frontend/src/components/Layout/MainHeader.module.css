@@ -1,0 +1,413 @@
+.header {
+  position: sticky;
+  top: 0;
+
+  z-index: var(--z-header);
+
+  width: 100%;
+  height: var(--header-height);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: var(--space-4);
+
+  padding: 0 var(--space-6);
+
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+
+  border-bottom: 1px solid var(--color-border);
+
+  direction: inherit;
+}
+
+/* =========================
+   Title
+========================= */
+
+.titleSection {
+  display: flex;
+  align-items: center;
+
+  gap: var(--space-3);
+
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+
+  min-width: 0;
+
+  color: var(--color-text-primary);
+
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* =========================
+   Menu
+========================= */
+
+.menuButton {
+  display: none;
+
+  width: 40px;
+  height: 40px;
+
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: var(--radius-md);
+
+  background: transparent;
+
+  color: var(--color-text-secondary);
+
+  font-size: 22px;
+
+  cursor: pointer;
+
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.menuButton:hover {
+  background: var(--color-surface-secondary);
+  color: var(--color-primary);
+}
+
+/* =========================
+   Actions
+========================= */
+
+.actions {
+  display: flex;
+  align-items: center;
+
+  gap: var(--space-2);
+
+  flex-shrink: 0;
+}
+
+/* =========================
+   Icon Buttons
+========================= */
+
+.iconButton {
+  width: 40px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  padding: 0;
+
+  border: 0;
+  border-radius: var(--radius-md);
+
+  background: transparent;
+
+  color: var(--color-text-secondary);
+
+  cursor: pointer;
+
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.iconButton:hover {
+  background: var(--color-surface-secondary);
+  color: var(--color-primary);
+}
+
+/* =========================
+   Language
+========================= */
+
+.languageButton {
+  min-width: 92px;
+  height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: var(--space-2);
+
+  flex-shrink: 0;
+
+  padding: 0 var(--space-3);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+
+  cursor: pointer;
+
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.languageButton:hover:not(:disabled) {
+  background: var(--color-surface-secondary);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.languageButton:disabled {
+  cursor: wait;
+  opacity: 0.8;
+}
+
+/* =========================
+   Language Loading
+========================= */
+
+.languageLoader {
+  width: 17px;
+  height: 17px;
+
+  display: block;
+
+  flex-shrink: 0;
+
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+
+  border-radius: 50%;
+
+  animation: languageSpin 0.65s linear infinite;
+}
+
+@keyframes languageSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================
+   Divider
+========================= */
+
+.divider {
+  width: 1px;
+  height: 28px;
+
+  margin: 0 var(--space-2);
+
+  background: var(--color-border);
+}
+
+/* =========================
+   User
+========================= */
+
+.userButton {
+  display: flex;
+  align-items: center;
+
+  gap: var(--space-2);
+
+  min-width: 0;
+
+  padding: var(--space-1);
+
+  border: 0;
+
+  background: transparent;
+
+  color: var(--color-text-primary);
+
+  cursor: pointer;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+
+  background: var(--color-primary);
+  color: var(--color-text-white);
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+
+  text-align: start;
+}
+
+.userName {
+  color: var(--color-text-primary);
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userRole {
+  color: var(--color-text-muted);
+
+  font-size: var(--font-size-xs);
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* =========================
+   Tablet
+========================= */
+
+@media (max-width: 1024px) {
+  .header {
+    padding: 0 var(--space-4);
+  }
+
+  .userInfo {
+    display: none;
+  }
+
+  .divider {
+    display: none;
+  }
+}
+
+/* =========================
+   Mobile
+========================= */
+
+@media (max-width: 768px) {
+  .header {
+    width: 100%;
+    min-width: 0;
+
+    padding: 0 var(--space-3);
+
+    gap: var(--space-2);
+  }
+
+  .titleSection {
+    flex: 1;
+    min-width: 0;
+
+    gap: var(--space-2);
+  }
+
+  .menuButton {
+    display: flex;
+  }
+
+  .title {
+    min-width: 0;
+
+    font-size: var(--font-size-lg);
+  }
+
+  .actions {
+    flex-shrink: 0;
+
+    gap: 2px;
+  }
+
+  .iconButton {
+    width: 38px;
+    height: 38px;
+  }
+
+  .languageButton {
+    min-width: 82px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: var(--space-2);
+
+    padding: 0 var(--space-2);
+  }
+
+  .userInfo {
+    display: none;
+  }
+
+  .divider {
+    display: none;
+  }
+
+  .userButton {
+    padding: 0;
+  }
+
+  .avatar {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+/* =========================
+   Very Small Screens
+========================= */
+
+@media (max-width: 420px) {
+  .header {
+    padding: 0 var(--space-2);
+  }
+
+  .title {
+    font-size: var(--font-size-md);
+  }
+
+  .menuButton,
+  .iconButton,
+  .languageButton {
+    width: 34px;
+    height: 34px;
+  }
+
+  .avatar {
+    width: 32px;
+    height: 32px;
+  }
+}
