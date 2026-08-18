@@ -34,6 +34,53 @@ const en = {
   },
 
   inventory: {
+
+    inventoryType: 'Inventory Type',
+
+selectInventoryType:
+  'Select inventory type',
+
+inventoryTypes: {
+  semiAnnual: 'Semi-Annual Inventory',
+  annual: 'Annual Inventory',
+},
+
+beforeInventory: 'Before Inventory',
+
+beforeInventoryDescription:
+  'Upload the Excel file before starting the inventory.',
+
+afterInventory: 'After Inventory',
+
+afterInventoryDescription:
+  'Upload the Excel file after completing the inventory.',
+
+invalidExcelFile:
+  'Only Excel files are allowed (.xlsx or .xls).',
+
+removeFile: 'Remove file',
+
+checkingFile:
+  'Checking file...',
+
+fileValidated:
+  'File validated successfully',
+
+totalRows: 'Total Rows',
+
+validRows: 'Valid Rows',
+
+errorRows: 'Error Rows',
+
+previewError:
+  'Failed to validate the Excel file.',
+
+createSessionError:
+  'Failed to create the inventory session.',
+
+creatingSession:
+  'Creating Session...',
+  
     sessionInformation: 'Inventory Session Information',
     sessionInformationDescription:
       'Enter the basic information for the new inventory session.',
@@ -44,6 +91,18 @@ const en = {
     inventoryTypes: {
       semiAnnual: 'Semi-Annual Inventory',
       annual: 'Annual Inventory',
+    },
+
+    requiredColumns: 'Required Columns',
+    requiredColumnsDescription:
+      'Both Excel files must contain the following columns.',
+
+    requiredColumnNames: {
+      itemCode: 'Item Code',
+      itemName: 'Item Name',
+      category: 'Category',
+      quantity: 'Quantity',
+      price: 'Price',
     },
 
     selectBranch: 'Select Branch',
@@ -77,6 +136,7 @@ const en = {
 
     createSession: 'Create Session',
     cancel: 'Cancel',
+    invalidExcelFile: 'Only Excel files are allowed (.xlsx or .xls).',
   },
 
   home: {
@@ -109,6 +169,8 @@ const en = {
     branches: 'Branches',
     attentionItems: 'Attention Items',
   },
+
+
 };
 
 export default en;

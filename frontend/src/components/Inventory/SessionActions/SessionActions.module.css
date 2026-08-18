@@ -37,6 +37,16 @@
   color: white;
 }
 
+.primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cancel:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 @media (max-width: 480px) {
   .actions {
     flex-direction: column-reverse;
@@ -46,3 +56,4 @@
     width: 100%;
   }
 }
+

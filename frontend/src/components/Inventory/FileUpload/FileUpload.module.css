@@ -1,7 +1,6 @@
 .card {
   width: 100%;
-
-  padding: var(--space-6);
+  padding: var(--space-5);
 
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
@@ -10,7 +9,7 @@
 }
 
 .header {
-  margin-bottom: var(--space-5);
+  margin-bottom: var(--space-4);
 }
 
 .header h2 {
@@ -18,7 +17,7 @@
 
   color: var(--color-text-primary);
 
-  font-size: var(--font-size-lg);
+  font-size: var(--font-size-md);
   font-weight: var(--font-weight-semibold);
 }
 
@@ -32,21 +31,19 @@
 }
 
 .dropZone {
-  min-height: 200px;
+  min-height: 230px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 
-  gap: var(--space-2);
+  padding: var(--space-5);
 
-  padding: var(--space-6);
-
-  border: 2px dashed var(--color-border);
+  border: 1px dashed var(--color-border);
   border-radius: var(--radius-lg);
 
-  color: var(--color-text-secondary);
+  background: var(--color-background);
 
   text-align: center;
 
@@ -57,7 +54,6 @@
 
 .dropZone:hover {
   border-color: var(--color-primary);
-  background: var(--color-surface-secondary);
 }
 
 .uploadIcon {
@@ -68,15 +64,28 @@
   align-items: center;
   justify-content: center;
 
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-3);
 
   border-radius: 50%;
 
-  background: var(--color-surface-secondary);
-
-  color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-text-white);
 
   font-size: 24px;
+}
+
+.dropZone strong {
+  color: var(--color-text-primary);
+
+  font-size: var(--font-size-sm);
+}
+
+.or {
+  margin: var(--space-2) 0;
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-size-sm);
 }
 
 .chooseButton {
@@ -84,18 +93,31 @@
 
   padding: 0 var(--space-4);
 
-  border: 0;
+  border: 1px solid var(--color-primary);
   border-radius: var(--radius-md);
 
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-text-white);
 
   font-family: inherit;
+  font-size: var(--font-size-sm);
 
   cursor: pointer;
+
+  transition:
+    opacity var(--transition-fast),
+    transform var(--transition-fast);
 }
 
-.file {
+.chooseButton:hover {
+  opacity: 0.9;
+}
+
+.chooseButton:active {
+  transform: translateY(1px);
+}
+
+.selectedFile {
   width: 100%;
 
   display: flex;
@@ -103,10 +125,31 @@
 
   gap: var(--space-3);
 
-  padding: var(--space-4);
+  padding: var(--space-3);
 
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+}
+
+.fileIcon {
+  width: 44px;
+  height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: var(--radius-md);
+
+  background: var(--color-primary);
+  color: var(--color-text-white);
+
+  font-size: 11px;
+  font-weight: var(--font-weight-bold);
 }
 
 .fileInfo {
@@ -117,7 +160,7 @@
   display: flex;
   flex-direction: column;
 
-  gap: var(--space-1);
+  gap: 4px;
 
   text-align: start;
 }
@@ -127,19 +170,24 @@
 
   color: var(--color-text-primary);
 
+  font-size: var(--font-size-sm);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .fileInfo span {
-  color: var(--color-text-muted);
+  color: var(--color-text-secondary);
 
-  font-size: var(--font-size-sm);
+  font-size: var(--font-size-xs);
 }
 
 .removeButton {
   width: 32px;
   height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   flex-shrink: 0;
 
@@ -147,7 +195,6 @@
   border-radius: var(--radius-md);
 
   background: transparent;
-
   color: var(--color-text-secondary);
 
   font-size: 22px;
@@ -156,13 +203,152 @@
 }
 
 .removeButton:hover {
-  background: var(--color-surface-secondary);
+  background: var(--color-background);
+  color: var(--color-text-primary);
+}
+
+.removeButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.previewLoading {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: var(--space-2);
+
+  margin-top: var(--space-4);
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-size-sm);
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-primary);
+
+  border-radius: 50%;
+
+  animation: spin 0.8s linear infinite;
+}
+
+.previewResult {
+  width: 100%;
+
+  margin-top: var(--space-4);
+
+  padding: var(--space-4);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+}
+
+.resultHeader {
+  display: flex;
+  align-items: center;
+
+  gap: var(--space-2);
+
+  margin-bottom: var(--space-3);
+
+  color: var(--color-text-primary);
+
+  font-size: var(--font-size-sm);
+}
+
+.successIcon {
+  width: 24px;
+  height: 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: var(--color-primary);
+  color: var(--color-text-white);
+
+  font-size: 13px;
+}
+
+.resultStats {
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: var(--space-2);
+}
+
+.resultStats > div {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+
+  padding: var(--space-2);
+
+  border-radius: var(--radius-md);
+
+  background: var(--color-background);
+
+  text-align: center;
+}
+
+.resultStats span {
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-size-xs);
+}
+
+.resultStats strong {
+  color: var(--color-text-primary);
+
+  font-size: var(--font-size-md);
 }
 
 .error {
-  margin-top: var(--space-2);
+  width: 100%;
 
-  color: var(--color-danger);
+  margin-top: var(--space-4);
+
+  padding: var(--space-3);
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  background: var(--color-background);
+  color: var(--color-text-primary);
 
   font-size: var(--font-size-sm);
+  line-height: 1.6;
+
+  text-align: start;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 600px) {
+  .resultStats {
+    grid-template-columns: 1fr;
+  }
+
+  .selectedFile {
+    align-items: flex-start;
+  }
 }

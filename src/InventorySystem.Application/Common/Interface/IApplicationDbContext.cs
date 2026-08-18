@@ -1,4 +1,5 @@
 using InventorySystem.Domain.Entities;
+using InventorySystem.Domain.Entities.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
@@ -25,6 +26,18 @@ public interface IApplicationDbContext
     DbSet<InventorySession> InventorySessions { get; }
 
     DbSet<InventoryDetail> InventoryDetails { get; }
+
+    DbSet<User> Users { get; }
+
+    DbSet<Role> Roles { get; }
+
+    DbSet<Permission> Permissions { get; }
+
+    DbSet<UserRole> UserRoles { get; }
+
+    DbSet<RolePermission> RolePermissions { get; }
+
+    DbSet<UserPermission> UserPermissions { get; }
 
     DatabaseFacade Database { get; }
 

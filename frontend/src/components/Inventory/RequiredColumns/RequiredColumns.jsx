@@ -1,20 +1,44 @@
 import { useLanguage } from '../../../context/LanguageContext';
+
 import styles from './RequiredColumns.module.css';
 
 function RequiredColumns() {
   const { translations } = useLanguage();
 
   const columns = [
-    'Item Code',
-    'Item Name',
-    'Unit',
-    'Quantity',
+    {
+      key: 'itemCode',
+      label:
+        translations.inventory.requiredColumnNames.itemCode,
+    },
+    {
+      key: 'itemName',
+      label:
+        translations.inventory.requiredColumnNames.itemName,
+    },
+    {
+      key: 'category',
+      label:
+        translations.inventory.requiredColumnNames.category,
+    },
+    {
+      key: 'quantity',
+      label:
+        translations.inventory.requiredColumnNames.quantity,
+    },
+    {
+      key: 'price',
+      label:
+        translations.inventory.requiredColumnNames.price,
+    },
   ];
 
   return (
     <section className={styles.card}>
       <div className={styles.header}>
-        <h2>{translations.inventory.requiredColumns}</h2>
+        <h2>
+          {translations.inventory.requiredColumns}
+        </h2>
 
         <p>
           {translations.inventory.requiredColumnsDescription}
@@ -24,11 +48,12 @@ function RequiredColumns() {
       <div className={styles.columns}>
         {columns.map((column) => (
           <div
-            key={column}
+            key={column.key}
             className={styles.column}
           >
             <span className={styles.dot} />
-            <span>{column}</span>
+
+            <span>{column.label}</span>
           </div>
         ))}
       </div>

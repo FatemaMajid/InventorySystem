@@ -34,6 +34,53 @@ const ar = {
   },
 
   inventory: {
+
+    inventoryType: 'نوع الجرد',
+
+selectInventoryType:
+  'اختر نوع الجرد',
+
+inventoryTypes: {
+  semiAnnual: 'الجرد نصف السنوي',
+  annual: 'الجرد السنوي',
+},
+
+beforeInventory: 'قبل الجرد',
+
+beforeInventoryDescription:
+  'ارفع ملف Excel قبل بدء عملية الجرد.',
+
+afterInventory: 'بعد الجرد',
+
+afterInventoryDescription:
+  'ارفع ملف Excel بعد إكمال عملية الجرد.',
+
+invalidExcelFile:
+  'يسمح فقط بملفات Excel بصيغة .xlsx أو .xls.',
+
+removeFile: 'إزالة الملف',
+
+checkingFile:
+  'جاري التحقق من الملف...',
+
+fileValidated:
+  'تم التحقق من الملف بنجاح',
+
+totalRows: 'إجمالي الصفوف',
+
+validRows: 'الصفوف الصحيحة',
+
+errorRows: 'الصفوف التي تحتوي أخطاء',
+
+previewError:
+  'فشل التحقق من ملف Excel.',
+
+createSessionError:
+  'فشل إنشاء جلسة الجرد.',
+
+creatingSession:
+  'جاري إنشاء الجلسة...',
+  
     sessionInformation: 'معلومات جلسة الجرد',
     sessionInformationDescription:
       'أدخل المعلومات الأساسية لجلسة الجرد الجديدة.',
@@ -44,6 +91,19 @@ const ar = {
     inventoryTypes: {
       semiAnnual: 'الجرد نصف السنوي',
       annual: 'الجرد السنوي',
+    },
+
+
+    requiredColumns: 'الأعمدة المطلوبة',
+    requiredColumnsDescription:
+      'يجب أن يحتوي كلا ملفي Excel على الأعمدة التالية.',
+
+    requiredColumnNames: {
+      itemCode: 'رقم الصنف',
+      itemName: 'اسم الصنف',
+      category: 'التصنيف',
+      quantity: 'الكمية',
+      price: 'السعر',
     },
 
     selectBranch: 'اختر الفرع',
@@ -77,6 +137,7 @@ const ar = {
 
     createSession: 'إنشاء الجلسة',
     cancel: 'إلغاء',
+    invalidExcelFile: 'يسمح فقط بملفات Excel بصيغة .xlsx أو .xls.',
   },
 
   home: {

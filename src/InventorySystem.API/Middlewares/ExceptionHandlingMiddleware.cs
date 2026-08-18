@@ -23,11 +23,21 @@ public class ExceptionHandlingMiddleware
         }
         catch (ValidationException ex)
         {
-            await HandleValidationException(context, ex);
+            await HandleValidationException(
+                context,
+                ex);
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            await HandleUnauthorizedException(
+                context,
+                ex);
         }
         catch (Exception ex)
         {
-            await HandleException(context, ex);
+            await HandleException(
+                context,
+                ex);
         }
     }
 
@@ -56,6 +66,19 @@ public class ExceptionHandlingMiddleware
             errors);
     }
 
+    private static async Task HandleUnauthorizedException(
+        HttpContext context,
+        UnauthorizedAccessException ex)
+    {
+        var language = GetLanguage(context);
+
+        await WriteResponse(
+            context,
+            HttpStatusCode.Forbidden,
+            ex.Message,
+            null);
+    }
+
     private static async Task HandleException(
         HttpContext context,
         Exception ex)
@@ -74,24 +97,29 @@ public class ExceptionHandlingMiddleware
             message);
     }
 
-    private static string GetLanguage(HttpContext context)
+    private static string GetLanguage(
+        HttpContext context)
     {
         return context.Features
             .Get<IRequestCultureFeature>()?
             .RequestCulture
             .UICulture
             .TwoLetterISOLanguageName
-            .ToLowerInvariant() ?? "ar";
+            .ToLowerInvariant()
+            ?? "ar";
     }
 
     private static async Task WriteResponse(
-        HttpContext context,                   
+        HttpContext context,
         HttpStatusCode statusCode,
         string message,
         object? errors = null)
     {
-        context.Response.StatusCode = (int)statusCode;
-        context.Response.ContentType = "application/json";
+        context.Response.StatusCode =
+            (int)statusCode;
+
+        context.Response.ContentType =
+            "application/json";
 
         var response = new
         {

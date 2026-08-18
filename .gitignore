@@ -1,40 +1,11 @@
-# Build
 bin/
 obj/
-
-# User files
+.vs/
 *.user
 *.suo
-*.userosscache
-*.sln.docstates
 
-# VS Code
-.vscode/
-
-# Visual Studio
-.vs/
-
-# Logs
-*.log
-
-# Node
-node_modules/
-
-# React
-frontend/node_modules/
-frontend/dist/
-
-# Environment
 .env
-.env.*
+appsettings.Development.json
 
-# SQL Server
-*.mdf
-*.ldf
-
-# OS
-Thumbs.db
-Desktop.ini
-
-# Git
-.git
+node_modules/
+dist/

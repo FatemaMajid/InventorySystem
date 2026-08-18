@@ -2,7 +2,12 @@ import { useLanguage } from '../../../context/LanguageContext';
 
 import styles from './SessionActions.module.css';
 
-function SessionActions() {
+function SessionActions({
+  disabled = true,
+  loading = false,
+  onSubmit,
+  onCancel,
+}) {
   const { translations } = useLanguage();
 
   return (
@@ -10,6 +15,8 @@ function SessionActions() {
       <button
         type="button"
         className={styles.cancel}
+        disabled={loading}
+        onClick={onCancel}
       >
         {translations.inventory.cancel}
       </button>
@@ -17,8 +24,12 @@ function SessionActions() {
       <button
         type="button"
         className={styles.primary}
+        disabled={disabled}
+        onClick={onSubmit}
       >
-        {translations.inventory.createSession}
+        {loading
+          ? translations.inventory.creatingSession
+          : translations.inventory.createSession}
       </button>
     </div>
   );
