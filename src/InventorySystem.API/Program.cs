@@ -3,8 +3,12 @@ using System.Text;
 using Microsoft.OpenApi;
 using AutoMapper;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 
 using InventorySystem.API.Middleware;
+using InventorySystem.API.Authorization;
+
+using InventorySystem.Infrastructure.Reports;
 
 using InventorySystem.Application.Common.Behaviors;
 using InventorySystem.Application.Common.Interfaces;
@@ -109,6 +113,22 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<
     ICurrentUserService,
     CurrentUserService>();
+
+builder.Services.AddSingleton<
+    IAuthorizationPolicyProvider,
+    PermissionPolicyProvider>();
+
+builder.Services.AddScoped<
+    IAuthorizationHandler,
+    PermissionAuthorizationHandler>();
+
+builder.Services.AddScoped<
+    IDashboardExportService,
+    DashboardExportService>();    
+
+builder.Services.AddScoped<
+    IComparisonExportService,
+    ComparisonExportService>();
 
 
 // =====================================================

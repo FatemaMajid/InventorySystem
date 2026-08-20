@@ -2,12 +2,21 @@ namespace InventorySystem.Application.Common.Authorization;
 
 public static class PermissionCodes
 {
+    // ==========================================
     // Dashboard
+    // ==========================================
+
     public const string DashboardView =
         "Dashboard.View";
 
+    public const string DashboardExport =
+    "Dashboard.Export";
 
+
+    // ==========================================
     // Inventory Sessions
+    // ==========================================
+
     public const string InventorySessionView =
         "InventorySession.View";
 
@@ -15,22 +24,46 @@ public static class PermissionCodes
         "InventorySession.Create";
 
 
-    // Comparison
+    // ==========================================
+    // Comparison Results
+    // ==========================================
+
     public const string ComparisonView =
         "Comparison.View";
 
+    public const string ComparisonExport =
+        "Comparison.Export";
 
+
+    // ==========================================
     // Attention Items
+    // ==========================================
+
     public const string AttentionView =
         "Attention.View";
 
+    public const string AttentionExport =
+        "Attention.Export";
 
+
+    // ==========================================
     // Reports
+    // ==========================================
+
     public const string ReportView =
         "Report.View";
 
+    public const string ReportCreate =
+        "Report.Create";
 
+    public const string ReportExport =
+        "Report.Export";
+
+
+    // ==========================================
     // Branches
+    // ==========================================
+
     public const string BranchView =
         "Branch.View";
 
@@ -41,7 +74,10 @@ public static class PermissionCodes
         "Branch.Edit";
 
 
+    // ==========================================
     // Stores
+    // ==========================================
+
     public const string StoreView =
         "Store.View";
 
@@ -52,7 +88,10 @@ public static class PermissionCodes
         "Store.Edit";
 
 
+    // ==========================================
     // Users
+    // ==========================================
+
     public const string UserView =
         "User.View";
 
@@ -66,7 +105,10 @@ public static class PermissionCodes
         "User.Deactivate";
 
 
+    // ==========================================
     // Roles & Permissions
+    // ==========================================
+
     public const string RoleView =
         "Role.View";
 
@@ -74,12 +116,18 @@ public static class PermissionCodes
         "Role.Edit";
 
 
+    // ==========================================
     // Audit Logs
+    // ==========================================
+
     public const string AuditLogView =
         "AuditLog.View";
 
 
+    // ==========================================
     // Settings
+    // ==========================================
+
     public const string SettingsView =
         "Settings.View";
 }

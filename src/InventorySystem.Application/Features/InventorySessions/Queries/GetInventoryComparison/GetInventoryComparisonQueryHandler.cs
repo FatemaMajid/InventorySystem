@@ -34,54 +34,53 @@ public class GetInventoryComparisonQueryHandler
         query = ApplySorting(query, request);
 
         var pageNumber = Math.Max(request.PageNumber, 1);
-        var pageSize = Math.Clamp(request.PageSize, 1, 100);
+        var pageSize = request.PageSize <= 0
+            ? 0
+            : Math.Clamp(request.PageSize, 1, 300);
+
+        if (pageSize > 0)
+        {
+            query = query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize);
+        }
 
         var items = await query
-            .Skip((pageNumber - 1) * pageSize)
-            .Take(pageSize)
-            .Select(x => new InventoryComparisonItem
-            {
-                InventoryDetailId = x.Id,
-
-                ItemId = x.ItemId,
-                ItemCode = x.Item!.ItemCode,
-                ItemName1 = x.Item.ItemName1,
-                ItemName2 = x.Item.ItemName2,
-
-                CategoryId = x.Item.CategoryId,
-                CategoryName = x.Item.Category != null
-                    ? x.Item.Category.CategoryNameArabic
-                    : string.Empty,
-
-                UnitId = x.Item.UnitId,
-                UnitName = x.Item.Unit != null
-                ? x.Item.Unit.UnitNameArabic
-                : string.Empty,
-
-                QuantityBefore = x.QuantityBefore,
-                QuantityAfter = x.QuantityAfter,
-                QuantityDifference = x.QuantityDifference,
-
-                DifferencePercentage =
-                x.QuantityBefore.HasValue &&
-                x.QuantityBefore.Value != 0 &&
-                x.QuantityDifference.HasValue
-                ? x.QuantityDifference.Value / x.QuantityBefore.Value * 100
+    .Select(x => new InventoryComparisonItem
+    {
+        InventoryDetailId = x.Id,
+        ItemId = x.ItemId,
+        ItemCode = x.Item!.ItemCode,
+        ItemName1 = x.Item.ItemName1,
+        ItemName2 = x.Item.ItemName2,
+        CategoryId = x.Item.CategoryId,
+        CategoryName = x.Item.Category != null
+            ? x.Item.Category.CategoryNameArabic
+            : string.Empty,
+        UnitId = x.Item.UnitId,
+        UnitName = x.Item.Unit != null
+            ? x.Item.Unit.UnitNameArabic
+            : string.Empty,
+        QuantityBefore = x.QuantityBefore,
+        QuantityAfter = x.QuantityAfter,
+        QuantityDifference = x.QuantityDifference,
+        DifferencePercentage =
+            x.QuantityBefore.HasValue &&
+            x.QuantityBefore.Value != 0 &&
+            x.QuantityDifference.HasValue
+                ? x.QuantityDifference.Value /
+                  x.QuantityBefore.Value * 100
                 : null,
-
-                ConsumerPriceBefore = x.ConsumerPriceBefore,
-                ConsumerPriceAfter = x.ConsumerPriceAfter,
-
-                BeforeValue = x.BeforeValue,
-                AfterValue = x.AfterValue,
-                ValueDifference = x.ValueDifference,
-
-                UnitNotDefined = !x.Item!.UnitId.HasValue,
-
-                Status = x.Status,
-                Description = x.Description
-            })
-            .ToListAsync(cancellationToken);
+        ConsumerPriceBefore = x.ConsumerPriceBefore,
+        ConsumerPriceAfter = x.ConsumerPriceAfter,
+        BeforeValue = x.BeforeValue,
+        AfterValue = x.AfterValue,
+        ValueDifference = x.ValueDifference,
+        UnitNotDefined = !x.Item!.UnitId.HasValue,
+        Status = x.Status,
+        Description = x.Description
+    })
+    .ToListAsync(cancellationToken);
 
         return new GetInventoryComparisonResponse
         {

@@ -1,13 +1,15 @@
+using InventorySystem.API.Authorization;
+using InventorySystem.Application.Common.Authorization;
 using InventorySystem.Application.Features.Users.Commands.CreateUser;
+
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventorySystem.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
 public sealed class UsersController : ControllerBase
 {
     private readonly ISender _sender;
@@ -18,6 +20,7 @@ public sealed class UsersController : ControllerBase
     }
 
     [HttpPost]
+    [HasPermission(PermissionCodes.UserCreate)]
     public async Task<ActionResult<CreateUserResponse>> CreateUser(
         [FromBody] CreateUserCommand command,
         CancellationToken cancellationToken)

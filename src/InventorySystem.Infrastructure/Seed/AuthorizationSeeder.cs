@@ -1,6 +1,7 @@
 using InventorySystem.Application.Common.Authorization;
 using InventorySystem.Domain.Entities.Authorization;
 using InventorySystem.Infrastructure.Persistence.Contexts;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace InventorySystem.Infrastructure.Seed;
@@ -18,17 +19,29 @@ public static class AuthorizationSeeder
     }
 
 
+    // =====================================================
+    // PERMISSIONS
+    // =====================================================
+
     private static async Task SeedPermissionsAsync(
         ApplicationDbContext context)
     {
         var permissions = new[]
         {
+            // Dashboard
             new Permission
             {
                 Code = PermissionCodes.DashboardView,
                 Name = "Dashboard View"
             },
+            new Permission
+            {
+                Code = PermissionCodes.DashboardExport,
+                Name = "Dashboard Export"
+            },
 
+
+            // Inventory Sessions
             new Permission
             {
                 Code = PermissionCodes.InventorySessionView,
@@ -41,6 +54,8 @@ public static class AuthorizationSeeder
                 Name = "Inventory Session Create"
             },
 
+
+            // Comparison
             new Permission
             {
                 Code = PermissionCodes.ComparisonView,
@@ -49,16 +64,52 @@ public static class AuthorizationSeeder
 
             new Permission
             {
+                Code = PermissionCodes.ComparisonExport,
+                Name = "Comparison Results Export"
+            },
+
+            new Permission
+            {
+                Code = PermissionCodes.ComparisonExport,
+                Name = "Comparison Export"
+            },
+
+
+            // Attention Items
+            new Permission
+            {
                 Code = PermissionCodes.AttentionView,
                 Name = "Attention Items View"
             },
 
             new Permission
             {
+                Code = PermissionCodes.AttentionExport,
+                Name = "Attention Items Export"
+            },
+
+
+            // Reports
+            new Permission
+            {
                 Code = PermissionCodes.ReportView,
                 Name = "Reports View"
             },
 
+            new Permission
+            {
+                Code = PermissionCodes.ReportCreate,
+                Name = "Report Create"
+            },
+
+            new Permission
+            {
+                Code = PermissionCodes.ReportExport,
+                Name = "Report Export"
+            },
+
+
+            // Branches
             new Permission
             {
                 Code = PermissionCodes.BranchView,
@@ -77,6 +128,8 @@ public static class AuthorizationSeeder
                 Name = "Branch Edit"
             },
 
+
+            // Stores
             new Permission
             {
                 Code = PermissionCodes.StoreView,
@@ -95,6 +148,8 @@ public static class AuthorizationSeeder
                 Name = "Store Edit"
             },
 
+
+            // Users
             new Permission
             {
                 Code = PermissionCodes.UserView,
@@ -119,6 +174,8 @@ public static class AuthorizationSeeder
                 Name = "User Deactivate"
             },
 
+
+            // Roles & Permissions
             new Permission
             {
                 Code = PermissionCodes.RoleView,
@@ -131,12 +188,16 @@ public static class AuthorizationSeeder
                 Name = "Roles & Permissions Edit"
             },
 
+
+            // Audit Logs
             new Permission
             {
                 Code = PermissionCodes.AuditLogView,
                 Name = "Audit Logs View"
             },
 
+
+            // Settings
             new Permission
             {
                 Code = PermissionCodes.SettingsView,
@@ -149,8 +210,8 @@ public static class AuthorizationSeeder
         {
             var exists =
                 await context.Permissions
-                    .AnyAsync(x =>
-                        x.Code == permission.Code);
+                    .AnyAsync(
+                        x => x.Code == permission.Code);
 
             if (!exists)
             {
@@ -161,6 +222,10 @@ public static class AuthorizationSeeder
         await context.SaveChangesAsync();
     }
 
+
+    // =====================================================
+    // ROLES
+    // =====================================================
 
     private static async Task SeedRolesAsync(
         ApplicationDbContext context)
@@ -178,14 +243,14 @@ public static class AuthorizationSeeder
             {
                 Name = "Admin",
                 Description =
-                    "Inventory and user administration."
+                    "Full operational and user administration access."
             },
 
             new Role
             {
                 Name = "User",
                 Description =
-                    "View only access."
+                    "View inventory sessions and results only."
             }
         };
 
@@ -194,8 +259,8 @@ public static class AuthorizationSeeder
         {
             var exists =
                 await context.Roles
-                    .AnyAsync(x =>
-                        x.Name == role.Name);
+                    .AnyAsync(
+                        x => x.Name == role.Name);
 
             if (!exists)
             {
@@ -207,23 +272,27 @@ public static class AuthorizationSeeder
     }
 
 
+    // =====================================================
+    // ROLE PERMISSIONS
+    // =====================================================
+
     private static async Task SeedRolePermissionsAsync(
         ApplicationDbContext context)
     {
         var manager =
             await context.Roles
-                .FirstAsync(x =>
-                    x.Name == "Manager");
+                .FirstAsync(
+                    x => x.Name == "Manager");
 
         var admin =
             await context.Roles
-                .FirstAsync(x =>
-                    x.Name == "Admin");
+                .FirstAsync(
+                    x => x.Name == "Admin");
 
         var user =
             await context.Roles
-                .FirstAsync(x =>
-                    x.Name == "User");
+                .FirstAsync(
+                    x => x.Name == "User");
 
 
         var allPermissions =
@@ -231,10 +300,10 @@ public static class AuthorizationSeeder
                 .ToListAsync();
 
 
-        // =====================================================
+        // =================================================
         // MANAGER
         // Full access
-        // =====================================================
+        // =================================================
 
         foreach (var permission in allPermissions)
         {
@@ -245,31 +314,55 @@ public static class AuthorizationSeeder
         }
 
 
-        // =====================================================
+        // =================================================
         // ADMIN
-        // =====================================================
+        // Operational + User Administration
+        // =================================================
 
         var adminPermissions = new[]
         {
+            // Dashboard
             PermissionCodes.DashboardView,
+            PermissionCodes.DashboardExport,
 
+
+            // Inventory
             PermissionCodes.InventorySessionView,
             PermissionCodes.InventorySessionCreate,
 
-            PermissionCodes.ComparisonView,
-            PermissionCodes.AttentionView,
-            PermissionCodes.ReportView,
 
+            // Results
+            PermissionCodes.ComparisonView,
+            PermissionCodes.ComparisonExport,
+
+            PermissionCodes.AttentionView,
+            PermissionCodes.AttentionExport,
+
+
+            // Reports
+            PermissionCodes.ReportView,
+            PermissionCodes.ReportCreate,
+            PermissionCodes.ReportExport,
+
+
+            // Branches - View ONLY
             PermissionCodes.BranchView,
+
+
+            // Stores - View ONLY
             PermissionCodes.StoreView,
 
+
+            // Users
             PermissionCodes.UserView,
             PermissionCodes.UserCreate,
             PermissionCodes.UserEdit,
             PermissionCodes.UserDeactivate,
 
+
+            // Roles & Permissions
             PermissionCodes.RoleView,
-            PermissionCodes.RoleEdit
+            PermissionCodes.RoleEdit,
         };
 
 
@@ -286,26 +379,20 @@ public static class AuthorizationSeeder
         }
 
 
-        // =====================================================
+        // =================================================
         // USER
-        // View only
-        // =====================================================
+        // View inventory sessions and results ONLY
+        // =================================================
 
         var userPermissions = new[]
         {
-            PermissionCodes.DashboardView,
-
             PermissionCodes.InventorySessionView,
 
             PermissionCodes.ComparisonView,
 
             PermissionCodes.AttentionView,
 
-            PermissionCodes.ReportView,
-
-            PermissionCodes.BranchView,
-
-            PermissionCodes.StoreView
+            PermissionCodes.DashboardView
         };
 
 
@@ -326,6 +413,10 @@ public static class AuthorizationSeeder
     }
 
 
+    // =====================================================
+    // ADD ROLE PERMISSION IF MISSING
+    // =====================================================
+
     private static async Task AddRolePermissionIfMissing(
         ApplicationDbContext context,
         int roleId,
@@ -333,9 +424,10 @@ public static class AuthorizationSeeder
     {
         var exists =
             await context.RolePermissions
-                .AnyAsync(x =>
-                    x.RoleId == roleId &&
-                    x.PermissionId == permissionId);
+                .AnyAsync(
+                    x =>
+                        x.RoleId == roleId &&
+                        x.PermissionId == permissionId);
 
         if (!exists)
         {

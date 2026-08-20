@@ -60,5 +60,6 @@ public class InventoryDetailConfiguration
             x.ItemId
         })
         .IsUnique();
+        builder.HasIndex(x => x.InventorySessionId);
     }
 }

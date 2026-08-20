@@ -29,7 +29,7 @@ public class GetInventorySessionsQueryHandler
         query = ApplySorting(query, request);
 
         var pageNumber = Math.Max(request.PageNumber, 1);
-        var pageSize = Math.Clamp(request.PageSize, 1, 100);
+        var pageSize = Math.Clamp(request.PageSize, 1, 300);
 
         var sessions = await query
             .Skip((pageNumber - 1) * pageSize)
