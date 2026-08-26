@@ -1,0 +1,180 @@
+.wrapper {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  box-sizing: border-box;
+
+  padding: 18px 20px;
+
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  overflow: hidden;
+}
+
+/* =========================
+   TITLE
+========================= */
+
+.title {
+  margin: 0 0 18px 0;
+
+  color: var(--color-text-secondary);
+
+  font-size: 11px;
+  font-weight: 500;
+
+  line-height: 1;
+  letter-spacing: 0.12em;
+
+  text-transform: uppercase;
+}
+
+/* =========================
+   CHART
+========================= */
+
+.chart {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+/* =========================
+   ROW
+========================= */
+
+.row {
+  width: 100%;
+  height: 17px;
+
+  display: grid;
+
+  grid-template-columns: 42px minmax(0, 1fr) 54px;
+
+  align-items: center;
+
+  column-gap: 0;
+}
+
+/* =========================
+   CODE
+========================= */
+
+.code {
+  width: 42px;
+
+  color: var(--color-text-secondary);
+
+  font-family: monospace;
+  font-size: 10px;
+  font-weight: 500;
+
+  line-height: 17px;
+
+  white-space: nowrap;
+}
+
+/* =========================
+   BAR AREA
+========================= */
+
+.barArea {
+  position: relative;
+
+  width: 100%;
+  height: 17px;
+
+  overflow: hidden;
+}
+
+/* =========================
+   BAR
+========================= */
+
+.bar {
+  position: absolute;
+
+  top: 2px;
+
+  height: 12px;
+
+  border-radius: 1px;
+
+  opacity: 0.82;
+}
+
+.barPositive {
+  right: 0;
+  background: var(--color-success);
+}
+
+.barNegative {
+  left: 0;
+  background: var(--color-danger);
+}
+
+/* =========================
+   VALUE
+========================= */
+
+.value {
+  width: 54px;
+
+  padding-left: 5px;
+
+  box-sizing: border-box;
+
+  font-family: monospace;
+
+  font-size: 10px;
+  font-weight: 500;
+
+  line-height: 17px;
+
+  text-align: left;
+
+  white-space: nowrap;
+}
+
+.valuePositive {
+  color: var(--color-success);
+}
+
+.valueNegative {
+  color: var(--color-danger);
+}
+
+/* =========================
+   HOVER
+========================= */
+
+.row:hover .bar {
+  opacity: 1;
+}
+
+.row:hover .code {
+  color: var(--color-text-primary);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+  .wrapper {
+    padding: 18px;
+  }
+
+  .row {
+    grid-template-columns: 42px minmax(0, 1fr) 52px;
+  }
+
+  .value {
+    width: 52px;
+  }
+}

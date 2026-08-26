@@ -1,19 +1,74 @@
 .dashboard {
-  min-height: 300px;
+  width: 100%;
+  min-height: 100%;
+
+  box-sizing: border-box;
+
+  padding: 24px;
+
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
+
+  gap: 16px;
 }
 
-.dashboard h1 {
-  color: var(--color-text-primary);
-  font-size: var(--font-size-3xl);
-  font-weight: var(--font-weight-bold);
+/* =========================
+   REMOVE SECTION MARGINS
+========================= */
+
+.dashboard section,
+.kpiSection,
+.financialSummarySection,
+.attentionSection {
+  width: 100%;
+  margin-top: 0;
 }
 
-.dashboard p {
-  color: var(--color-text-secondary);
-  font-size: var(--font-size-md);
+/* =========================
+   CHARTS SECTION
+========================= */
+
+.chartSection {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: var(--space-4);
+
+  align-items: stretch;
+}
+
+.chartSection > * {
+  min-width: 0;
+  width: 100%;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1200px) {
+  .dashboard {
+    padding: 20px;
+    gap: 16px;
+  }
+
+  .chartSection {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .chartSection {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 16px;
+    gap: 16px;
+  }
 }

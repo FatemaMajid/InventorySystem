@@ -37,50 +37,50 @@ const ar = {
 
     inventoryType: 'نوع الجرد',
 
-selectInventoryType:
-  'اختر نوع الجرد',
+    selectInventoryType:
+      'اختر نوع الجرد',
 
-inventoryTypes: {
-  semiAnnual: 'الجرد نصف السنوي',
-  annual: 'الجرد السنوي',
-},
+    inventoryTypes: {
+      semiAnnual: 'الجرد نصف السنوي',
+      annual: 'الجرد السنوي',
+    },
 
-beforeInventory: 'قبل الجرد',
+    beforeInventory: 'قبل الجرد',
 
-beforeInventoryDescription:
-  'ارفع ملف Excel قبل بدء عملية الجرد.',
+    beforeInventoryDescription:
+      'ارفع ملف Excel قبل بدء عملية الجرد.',
 
-afterInventory: 'بعد الجرد',
+    afterInventory: 'بعد الجرد',
 
-afterInventoryDescription:
-  'ارفع ملف Excel بعد إكمال عملية الجرد.',
+    afterInventoryDescription:
+      'ارفع ملف Excel بعد إكمال عملية الجرد.',
 
-invalidExcelFile:
-  'يسمح فقط بملفات Excel بصيغة .xlsx أو .xls.',
+    invalidExcelFile:
+      'يسمح فقط بملفات Excel بصيغة .xlsx أو .xls.',
 
-removeFile: 'إزالة الملف',
+    removeFile: 'إزالة الملف',
 
-checkingFile:
-  'جاري التحقق من الملف...',
+    checkingFile:
+      'جاري التحقق من الملف...',
 
-fileValidated:
-  'تم التحقق من الملف بنجاح',
+    fileValidated:
+      'تم التحقق من الملف بنجاح',
 
-totalRows: 'إجمالي الصفوف',
+    totalRows: 'إجمالي الصفوف',
 
-validRows: 'الصفوف الصحيحة',
+    validRows: 'الصفوف الصحيحة',
 
-errorRows: 'الصفوف التي تحتوي أخطاء',
+    errorRows: 'الصفوف التي تحتوي أخطاء',
 
-previewError:
-  'فشل التحقق من ملف Excel.',
+    previewError:
+      'فشل التحقق من ملف Excel.',
 
-createSessionError:
-  'فشل إنشاء جلسة الجرد.',
+    createSessionError:
+      'فشل إنشاء جلسة الجرد.',
 
-creatingSession:
-  'جاري إنشاء الجلسة...',
-  
+    creatingSession:
+      'جاري إنشاء الجلسة...',
+
     sessionInformation: 'معلومات جلسة الجرد',
     sessionInformationDescription:
       'أدخل المعلومات الأساسية لجلسة الجرد الجديدة.',
@@ -170,6 +170,114 @@ creatingSession:
     branches: 'الفروع',
     attentionItems: 'العناصر التي تحتاج انتباه',
   },
+
+  dashboard: {
+    header: {
+      title: 'لوحة تحكم الجرد',
+      session: 'الجلسة',
+      statuses: {
+        completed: 'مكتملة',
+        inProgress: 'قيد التنفيذ',
+      },
+      type: 'النوع',
+      inventoryTypes: {
+        semiAnnual: 'جرد نصف سنوي',
+        annual: 'جرد سنوي',
+      },
+      date: 'التاريخ',
+      branch: 'الفرع',
+      store: 'المخزن',
+      exportExcel: 'تصدير Excel',
+      exportPdf: 'تصدير PDF',
+    },
+
+    kpiCards: {
+      totalItems: 'إجمالي العناصر',
+      increase: 'زيادة',
+      decrease: 'نقص',
+      match: 'مطابقة',
+      newlyCounted: 'ظهر بعد الجرد',
+      fullyDepleted: 'غير موجود بعد الجرد ',
+      priceChanged: 'تغير في السعر',
+      unitNotDefined: 'الوحدة غير معرفة',
+      title: 'حالة العناصر',
+      total: 'المجموع',
+
+      topDifferences: {
+        title: 'أعلى 10 مراكز حسب فرق القيمة (د.ع)'
+      }
+    },
+
+    financialSummary: {
+      title: "ملخص مالي",
+      totalValueBefore: "إجمالي القيمة قبل الجرد",
+      totalValueAfter: "إجمالي القيمة بعد الجرد",
+      totalDifference: "إجمالي الفرق",
+      differencePercentage: "نسبة الفرق",
+      currency: 'د.ع',
+    },
+
+    valueChart: {
+      title: "قيمة المخزون",
+      subtitle: "مقارنة قيمة المخزون",
+      before: "قبل الجرد",
+      after: "بعد الجرد",
+    },
+
+    attention: {
+      title: 'تحتاج إلى انتباه',
+      description: 'عناصر تحتاج إلى انتباهك',
+      viewAll: 'عرض الكل',
+      view: 'عرض',
+      newlyCounted: 'ظهر بعد الجرد',
+      fullyDepleted: 'غير موجود بعد الجرد',
+      unitNotDefined: 'الوحدة غير معرفة',
+      priceChanged: 'تغير في السعر',
+    },
+
+    comparisonResults: {
+      title: "نتائج المقارنة",
+      items: "عنصر",
+
+      filters: "الفلاتر",
+      clear: "مسح",
+      status: "الحالة",
+      search: "البحث (رقم الصنف / الاسم)",
+      searchPlaceholder: "بحث...",
+      category: "التصنيف",
+      unit: "الوحدة",
+      all: "الكل",
+      applyFilters: "تطبيق الفلاتر",
+
+      itemCode: "رقم الصنف",
+      itemName: "اسم الصنف",
+      quantityBefore: "الكمية قبل الجرد",
+      quantityAfter: "الكمية بعد الجرد",
+      quantityDifference: "فرق الكمية",
+      differencePercentage: "نسبة الفرق",
+      priceBefore: "السعر قبل الجرد",
+      priceAfter: "السعر بعد الجرد",
+      beforeValue: "القيمة قبل الجرد",
+      afterValue: "القيمة بعد الجرد",
+      valueDifference: "فرق القيمة",
+      status: "الحالة",
+
+      loading: "جاري تحميل البيانات...",
+      noResults: "لا توجد نتائج",
+
+      of: "من",
+      previous: "السابق",
+      next: "التالي",
+
+      statuses: {
+        increase: "زيادة",
+        decrease: "نقص",
+        noDifference: "لا يوجد فرق",
+        firstInventory: "جرد أول",
+      },
+    },
+  },
+
 };
 
 export default ar;

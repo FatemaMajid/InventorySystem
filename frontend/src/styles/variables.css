@@ -5,44 +5,47 @@
 
   --color-primary: #2563eb;
   --color-primary-hover: #1d4ed8;
-  --color-primary-light: #e3e9f1;
+  --color-primary-light: #e8eef8;
 
   --color-sidebar: #14253d;
   --color-sidebar-dark: #0f1d31;
   --color-sidebar-hover: #1e4f9a;
   --color-sidebar-active: #2563eb;
 
-  --color-background: #F7FBFC;
-  --color-surface: #F3F8FF;
-  --color-surface-secondary: #f8fafc;
+  /* Light Theme */
+  --color-background: #f5f4f1;
+  --color-surface: #faf9f6;
+  --color-surface-secondary: #f1f3f5;
 
-  --color-border: #e2e8f0;
-  --color-border-light: #edf1f5;
+  --color-border: #dddcd8;
+  --color-border-light: #e8e7e3;
 
   --color-text-primary: #172033;
-  --color-text-secondary: #64748b;
-  --color-text-muted: #94a3b8;
+  --color-text-secondary: #536174;
+  --color-text-muted: #8792a3;
   --color-text-white: #ffffff;
 
-  /* Status Colors */
+  /* ================================
+     Status Colors
+  ================================= */
 
-  --color-success: #22a06b;
-  --color-success-light: #ecfdf5;
-  --color-success-dark: #15803d;
+  --color-success: #3f8f68;
+  --color-success-light: #e8f3ed;
+  --color-success-dark: #28704d;
 
-  --color-danger: #ef4444;
-  --color-danger-light: #fef2f2;
-  --color-danger-dark: #dc2626;
+  --color-danger: #d9534f;
+  --color-danger-light: #f9eaea;
+  --color-danger-dark: #b83b38;
 
-  --color-warning: #f59e0b;
-  --color-warning-light: #fffbeb;
-  --color-warning-dark: #d97706;
+  --color-warning: #d79532;
+  --color-warning-light: #faf1df;
+  --color-warning-dark: #b87516;
 
-  --color-purple: #8b5cf6;
-  --color-purple-light: #f5f3ff;
+  --color-purple: #7656b5;
+  --color-purple-light: #eee9f8;
 
-  --color-teal: #1597a5;
-  --color-teal-light: #ecfeff;
+  --color-teal: #3b929b;
+  --color-teal-light: #e5f2f3;
 
   /* ================================
      Layout
@@ -135,36 +138,46 @@
   --z-toast: 1100;
 }
 
-    /* ================================
-     Dark-moode Theme
-  ================================= */
 
-  [data-theme='dark'] {
+/* ================================
+   Dark-mode Theme
+================================ */
+
+[data-theme='dark'] {
   --color-background: #0f172a;
-  --color-surface: #1e293b;
-  --color-surface-secondary: #172033;
+  --color-surface: #1b273b;
+  --color-surface-secondary: #172236;
 
-  --color-border: #334155;
-  --color-border-light: #273449;
+  --color-border: #304057;
+  --color-border-light: #26354b;
 
   --color-text-primary: #f1f5f9;
-  --color-text-secondary: #cbd5e1;
-  --color-text-muted: #94a3b8;
+  --color-text-secondary: #c3cedd;
+  --color-text-muted: #8f9caf;
+  --color-text-white: #ffffff;
 
-  --color-primary-light: #172554;
+  --color-primary-light: #172b55;
 
-  --color-success-light: #052e1b;
-  --color-danger-light: #450a0a;
-  --color-warning-light: #451a03;
-  --color-purple-light: #2e1065;
-  --color-teal-light: #083344;
+  /* ================================
+     Dark Status Colors
+  ================================= */
+
+  --color-success-light: #123526;
+  --color-danger-light: #3d1d20;
+  --color-warning-light: #3b2d17;
+  --color-purple-light: #2c2148;
+  --color-teal-light: #16383d;
+
+  /* ================================
+     Dark Shadows
+  ================================= */
 
   --shadow-sm:
     0 1px 3px rgba(0, 0, 0, 0.25);
 
   --shadow-md:
-    0 4px 12px rgba(0, 0, 0, 0.3);
+    0 4px 12px rgba(0, 0, 0, 0.30);
 
   --shadow-lg:
-    0 10px 30px rgba(0, 0, 0, 0.4);
+    0 10px 30px rgba(0, 0, 0, 0.40);
 }

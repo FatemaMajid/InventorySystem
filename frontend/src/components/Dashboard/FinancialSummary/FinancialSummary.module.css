@@ -1,0 +1,171 @@
+.wrapper {
+  width: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-sm);
+}
+
+.title {
+  margin: 0 0 var(--space-4);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.4;
+}
+
+.cards {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.card {
+  min-width: 0;
+  min-height: 112px;
+  padding: var(--space-4);
+  background: var(--color-surface-secondary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  transition:
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.before:hover {
+  border-color: var(--color-primary);
+}
+
+.after:hover {
+  border-color: var(--color-success);
+}
+
+.difference:hover,
+.percentage:hover {
+  border-color: var(--color-danger);
+}
+
+.label {
+  margin-bottom: var(--space-2);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+}
+
+.value {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.2;
+}
+
+.currency {
+  margin-top: var(--space-1);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ================================
+   Before
+================================ */
+
+.before {
+  border-color: var(--color-primary-light);
+}
+
+.before .value {
+  color: var(--color-primary);
+}
+
+/* ================================
+   After
+================================ */
+
+.after {
+  border-color: var(--color-success-light);
+}
+
+.after .value {
+  color: var(--color-success);
+}
+
+/* ================================
+   Difference
+================================ */
+
+.difference {
+  border-color: var(--color-danger-light);
+}
+
+.difference .value {
+  color: var(--color-danger);
+}
+
+/* ================================
+   Difference Percentage
+================================ */
+
+.percentage {
+  border-color: var(--color-danger-light);
+}
+
+.percentage .value {
+  color: var(--color-danger);
+}
+
+/* ================================
+   Dark Mode
+================================ */
+
+[data-theme="dark"] .before {
+  border-color: var(--color-primary);
+}
+
+[data-theme="dark"] .after {
+  border-color: var(--color-success);
+}
+
+[data-theme="dark"] .difference,
+[data-theme="dark"] .percentage {
+  border-color: var(--color-danger);
+}
+
+/* ================================
+   Responsive
+================================ */
+
+@media (max-width: 1100px) {
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .wrapper {
+    padding: var(--space-3);
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    min-height: 100px;
+  }
+}

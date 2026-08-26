@@ -4,6 +4,12 @@ import plus from '../../../assets/icons/plus.svg';
 import comparison from '../../../assets/icons/comparison.svg';
 import attention from '../../../assets/icons/attention.svg';
 import reports from '../../../assets/icons/reports.svg';
+import increase from '../../../assets/icons/increase.svg';
+import decrease from '../../../assets/icons/decrease.svg';
+import depleted from '../../../assets/icons/depleted.svg';
+import priceChange from '../../../assets/icons/price-change.svg';
+import tick from '../../../assets/icons/tick.svg';
+import totalItems from '../../../assets/icons/totalItem.svg';
 
 import branches from '../../../assets/icons/branches.svg';
 import stores from '../../../assets/icons/stores.svg';
@@ -24,9 +30,15 @@ import moon from '../../../assets/icons/moon.svg';
 import menu from '../../../assets/icons/menu.svg';
 import close from '../../../assets/icons/close.svg';
 
-import arrowRight from '../../../assets/icons/arrow-right.svg';
-import arrowLeft from '../../../assets/icons/arrow-left.svg';
-import chevronDown from '../../../assets/icons/chevron-down.svg';
+import arrowRight from '../../../assets/icons/arrowRight.svg';
+import arrowLeft from '../../../assets/icons/arrowLeft.svg';
+import chevronDown from '../../../assets/icons/chevronDown.svg';
+
+import changeUnit from '../../../assets/icons/changeUnit.svg'
+import filter from '../../../assets/icons/filter.svg'
+import search from '../../../assets/icons/search.svg'
+import nextIcon from '../../../assets/icons/nextIcon.svg'
+import previousIcon from '../../../assets/icons/previousIcon.svg'
 
 const iconMap = {
   dashboard,
@@ -35,6 +47,12 @@ const iconMap = {
   comparison,
   attention,
   reports,
+  increase,
+  decrease,
+  depleted,
+  priceChange,
+  tick,
+  totalItems,
 
   branches,
   stores,
@@ -58,6 +76,12 @@ const iconMap = {
   arrowRight,
   arrowLeft,
   chevronDown,
+  changeUnit,
+  filter,
+  search,
+  nextIcon,
+  previousIcon
+
 };
 
 export default iconMap;

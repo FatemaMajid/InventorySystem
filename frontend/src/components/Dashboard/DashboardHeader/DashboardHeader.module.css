@@ -1,0 +1,218 @@
+.header {
+  width: 100%;
+  padding-bottom: 18px;
+
+  border-bottom: 1px solid var(--color-border);
+
+  box-sizing: border-box;
+}
+
+/* =========================
+   MAIN ROW
+========================= */
+
+.topRow {
+  width: 100%;
+
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 30px;
+}
+
+/* =========================
+   TITLE
+========================= */
+
+.titleSection {
+  flex: 1;
+  min-width: 0;
+}
+
+.titleSection h1 {
+  margin: 0 0 18px;
+
+  color: var(--color-text-primary);
+
+  font-size: 30px;
+  line-height: 1.2;
+  font-weight: 700;
+}
+
+/* =========================
+   SESSION INFO
+========================= */
+
+.sessionInfo {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 14px 18px;
+
+  color: var(--color-text-secondary);
+
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.sessionNumber {
+  color: var(--color-primary);
+
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 4px 10px;
+
+  border-radius: 6px;
+
+  background: var(--color-success-light);
+  color: var(--color-success-dark);
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.sessionInfo span:not(.sessionNumber):not(.status) {
+  white-space: nowrap;
+}
+
+.sessionInfo strong {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+/* =========================
+   EXPORT BUTTONS
+========================= */
+
+.exportButtons {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  flex-shrink: 0;
+
+  padding-top: 2px;
+}
+
+.exportButton {
+  height: 38px;
+  min-width: 142px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 0 14px;
+
+  border: 0;
+  border-radius: 6px;
+
+  color: var(--color-text-white);
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+
+.exportButton:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.exportButton:active {
+  transform: translateY(0);
+}
+
+/* =========================
+   EXCEL
+========================= */
+
+.excel {
+  background: var(--color-success-dark);
+}
+
+/* =========================
+   PDF
+========================= */
+
+.pdf {
+  background: var(--color-danger-dark);
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1100px) {
+  .topRow {
+    gap: 20px;
+  }
+
+  .titleSection h1 {
+    font-size: 27px;
+  }
+
+  .exportButton {
+    min-width: 125px;
+  }
+}
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 850px) {
+  .topRow {
+    flex-direction: column;
+  }
+
+  .exportButtons {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  [dir="rtl"].exportButtons {
+    justify-content: flex-start;
+  }
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 600px) {
+  .titleSection h1 {
+    font-size: 24px;
+  }
+
+  .sessionInfo {
+    gap: 10px 14px;
+  }
+
+  .exportButtons {
+    width: 100%;
+  }
+
+  .exportButton {
+    flex: 1;
+    min-width: 0;
+  }
+}

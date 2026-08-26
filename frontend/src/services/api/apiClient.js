@@ -1,10 +1,10 @@
-import API_BASE_URL from './apiConfig';
+import API_BASE_URL from "./apiConfig";
 
 async function parseResponse(response) {
   const contentType =
-    response.headers.get('content-type') || '';
+    response.headers.get("content-type") || "";
 
-  if (contentType.includes('application/json')) {
+  if (contentType.includes("application/json")) {
     return response.json();
   }
 
@@ -15,20 +15,25 @@ async function parseResponse(response) {
 
 async function request(endpoint, options = {}) {
   const {
-    method = 'GET',
+    method = "GET",
     body,
     headers = {},
   } = options;
 
   const isFormData = body instanceof FormData;
 
+  const token = localStorage.getItem("inventory_token");
+
   const requestHeaders = {
     ...headers,
   };
 
+  if (token) {
+    requestHeaders.Authorization = `Bearer ${token}`;
+  }
+
   if (!isFormData && body !== undefined) {
-    requestHeaders['Content-Type'] =
-      'application/json';
+    requestHeaders["Content-Type"] = "application/json";
   }
 
   const response = await fetch(
@@ -50,11 +55,11 @@ async function request(endpoint, options = {}) {
     let message =
       `Request failed with status ${response.status}.`;
 
-    if (typeof data === 'string' && data) {
+    if (typeof data === "string" && data) {
       message = data;
     }
 
-    if (typeof data === 'object' && data) {
+    if (typeof data === "object" && data) {
       message =
         data.message ||
         data.title ||
@@ -72,14 +77,14 @@ const apiClient = {
   get(endpoint, options = {}) {
     return request(endpoint, {
       ...options,
-      method: 'GET',
+      method: "GET",
     });
   },
 
   post(endpoint, body, options = {}) {
     return request(endpoint, {
       ...options,
-      method: 'POST',
+      method: "POST",
       body,
     });
   },
@@ -87,7 +92,7 @@ const apiClient = {
   put(endpoint, body, options = {}) {
     return request(endpoint, {
       ...options,
-      method: 'PUT',
+      method: "PUT",
       body,
     });
   },
@@ -95,7 +100,7 @@ const apiClient = {
   patch(endpoint, body, options = {}) {
     return request(endpoint, {
       ...options,
-      method: 'PATCH',
+      method: "PATCH",
       body,
     });
   },
@@ -103,14 +108,14 @@ const apiClient = {
   delete(endpoint, options = {}) {
     return request(endpoint, {
       ...options,
-      method: 'DELETE',
+      method: "DELETE",
     });
   },
 
   postForm(endpoint, formData, options = {}) {
     return request(endpoint, {
       ...options,
-      method: 'POST',
+      method: "POST",
       body: formData,
     });
   },
@@ -118,7 +123,7 @@ const apiClient = {
   putForm(endpoint, formData, options = {}) {
     return request(endpoint, {
       ...options,
-      method: 'PUT',
+      method: "PUT",
       body: formData,
     });
   },
