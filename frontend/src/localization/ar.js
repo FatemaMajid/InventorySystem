@@ -10,6 +10,7 @@ const ar = {
   },
 
   navigation: {
+    home: 'الصفحة الرئيسية',
     dashboard: 'لوحة التحكم',
     inventorySessions: 'جلسات الجرد',
     newInventorySession: 'جلسة جرد جديدة',
@@ -169,6 +170,48 @@ const ar = {
     activeSessions: 'الجلسات النشطة',
     branches: 'الفروع',
     attentionItems: 'العناصر التي تحتاج انتباه',
+    activeSessionsDescription: 'قيد التنفيذ حالياً',
+
+    totalSessionsDescription: 'جميع جلسات الجرد',
+
+    attentionItemsDescription: 'تتطلب المراجعة',
+    totalSessions: 'إجمالي الجلسات',
+
+    recentSessions: {
+      title: "جلسات الجرد الأخيرة",
+      viewAll: "عرض جميع الجلسات",
+
+      sessionId: "رقم الجلسة",
+      date: "التاريخ",
+      branch: "الفرع",
+      store: "المستودع",
+      status: "الحالة",
+      items: "العناصر",
+      actions: "الإجراءات",
+      view: "عرض",
+      noSessions: "لا توجد جلسات جرد",
+
+      statuses: {
+        completed: "مكتملة",
+        inProgress: "قيد التنفيذ",
+        cancelled: "ملغاة",
+      },
+    },
+    itemCategories: "تصنيفات الأصناف",
+    stores: "المستودعات",
+    totalBranches: "إجمالي الفروع",
+    totalStores: "إجمالي المخازن",
+    totalCategories: "إجمالي التصنيفات",
+    totalItems: "إجمالي الأصناف",
+
+    systemStatus: 'حالة النظام',
+    apiStatus: 'حالة واجهة API',
+    database: 'قاعدة البيانات',
+    lastBackup: 'آخر نسخة احتياطية',
+    systemHealth: 'سلامة النظام',
+    connected: 'متصل',
+    healthy: 'سليم',
+    lastBackupValue: 'اليوم، 03:00 م',
   },
 
   dashboard: {
@@ -273,10 +316,19 @@ const ar = {
         increase: "زيادة",
         decrease: "نقص",
         noDifference: "لا يوجد فرق",
-        firstInventory: "جرد أول",
+        afterOnly: "موجود بعد الجرد فقط",
+        beforeOnly: "موجود قبل الجرد فقط",
       },
     },
   },
+  footer: {
+    systemName: 'نظام إدارة المخزون',
+    systemDescription: 'ذكي • موثوق • فعّال',
+    copyright: 'Fatema Majid 2026',
+    version: 'الإصدار 1.0.0',
+    allRightsReserved: 'جميع الحقوق محفوظة',
+  },
+
 
 };
 

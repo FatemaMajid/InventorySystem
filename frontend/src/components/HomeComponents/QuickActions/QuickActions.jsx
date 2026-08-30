@@ -1,55 +1,76 @@
-import { useNavigate } from 'react-router-dom';
-import { useLanguage } from '../../../context/LanguageContext';
-
-import QuickActionCard from '../QuickActionCard/QuickActionCard';
-
-import styles from './QuickActions.module.css';
+import { useLanguage } from "../../../context/LanguageContext";
+import { useNavigate } from "react-router-dom";
+import Icon from "../../UI/Icon/Icon";
+import styles from "./QuickActions.module.css";
 
 function QuickActions() {
-  const { translations } = useLanguage();
+  const { translations, isArabic } = useLanguage();
   const navigate = useNavigate();
+
+  const t = translations.home;
 
   const actions = [
     {
-      id: 'new-inventory',
-      icon: 'plus',
-      title: translations.home.newInventory,
-      description: translations.home.newInventoryDescription,
-      path: '/new-inventory-session',
+      key: "newInventory",
+      title: t.newInventory,
+      description: t.newInventoryDescription,
+      icon: "plus",
+      path: "/new-inventory-session",
+      className: styles.blue,
     },
     {
-      id: 'inventory-sessions',
-      icon: 'inventory',
-      title: translations.home.inventorySessions,
-      description: translations.home.inventorySessionsDescription,
-      path: '/inventory-sessions',
+      key: "inventorySessions",
+      title: t.inventorySessions,
+      description: t.inventorySessionsDescription,
+      icon: "inventory",
+      path: "/inventory-sessions",
+      className: styles.purple,
     },
     {
-      id: 'reports',
-      icon: 'reports',
-      title: translations.home.reports,
-      description: translations.home.reportsDescription,
-      path: '/reports',
+      key: "reports",
+      title: t.reports,
+      description: t.reportsDescription,
+      icon: "reports",
+      path: "/reports",
+      className: styles.green,
     },
   ];
 
   return (
-    <section className={styles.section}>
-      <div className={styles.header}>
-        <h2>{translations.home.quickActions}</h2>
-
-        <p>{translations.home.quickActionsSubtitle}</p>
-      </div>
-
-      <div className={styles.grid}>
+    <section
+      className={styles.wrapper}
+      dir={isArabic ? "rtl" : "ltr"}
+    >
+      <div className={styles.cards}>
         {actions.map((action) => (
-          <QuickActionCard
-            key={action.id}
-            icon={action.icon}
-            title={action.title}
-            description={action.description}
+          <button
+            key={action.key}
+            type="button"
+            className={styles.card}
             onClick={() => navigate(action.path)}
-          />
+          >
+            <div
+              className={`${styles.iconBox} ${action.className}`}
+            >
+              <Icon
+                name={action.icon}
+                size={23}
+              />
+            </div>
+
+            <div className={styles.content}>
+              <h3>{action.title}</h3>
+
+              <p>{action.description}</p>
+            </div>
+
+            <div className={styles.arrow}>
+              <Icon
+                name={isArabic ? "arrowLeft" : "arrowRight"}
+                size={19}
+              />
+            </div>
+          </button>
         ))}
       </div>
     </section>

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../../context/LanguageContext";
 
-import Icon from "../../UI/Icon/Icon";
+// import Icon from "../../UI/Icon/Icon";
 import Filters from "./Filters";
 import Pagination from "./Pagination";
 
@@ -175,8 +175,8 @@ function ComparisonResults({ sessionId }) {
 
         setError(
           err?.message ||
-            t.error ||
-            "Failed to load comparison results."
+          t.error ||
+          "Failed to load comparison results."
         );
       } finally {
         if (!cancelled) {
@@ -404,9 +404,17 @@ function ComparisonResults({ sessionId }) {
                     (item, index) => {
                       const rowNumber =
                         (safePage - 1) *
-                          PAGE_SIZE +
+                        PAGE_SIZE +
                         index +
                         1;
+
+                      const statusTranslationKey = {
+                        Increase: "increase",
+                        Decrease: "decrease",
+                        NoDifference: "noDifference",
+                        AfterOnly: "afterOnly",
+                        BeforeOnly: "beforeOnly",
+                      };
 
                       return (
                         <tr
@@ -465,12 +473,12 @@ function ComparisonResults({ sessionId }) {
                             )}
                           >
                             {item.differencePercentage !==
-                            null &&
-                            item.differencePercentage !==
-                            undefined
+                              null &&
+                              item.differencePercentage !==
+                              undefined
                               ? `${Number(
-                                  item.differencePercentage
-                                ).toFixed(2)}%`
+                                item.differencePercentage
+                              ).toFixed(2)}%`
                               : "—"}
                           </td>
 
@@ -510,16 +518,14 @@ function ComparisonResults({ sessionId }) {
 
                           <td>
                             <span
-                              className={`${styles.status} ${
-                                styles[
-                                  item.status
-                                ] || ""
-                              }`}
+                              className={`${styles.status} ${styles[
+                                item.status
+                              ] || ""
+                                }`}
                             >
                               {t.statuses?.[
-                                item.status
-                              ] ||
-                                item.status}
+                                statusTranslationKey[item.status]
+                              ] || item.status}
                             </span>
                           </td>
                         </tr>

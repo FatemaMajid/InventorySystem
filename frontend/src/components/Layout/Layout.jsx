@@ -1,12 +1,17 @@
-import { useEffect, useState } from 'react';
-import { Outlet } from 'react-router-dom';
-import { useLanguage } from '../../context/LanguageContext';
-import Sidebar from './Sidebar';
-import MainHeader from './MainHeader';
-import styles from './Layout.module.css';
+import { useEffect, useState } from "react";
+import { Outlet } from "react-router-dom";
+
+import { useLanguage } from "../../context/LanguageContext";
+
+import Sidebar from "./Sidebar";
+import MainHeader from "./MainHeader";
+import Footer from "./Footer";
+
+import styles from "./Layout.module.css";
 
 function Layout() {
   const { language, direction } = useLanguage();
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
@@ -42,11 +47,17 @@ function Layout() {
       )}
 
       <div className={styles.main}>
-        <MainHeader onMenuClick={toggleSidebar} />
+        <MainHeader
+          onMenuClick={toggleSidebar}
+        />
 
-        <main className={styles.content}>
-          <Outlet />
-        </main>
+        <div className={styles.scrollArea}>
+          <main className={styles.content}>
+            <Outlet />
+          </main>
+
+          <Footer />
+        </div>
       </div>
     </div>
   );

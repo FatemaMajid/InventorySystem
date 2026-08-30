@@ -1,9 +1,174 @@
+/* =================================
+   Home
+================================= */
+
 .home {
   width: 100%;
-  max-width: 1440px;
+
   margin: 0 auto;
+
+  padding:
+    var(--space-5)
+    var(--space-6)
+    var(--space-8);
 
   display: flex;
   flex-direction: column;
-  gap: var(--space-8);
+
+  gap: var(--space-5);
+
+  color: var(--color-text-primary);
+
+  transition:
+    color var(--transition-normal);
+}
+
+
+/* =================================
+   Section
+================================= */
+
+.section {
+  width: 100%;
+}
+
+
+/* =================================
+   Section Header
+================================= */
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sectionTitle {
+  margin: 0;
+
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+
+  color: var(--color-text-primary);
+}
+
+.sectionDescription {
+  margin:
+    var(--space-1)
+    0
+    0;
+
+  font-size: var(--font-size-sm);
+
+  color: var(--color-text-secondary);
+}
+
+
+/* =================================
+   Recent Sessions + Overview
+================================= */
+
+.bottomGrid {
+  width: 100%;
+
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.6fr)
+    minmax(360px, 1fr);
+
+  gap: var(--space-5);
+
+  align-items: stretch;
+}
+
+
+/* =================================
+   System Status
+================================= */
+
+.systemStatus {
+  width: 100%;
+}
+
+
+/* =================================
+   Responsive
+================================= */
+
+@media (max-width: 1200px) {
+  .home {
+    padding-left: var(--space-5);
+    padding-right: var(--space-5);
+  }
+}
+
+
+@media (max-width: 1100px) {
+  .bottomGrid {
+    grid-template-columns:
+      minmax(0, 1.35fr)
+      minmax(300px, 1fr);
+
+    gap: var(--space-4);
+  }
+}
+
+
+@media (max-width: 900px) {
+  .bottomGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .home {
+    padding:
+      var(--space-4)
+      var(--space-4)
+      var(--space-6);
+
+    gap: var(--space-4);
+  }
+
+  .sectionHeader {
+    margin-bottom: var(--space-3);
+  }
+
+  .sectionTitle {
+    font-size: var(--font-size-lg);
+  }
+
+  .sectionDescription {
+    font-size: var(--font-size-xs);
+  }
+}
+
+
+/* =================================
+   RTL
+================================= */
+
+:global([dir="rtl"]) .sectionHeader {
+  direction: rtl;
+}
+
+:global([dir="rtl"]) .sectionTitle,
+:global([dir="rtl"]) .sectionDescription {
+  text-align: right;
+}
+
+
+/* =================================
+   LTR
+================================= */
+
+:global([dir="ltr"]) .sectionHeader {
+  direction: ltr;
+}
+
+:global([dir="ltr"]) .sectionTitle,
+:global([dir="ltr"]) .sectionDescription {
+  text-align: left;
 }

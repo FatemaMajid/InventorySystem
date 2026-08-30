@@ -1,0 +1,1034 @@
+/* =========================================
+   HERO
+========================================= */
+
+.hero {
+  position: relative;
+
+  width: 100%;
+  min-height: 250px;
+
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+
+  gap: var(--space-8);
+
+  padding: var(--space-7) var(--space-8);
+
+  overflow: hidden;
+
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border);
+
+  border-radius: var(--radius-xl);
+
+  box-shadow: var(--shadow-md);
+
+  color: var(--color-text-primary);
+
+  isolation: isolate;
+
+  transition:
+    background-color var(--transition-normal),
+    border-color var(--transition-normal),
+    box-shadow var(--transition-normal);
+}
+
+
+/* =========================================
+   DECORATIVE BACKGROUND
+========================================= */
+
+.hero::before {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  z-index: -2;
+
+  background:
+    linear-gradient(
+      120deg,
+      var(--color-primary-light) 0%,
+      transparent 55%
+    );
+
+  opacity: 0.65;
+
+  pointer-events: none;
+}
+
+
+.hero::after {
+  content: "";
+
+  position: absolute;
+
+  width: 280px;
+  height: 280px;
+
+  top: -170px;
+  left: 42%;
+
+  border-radius: 50%;
+
+  background: var(--color-primary-light);
+
+  opacity: 0.3;
+
+  filter: blur(2px);
+
+  z-index: -1;
+
+  pointer-events: none;
+}
+
+
+/* =========================================
+   CONTENT
+========================================= */
+
+.heroContent {
+  position: relative;
+
+  z-index: 3;
+
+  flex: 1;
+
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+}
+
+
+/* =========================================
+   GREETING
+========================================= */
+
+.greeting {
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+
+  margin-bottom: var(--space-2);
+
+  color: var(--color-primary);
+
+  font-size: var(--font-size-3xl);
+
+  font-weight: var(--font-weight-bold);
+
+  line-height: 1.4;
+}
+
+
+.greetingUser {
+  color: var(--color-text-secondary);
+
+  font-weight: var(--font-weight-medium);
+}
+
+
+.greetingEmoji {
+  display: inline-flex;
+
+  margin-inline-start: 2px;
+
+  font-size: 15px;
+
+  line-height: 1;
+}
+
+
+/* =========================================
+   TITLE
+========================================= */
+
+.title {
+  max-width: 650px;
+
+  margin: 0;
+
+  color: var(--color-text-primary);
+
+  font-size: var(--font-size-3xl);
+
+  font-weight: var(--font-weight-bold);
+
+  line-height: 1.15;
+
+  letter-spacing: -0.4px;
+}
+
+
+/* =========================================
+   SUBTITLE
+========================================= */
+
+.subtitle {
+  max-width: 650px;
+
+  margin:
+    var(--space-2)
+    0
+    var(--space-6);
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-size-sm);
+
+  line-height: 1.6;
+}
+
+
+/* =========================================
+   STATS
+========================================= */
+
+.stats {
+  width: 100%;
+  max-width: 700px;
+
+  display: grid;
+
+  grid-template-columns:
+    repeat(3, minmax(170px, 1fr));
+
+  gap: var(--space-3);
+}
+
+
+/* =========================================
+   STAT CARD
+========================================= */
+
+.statCard {
+  min-width: 0;
+  min-height: 88px;
+
+  display: flex;
+  align-items: center;
+
+  gap: var(--space-3);
+
+  padding:
+    var(--space-3)
+    var(--space-4);
+
+  background: var(--color-surface);
+
+  border: 1px solid var(--color-border-light);
+
+  border-radius: var(--radius-lg);
+
+  box-shadow: var(--shadow-sm);
+
+  transition:
+    transform var(--transition-fast),
+    background-color var(--transition-normal),
+    border-color var(--transition-normal),
+    box-shadow var(--transition-fast);
+}
+
+
+.statCard:hover {
+  transform: translateY(-2px);
+
+  border-color: var(--color-border);
+
+  box-shadow: var(--shadow-md);
+}
+
+
+/* =========================================
+   STAT ICON
+========================================= */
+
+.statIcon {
+  width: 42px;
+  height: 42px;
+
+  min-width: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: var(--radius-md);
+
+  transition:
+    background-color var(--transition-normal),
+    color var(--transition-normal);
+}
+
+
+/* Blue */
+
+.blue .statIcon {
+  background: var(--color-primary-light);
+
+  color: var(--color-primary);
+}
+
+
+/* Green */
+
+.green .statIcon {
+  background: var(--color-success-light);
+
+  color: var(--color-success);
+}
+
+
+/* Orange */
+
+.orange .statIcon {
+  background: var(--color-warning-light);
+
+  color: var(--color-warning);
+}
+
+
+/* =========================================
+   STAT CONTENT
+========================================= */
+
+.statContent {
+  min-width: 0;
+
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+
+  text-align: start;
+}
+
+
+/* =========================================
+   LABEL
+========================================= */
+
+.statLabel {
+  overflow: hidden;
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-size-xs);
+
+  font-weight: var(--font-weight-semibold);
+
+  line-height: 1.3;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================
+   VALUE
+========================================= */
+
+.statValue {
+  margin-top: 4px;
+
+  color: var(--color-text-primary);
+
+  font-size: var(--font-size-xl);
+
+  font-weight: var(--font-weight-bold);
+
+  line-height: 1;
+
+  font-variant-numeric: tabular-nums;
+
+  /* direction: ltr; */
+
+  unicode-bidi: isolate;
+}
+
+
+/* =========================================
+   CHANGE
+========================================= */
+
+.statChange {
+  display: flex;
+  align-items: center;
+
+  gap: 4px;
+
+  margin-top: 6px;
+
+  font-size: var(--font-size-xs);
+
+  font-weight: var(--font-weight-medium);
+
+  line-height: 1.3;
+
+  white-space: nowrap;
+
+  direction: ltr;
+}
+
+
+.changeArrow {
+  font-size: 13px;
+
+  line-height: 1;
+}
+
+
+.greenText {
+  color: var(--color-success);
+}
+
+
+.orangeText {
+  color: var(--color-warning);
+}
+
+
+/* =========================================
+   VISUAL
+========================================= */
+
+.visual {
+  position: relative;
+
+  width: 43%;
+
+  min-width: 390px;
+  min-height: 210px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-inline-start: var(--space-4);
+}
+
+
+/* =========================================
+   DECORATIVE WAVE
+========================================= */
+
+.backgroundWave {
+  position: absolute;
+
+  width: 560px;
+  height: 250px;
+
+  top: 50%;
+  right: -160px;
+
+  transform:
+    translateY(-50%)
+    rotate(-7deg);
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      145deg,
+      transparent 35%,
+      var(--color-primary-light) 36%,
+      var(--color-primary-light) 70%,
+      transparent 71%
+    );
+
+  opacity: 0.85;
+
+  pointer-events: none;
+}
+
+
+/* =========================================
+   ILLUSTRATION
+========================================= */
+
+.illustration {
+  position: relative;
+
+  width: 260px;
+  height: 180px;
+
+  z-index: 2;
+
+  margin-inline-end: 60px;
+}
+
+
+/* =========================================
+   CLIPBOARD
+========================================= */
+
+.clipboard {
+  position: absolute;
+
+  top: 7px;
+  left: 78px;
+
+  width: 108px;
+  height: 145px;
+
+  background: var(--color-surface);
+
+  border: 5px solid var(--color-primary);
+
+  border-radius: var(--radius-sm);
+
+  box-shadow: var(--shadow-md);
+
+  transition:
+    background-color var(--transition-normal),
+    border-color var(--transition-normal),
+    box-shadow var(--transition-normal);
+}
+
+
+/* =========================================
+   CLIP
+========================================= */
+
+.clip {
+  position: absolute;
+
+  top: -17px;
+  left: 27px;
+
+  width: 50px;
+  height: 22px;
+
+  border-radius: var(--radius-sm);
+
+  background: var(--color-primary);
+
+  box-shadow: var(--shadow-sm);
+}
+
+
+/* =========================================
+   PAPER
+========================================= */
+
+.paper {
+  padding:
+    30px
+    11px
+    10px;
+}
+
+
+/* =========================================
+   PAPER LINES
+========================================= */
+
+.line {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  margin-bottom: 10px;
+}
+
+
+.line span {
+  width: 16px;
+  height: 16px;
+
+  flex-shrink: 0;
+
+  border-radius: 4px;
+
+  background: var(--color-primary-light);
+}
+
+
+.line i {
+  width: 48px;
+  height: 5px;
+
+  border-radius: var(--radius-full);
+
+  background: var(--color-border);
+}
+
+
+/* =========================================
+   BOXES
+========================================= */
+
+.box {
+  position: absolute;
+
+  bottom: 5px;
+
+  border-radius:
+    3px
+    3px
+    1px
+    1px;
+
+  background: var(--color-primary);
+
+  box-shadow: var(--shadow-sm);
+
+  transition:
+    background-color var(--transition-normal);
+}
+
+
+.boxOne {
+  right: 18px;
+
+  width: 50px;
+  height: 60px;
+}
+
+
+.boxTwo {
+  right: -12px;
+
+  width: 58px;
+  height: 90px;
+
+  background: var(--color-primary-hover);
+}
+
+
+/* =========================================
+   PLANT
+========================================= */
+
+.plant {
+  position: absolute;
+
+  bottom: 2px;
+  left: 13px;
+
+  width: 62px;
+  height: 100px;
+}
+
+
+/* Stem */
+
+.stem {
+  position: absolute;
+
+  bottom: 20px;
+  left: 30px;
+
+  width: 3px;
+  height: 58px;
+
+  border-radius: var(--radius-full);
+
+  background: var(--color-success);
+}
+
+
+/* Leaves */
+
+.leaf {
+  position: absolute;
+
+  width: 28px;
+  height: 45px;
+
+  border-radius:
+    100%
+    0
+    100%
+    0;
+
+  background: var(--color-success-light);
+
+  border: 1px solid var(--color-success);
+
+  transform: rotate(35deg);
+}
+
+
+.leafOne {
+  top: 17px;
+  left: 6px;
+}
+
+
+.leafTwo {
+  top: 0;
+  left: 29px;
+
+  transform: rotate(55deg);
+}
+
+
+.leafThree {
+  top: 36px;
+  left: 28px;
+
+  transform: rotate(75deg);
+}
+
+
+/* =========================================
+   NEW INVENTORY BUTTON
+========================================= */
+
+.newInventoryButton {
+  position: absolute;
+
+  right: var(--space-6);
+  bottom: var(--space-5);
+
+  z-index: 4;
+
+  min-width: 205px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: var(--space-2);
+
+  padding:
+    0
+    var(--space-4);
+
+  border: none;
+
+  border-radius: var(--radius-md);
+
+  background: var(--color-primary);
+
+  color: var(--color-text-white);
+
+  font-family: inherit;
+
+  font-size: var(--font-size-sm);
+
+  font-weight: var(--font-weight-semibold);
+
+  cursor: pointer;
+
+  box-shadow: var(--shadow-md);
+
+  transition:
+    background-color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+
+.newInventoryButton:hover {
+  background: var(--color-primary-hover);
+
+  transform: translateY(-2px);
+
+  box-shadow: var(--shadow-lg);
+}
+
+
+.newInventoryButton:active {
+  transform: translateY(0);
+}
+
+
+.newInventoryButton:focus-visible {
+  outline: 2px solid var(--color-primary);
+
+  outline-offset: 3px;
+}
+
+
+/* =========================================
+   BUTTON ARROW
+========================================= */
+
+.arrow {
+  margin-inline-start: auto;
+
+  font-size: 17px;
+
+  line-height: 1;
+}
+
+
+/* =========================================
+   RTL
+========================================= */
+
+:global([dir="rtl"]) .hero {
+  direction: rtl;
+}
+
+
+:global([dir="rtl"]) .heroContent {
+  text-align: right;
+}
+
+
+:global([dir="rtl"]) .stats {
+  direction: rtl;
+}
+
+
+:global([dir="rtl"]) .statCard {
+  flex-direction: row;
+}
+
+
+:global([dir="rtl"]) .statChange {
+  direction: ltr;
+}
+
+
+:global([dir="rtl"]) .illustration {
+  transform: scaleX(-1);
+}
+
+
+:global([dir="rtl"]) .newInventoryButton {
+  right: auto;
+  left: var(--space-6);
+}
+
+
+:global([dir="rtl"]) .backgroundWave {
+  right: auto;
+  left: -160px;
+
+  transform:
+    translateY(-50%)
+    rotate(7deg);
+}
+
+
+/* =========================================
+   DARK MODE
+========================================= */
+
+:global([data-theme="dark"]) .hero::before {
+  opacity: 0.35;
+}
+
+
+:global([data-theme="dark"]) .hero::after {
+  opacity: 0.18;
+}
+
+
+:global([data-theme="dark"]) .backgroundWave {
+  opacity: 0.45;
+}
+
+
+:global([data-theme="dark"]) .statCard {
+  background: var(--color-surface);
+
+  border-color: var(--color-border);
+
+  box-shadow: var(--shadow-sm);
+}
+
+
+:global([data-theme="dark"]) .statCard:hover {
+  border-color: var(--color-primary);
+}
+
+
+:global([data-theme="dark"]) .clipboard {
+  background: var(--color-surface);
+
+  box-shadow: var(--shadow-md);
+}
+
+
+/* =========================================
+   LARGE TABLET
+========================================= */
+
+@media (max-width: 1200px) {
+
+  .hero {
+    gap: var(--space-5);
+
+    padding:
+      var(--space-6)
+      var(--space-6);
+  }
+
+
+  .visual {
+    width: 40%;
+
+    min-width: 340px;
+  }
+
+
+  .illustration {
+    margin-inline-end: 20px;
+  }
+
+
+  .stats {
+    max-width: 100%;
+  }
+
+
+  .statCard {
+    padding:
+      var(--space-3);
+  }
+}
+
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (max-width: 950px) {
+
+  .hero {
+    min-height: auto;
+
+    flex-direction: column;
+
+    gap: var(--space-5);
+  }
+
+
+  .heroContent {
+    width: 100%;
+  }
+
+
+  .visual {
+    width: 100%;
+
+    min-width: 0;
+    min-height: 190px;
+
+    margin-inline-start: 0;
+  }
+
+
+  .illustration {
+    margin-inline-end: 0;
+  }
+
+
+  .newInventoryButton {
+    right: var(--space-4);
+    bottom: var(--space-3);
+  }
+
+
+  :global([dir="rtl"]) .newInventoryButton {
+    right: auto;
+    left: var(--space-4);
+  }
+}
+
+
+/* =========================================
+   SMALL TABLET
+========================================= */
+
+@media (max-width: 700px) {
+
+  .hero {
+    padding: var(--space-5);
+
+    border-radius: var(--radius-lg);
+  }
+
+
+  .title {
+    font-size: var(--font-size-2xl);
+  }
+
+
+  .subtitle {
+    margin-bottom: var(--space-5);
+  }
+
+
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+
+  .statCard {
+    width: 100%;
+
+    min-height: 76px;
+  }
+
+
+  .visual {
+    min-height: 175px;
+  }
+
+
+  .newInventoryButton {
+    min-width: 190px;
+  }
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 520px) {
+
+  .hero {
+    padding: var(--space-4);
+  }
+
+
+  .greeting {
+    font-size: var(--font-size-xs);
+  }
+
+
+  .title {
+    font-size: 21px;
+
+    line-height: 1.25;
+  }
+
+
+  .subtitle {
+    font-size: var(--font-size-xs);
+  }
+
+
+  .visual {
+    display: none;
+  }
+
+
+  .newInventoryButton {
+    position: static;
+
+    width: 100%;
+
+    min-width: 0;
+
+    margin-top: var(--space-4);
+  }
+}

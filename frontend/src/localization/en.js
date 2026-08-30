@@ -10,6 +10,7 @@ const en = {
   },
 
   navigation: {
+    home: 'Home',
     dashboard: 'Dashboard',
     inventorySessions: 'Inventory Sessions',
     newInventorySession: 'New Inventory Session',
@@ -168,6 +169,50 @@ const en = {
     activeSessions: 'Active Sessions',
     branches: 'Branches',
     attentionItems: 'Attention Items',
+
+    activeSessionsDescription: 'Currently in progress',
+
+    totalSessionsDescription: 'All inventory sessions',
+
+    attentionItemsDescription: 'Require review',
+    totalSessions: 'Total Sessions',
+
+    recentSessions: {
+      title: "Recent Inventory Sessions",
+      viewAll: "View All Sessions",
+
+
+      sessionId: "Session ID",
+      date: "Date",
+      branch: "Branch",
+      store: "Store",
+      status: "Status",
+      items: "Items",
+      actions: "Actions",
+      view: "View",
+      noSessions: "No inventory sessions",
+
+      statuses: {
+        completed: "Completed",
+        inProgress: "In Progress",
+        cancelled: "Cancelled",
+      },
+    },
+    itemCategories: "Item Categories",
+    stores: "stores",
+    totalBranches: "Total branches",
+    totalStores: "Total stores",
+    totalCategories: "Total categories",
+    totalItems: "Total items",
+
+    systemStatus: 'System Status',
+    apiStatus: 'API Status',
+    database: 'Database',
+    lastBackup: 'Last Backup',
+    systemHealth: 'System Health',
+    connected: 'Connected',
+    healthy: 'Healthy',
+    lastBackupValue: 'Today, 03:00 PM',
   },
 
   dashboard: {
@@ -275,10 +320,17 @@ const en = {
         increase: "Increase",
         decrease: "Decrease",
         noDifference: "No Difference",
-        firstInventory: "First Inventory",
+        afterOnly: "After Inventory Only",
+        beforeOnly: "Before Inventory Only",
       },
     },
-
+  },
+  footer: {
+    systemName: 'Inventory Management System',
+    systemDescription: 'Smart • Reliable • Efficient',
+    copyright: 'Fatema Majid 2026',
+    version: 'v1.0.0',
+    allRightsReserved: 'All rights reserved',
   },
 
 }

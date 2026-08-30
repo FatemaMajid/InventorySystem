@@ -1,8 +1,8 @@
-import { NavLink } from 'react-router-dom';
-import { useLanguage } from '../../context/LanguageContext';
-import { navigationGroups } from '../Navigation/navigationItems';
-import Icon from '../UI/Icon/Icon';
-import styles from './Sidebar.module.css';
+import { NavLink } from "react-router-dom";
+import { useLanguage } from "../../context/LanguageContext";
+import { navigationGroups } from "../Navigation/navigationItems";
+import Icon from "../UI/Icon/Icon";
+import styles from "./Sidebar.module.css";
 
 function Sidebar({
   isOpen = false,
@@ -13,17 +13,23 @@ function Sidebar({
   return (
     <aside
       className={`${styles.sidebar} ${
-        isOpen ? styles.open : ''
+        isOpen ? styles.open : ""
       }`}
     >
       <div className={styles.logo}>
         <div className={styles.logoIcon}>
-          IS
+          <span>
+            {translations.common.systemName
+              .split(" ")
+              .map((word) => word.charAt(0))
+              .slice(0, 2)
+              .join("")}
+          </span>
         </div>
 
-        <span>
+        <div className={styles.logoText}>
           {translations.common.systemName}
-        </span>
+        </div>
       </div>
 
       <nav className={styles.navigation}>
@@ -44,16 +50,18 @@ function Sidebar({
                   onClick={onClose}
                   className={({ isActive }) =>
                     `${styles.navItem} ${
-                      isActive ? styles.active : ''
+                      isActive ? styles.active : ""
                     }`
                   }
                 >
-                  <Icon
-                    name={item.icon}
-                    size={19}
-                  />
+                  <span className={styles.navIcon}>
+                    <Icon
+                      name={item.icon}
+                      size={18}
+                    />
+                  </span>
 
-                  <span>
+                  <span className={styles.navLabel}>
                     {translations.navigation[item.key]}
                   </span>
                 </NavLink>
@@ -68,12 +76,14 @@ function Sidebar({
           type="button"
           className={styles.logout}
         >
-          <Icon
-            name="logout"
-            size={19}
-          />
+          <span className={styles.logoutIcon}>
+            <Icon
+              name="logout"
+              size={18}
+            />
+          </span>
 
-          <span>
+          <span className={styles.logoutLabel}>
             {translations.common.logout}
           </span>
         </button>

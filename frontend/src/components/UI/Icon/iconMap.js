@@ -10,7 +10,7 @@ import depleted from '../../../assets/icons/depleted.svg';
 import priceChange from '../../../assets/icons/price-change.svg';
 import tick from '../../../assets/icons/tick.svg';
 import totalItems from '../../../assets/icons/totalItem.svg';
-
+import category from '../../../assets/icons/category.svg';
 import branches from '../../../assets/icons/branches.svg';
 import stores from '../../../assets/icons/stores.svg';
 
@@ -39,8 +39,23 @@ import filter from '../../../assets/icons/filter.svg'
 import search from '../../../assets/icons/search.svg'
 import nextIcon from '../../../assets/icons/nextIcon.svg'
 import previousIcon from '../../../assets/icons/previousIcon.svg'
+import home from '../../../assets/icons/home.svg'
+
+import active from '../../../assets/icons/active.svg'
+import wave from '../../../assets/icons/wave.svg'
+import arrowUp from '../../../assets/icons/arrowUp.svg'
+import eye from '../../../assets/icons/eye.svg'
+import lock from '../../../assets/icons/lock.svg'
+import copyright from '../../../assets/icons/copyright.svg'
+import system from '../../../assets/icons/system.svg'
+
+import shield from '../../../assets/icons/shield.svg'
+import health from '../../../assets/icons/health.svg'
+import calendar from '../../../assets/icons/calendar.svg'
+
 
 const iconMap = {
+  home,
   dashboard,
   inventory,
   plus,
@@ -80,7 +95,18 @@ const iconMap = {
   filter,
   search,
   nextIcon,
-  previousIcon
+  previousIcon,
+  active,
+  arrowUp,
+  wave,
+  eye,
+  lock,
+  copyright,
+  system,
+  category,
+  shield,
+  calendar,
+  health
 
 };
 

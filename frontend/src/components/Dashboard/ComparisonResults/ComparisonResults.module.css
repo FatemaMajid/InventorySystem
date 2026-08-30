@@ -250,11 +250,18 @@
   background: rgba(31, 92, 211, 0.25);
 }
 
-/* First inventory */
+/* Befor Inventory */
 
-.FirstInventory {
+.BeforeOnly {
   color: #f0a11b;
   background: rgba(184, 113, 8, 0.28);
+}
+
+/*After Inventory */
+
+.AfterOnly {
+  color: #f01bcc;
+  background: rgba(184, 8, 169, 0.28);
 }
 
 /* =========================

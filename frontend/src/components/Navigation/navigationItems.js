@@ -3,6 +3,13 @@ export const navigationGroups = [
     key: 'main',
     items: [
       {
+        key: 'home',
+        path: './',
+        icon: 'home',
+        permission: 'Home.View',
+      },
+      
+      {
         key: 'dashboard',
         path: '/dashboard',
         icon: 'dashboard',

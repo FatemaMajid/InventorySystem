@@ -1,4 +1,3 @@
-import React from "react";
 import { useLanguage } from "../../../context/LanguageContext";
 import Icon from "../../UI/Icon/Icon";
 import styles from "./Filters.module.css";
@@ -16,12 +15,13 @@ const Filters = ({
     const t = translations.dashboard.comparisonResults;
 
     const statusOptions = [
-        { value: "All", label: t.all },
-        { value: "Increase", label: t.statuses.increase },
-        { value: "Decrease", label: t.statuses.decrease },
-        { value: "NoDifference", label: t.statuses.noDifference },
-        { value: "FirstInventory", label: t.statuses.firstInventory },
-    ];
+    { value: "All", label: t.all },
+    { value: "Increase", label: t.statuses.increase },
+    { value: "Decrease", label: t.statuses.decrease },
+    { value: "NoDifference", label: t.statuses.noDifference },
+    { value: "AfterOnly", label: t.statuses.afterOnly },
+    { value: "BeforeOnly", label: t.statuses.beforeOnly },
+];
 
     return (
         <aside

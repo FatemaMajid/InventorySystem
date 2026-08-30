@@ -1,183 +1,351 @@
 :root {
-  /* ================================
-     Colors
+   /* =================================
+     Colors - Brand
+  ================================= */
+   --color-sidebar-active-text: #26332f;
+   --color-primary: #7fa574;
+   --color-primary-hover: #6e9464;
+   --color-primary-light: #e8efe4;
+   --color-primary-soft: #f3f6f0;
+
+   /* =================================
+     Light Theme
   ================================= */
 
-  --color-primary: #2563eb;
-  --color-primary-hover: #1d4ed8;
-  --color-primary-light: #e8eef8;
+   --color-background: #f8f8f4;
 
-  --color-sidebar: #14253d;
-  --color-sidebar-dark: #0f1d31;
-  --color-sidebar-hover: #1e4f9a;
-  --color-sidebar-active: #2563eb;
+   --color-surface: #ffffff;
+   --color-surface-secondary: #f4f5ef;
+   --color-surface-tertiary: #ecefe7;
 
-  /* Light Theme */
-  --color-background: #f5f4f1;
-  --color-surface: #faf9f6;
-  --color-surface-secondary: #f1f3f5;
+   --color-border: #dde3d8;
+   --color-border-light: #e9ede5;
 
-  --color-border: #dddcd8;
-  --color-border-light: #e8e7e3;
+   --color-text-primary: #273129;
+   --color-text-secondary: #687269;
+   --color-text-muted: #929a92;
+   --color-text-white: #ffffff;
 
-  --color-text-primary: #172033;
-  --color-text-secondary: #536174;
-  --color-text-muted: #8792a3;
-  --color-text-white: #ffffff;
+   /* =================================
+     Sidebar
+  ================================= */
 
-  /* ================================
+   --color-sidebar: #26352b;
+   --color-sidebar-dark: #1c2921;
+   --color-sidebar-hover: #35483a;
+   --color-sidebar-active: #7fa574;
+
+   --color-sidebar-text: #e7eee8;
+   --color-sidebar-muted: #a2afa5;
+
+   /* =================================
      Status Colors
   ================================= */
 
-  --color-success: #3f8f68;
-  --color-success-light: #e8f3ed;
-  --color-success-dark: #28704d;
+   --color-success: #7fa574;
+   --color-success-light: #e8efe4;
+   --color-success-dark: #5f8056;
 
-  --color-danger: #d9534f;
-  --color-danger-light: #f9eaea;
-  --color-danger-dark: #b83b38;
+   --color-danger: #d37676;
+   --color-danger-light: #f7e6e6;
+   --color-danger-dark: #b85d5d;
 
-  --color-warning: #d79532;
-  --color-warning-light: #faf1df;
-  --color-warning-dark: #b87516;
+   --color-warning: #ebc49f;
+   --color-warning-light: #fbf0e2;
+   --color-warning-dark: #c99461;
 
-  --color-purple: #7656b5;
-  --color-purple-light: #eee9f8;
+   --color-purple: #9a88ae;
+   --color-purple-light: #eeeaf2;
 
-  --color-teal: #3b929b;
-  --color-teal-light: #e5f2f3;
+   --color-teal: #76a99c;
+   --color-teal-light: #e5f0ed;
 
-  /* ================================
+   --color-blue-light: #edf2ed;
+
+   /* =================================
+     Highlight
+  ================================= */
+
+   --color-yellow: #f1ef99;
+   --color-yellow-light: #faf9d9;
+
+   /* =================================
      Layout
   ================================= */
 
-  --sidebar-width: 220px;
-  --header-height: 72px;
+   --sidebar-width: 220px;
+   --header-height: 64px;
 
-  --content-max-width: 1600px;
+   --content-max-width: 1600px;
 
-  /* ================================
+   /* =================================
      Spacing
   ================================= */
 
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-  --space-7: 28px;
-  --space-8: 32px;
-  --space-10: 40px;
-  --space-12: 48px;
+   --space-1: 4px;
+   --space-2: 8px;
+   --space-3: 12px;
+   --space-4: 16px;
+   --space-5: 20px;
+   --space-6: 24px;
+   --space-7: 28px;
+   --space-8: 32px;
+   --space-9: 36px;
+   --space-10: 40px;
+   --space-12: 48px;
+   --space-14: 56px;
 
-  /* ================================
+   /* =================================
      Border Radius
   ================================= */
 
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
-  --radius-full: 9999px;
+   --radius-sm: 6px;
+   --radius-md: 10px;
+   --radius-lg: 14px;
+   --radius-xl: 18px;
+   --radius-2xl: 22px;
+   --radius-full: 9999px;
 
-  /* ================================
+   /* =================================
      Typography
   ================================= */
 
-  --font-family:
-    Inter,
-    "Segoe UI",
-    Tahoma,
-    Arial,
-    sans-serif;
+   --font-family:
+      Inter,
+      "Segoe UI",
+      Tahoma,
+      Arial,
+      sans-serif;
 
-  --font-size-xs: 11px;
-  --font-size-sm: 13px;
-  --font-size-md: 14px;
-  --font-size-lg: 16px;
-  --font-size-xl: 18px;
-  --font-size-2xl: 22px;
-  --font-size-3xl: 28px;
-  --font-size-4xl: 32px;
+   --font-size-xs: 11px;
+   --font-size-sm: 13px;
+   --font-size-md: 14px;
+   --font-size-lg: 16px;
+   --font-size-xl: 18px;
+   --font-size-2xl: 22px;
+   --font-size-3xl: 28px;
+   --font-size-4xl: 32px;
 
-  --font-weight-normal: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
+   --font-weight-normal: 400;
+   --font-weight-medium: 500;
+   --font-weight-semibold: 600;
+   --font-weight-bold: 700;
 
-  /* ================================
+   /* =================================
      Shadows
   ================================= */
 
-  --shadow-sm:
-    0 1px 3px rgba(15, 23, 42, 0.06);
+   --shadow-sm:
+      0 1px 3px rgba(39, 49, 41, 0.05);
 
-  --shadow-md:
-    0 4px 12px rgba(15, 23, 42, 0.08);
+   --shadow-md:
+      0 5px 16px rgba(39, 49, 41, 0.07);
 
-  --shadow-lg:
-    0 10px 30px rgba(15, 23, 42, 0.12);
+   --shadow-lg:
+      0 12px 32px rgba(39, 49, 41, 0.1);
 
-  /* ================================
+   --shadow-card:
+      0 2px 10px rgba(39, 49, 41, 0.045);
+
+   /* =================================
      Transitions
   ================================= */
 
-  --transition-fast: 150ms ease;
-  --transition-normal: 200ms ease;
-  --transition-slow: 300ms ease;
+   --transition-fast: 150ms ease;
+   --transition-normal: 200ms ease;
+   --transition-slow: 300ms ease;
 
-  /* ================================
+   /* =================================
      Z-Index
   ================================= */
 
-  --z-sidebar: 100;
-  --z-header: 200;
-  --z-dropdown: 300;
-  --z-modal: 1000;
-  --z-toast: 1100;
+   --z-sidebar: 100;
+   --z-header: 200;
+   --z-dropdown: 300;
+   --z-modal: 1000;
+   --z-toast: 1100;
 }
 
 
-/* ================================
-   Dark-mode Theme
-================================ */
+/* =================================
+   Dark Theme
+================================= */
 
-[data-theme='dark'] {
-  --color-background: #0f172a;
-  --color-surface: #1b273b;
-  --color-surface-secondary: #172236;
-
-  --color-border: #304057;
-  --color-border-light: #26354b;
-
-  --color-text-primary: #f1f5f9;
-  --color-text-secondary: #c3cedd;
-  --color-text-muted: #8f9caf;
-  --color-text-white: #ffffff;
-
-  --color-primary-light: #172b55;
-
-  /* ================================
-     Dark Status Colors
+[data-theme="dark"] {
+   --color-sidebar-active-text: #17211f;
+   /* =================================
+     Background
   ================================= */
 
-  --color-success-light: #123526;
-  --color-danger-light: #3d1d20;
-  --color-warning-light: #3b2d17;
-  --color-purple-light: #2c2148;
-  --color-teal-light: #16383d;
+   --color-background: #151a16;
 
-  /* ================================
-     Dark Shadows
+   --color-surface: #1d251f;
+   --color-surface-secondary: #242e26;
+   --color-surface-tertiary: #2c382e;
+
+   /* =================================
+     Borders
   ================================= */
 
-  --shadow-sm:
-    0 1px 3px rgba(0, 0, 0, 0.25);
+   --color-border: #3a483d;
+   --color-border-light: #303c33;
 
-  --shadow-md:
-    0 4px 12px rgba(0, 0, 0, 0.30);
+   /* =================================
+     Text
+  ================================= */
 
-  --shadow-lg:
-    0 10px 30px rgba(0, 0, 0, 0.40);
+   --color-text-primary: #f1f3ed;
+   --color-text-secondary: #c0c8be;
+   --color-text-muted: #899289;
+   --color-text-white: #ffffff;
+
+   /* =================================
+     Brand
+  ================================= */
+
+   --color-primary: #9dbb91;
+   --color-primary-hover: #b0cba5;
+   --color-primary-light: #29392c;
+   --color-primary-soft: #223026;
+
+   /* =================================
+     Sidebar
+  ================================= */
+
+   --color-sidebar: #101610;
+   --color-sidebar-dark: #0b100c;
+   --color-sidebar-hover: #253328;
+   --color-sidebar-active: #7fa574;
+
+   --color-sidebar-text: #dce6dd;
+   --color-sidebar-muted: #89968b;
+
+   /* =================================
+     Status Colors
+  ================================= */
+
+   --color-success: #9dbb91;
+   --color-success-light: #263829;
+   --color-success-dark: #b0cba5;
+
+   --color-danger: #d98a8a;
+   --color-danger-light: #3a2525;
+   --color-danger-dark: #e5a0a0;
+
+   --color-warning: #ebc49f;
+   --color-warning-light: #3a3025;
+   --color-warning-dark: #f0cea8;
+
+   --color-purple: #b09bc5;
+   --color-purple-light: #302a38;
+
+   --color-teal: #88b7aa;
+   --color-teal-light: #253934;
+
+   --color-blue-light: #293630;
+
+   /* =================================
+     Highlight
+  ================================= */
+
+   --color-yellow: #e9e58f;
+   --color-yellow-light: #383720;
+
+   /* =================================
+     Shadows
+  ================================= */
+
+   --shadow-sm:
+      0 1px 3px rgba(0, 0, 0, 0.22);
+
+   --shadow-md:
+      0 5px 16px rgba(0, 0, 0, 0.28);
+
+   --shadow-lg:
+      0 12px 32px rgba(0, 0, 0, 0.38);
+
+   --shadow-card:
+      0 2px 10px rgba(0, 0, 0, 0.22);
+}
+
+
+/* =================================
+   Global Base
+================================= */
+
+* {
+   box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+   min-height: 100%;
+}
+
+body {
+   margin: 0;
+
+   font-family: var(--font-family);
+
+   font-size: var(--font-size-md);
+   font-weight: var(--font-weight-normal);
+
+   color: var(--color-text-primary);
+   background: var(--color-background);
+
+   transition:
+      background-color var(--transition-normal),
+      color var(--transition-normal);
+}
+
+
+/* =================================
+   RTL Support
+================================= */
+
+html[dir="rtl"],
+body[dir="rtl"] {
+   direction: rtl;
+}
+
+html[dir="ltr"],
+body[dir="ltr"] {
+   direction: ltr;
+}
+
+
+/* =================================
+   Buttons / Inputs
+================================= */
+
+button,
+input,
+select,
+textarea {
+   font-family: inherit;
+}
+
+button {
+   cursor: pointer;
+}
+
+
+/* =================================
+   Links
+================================= */
+
+a {
+   color: inherit;
+   text-decoration: none;
+}
+
+
+/* =================================
+   Selection
+================================= */
+
+::selection {
+   background: var(--color-primary);
+   color: #ffffff;
 }
