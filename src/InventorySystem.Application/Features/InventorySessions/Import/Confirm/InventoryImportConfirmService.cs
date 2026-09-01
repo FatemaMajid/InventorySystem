@@ -255,7 +255,7 @@ public class InventoryImportConfirmService
             CancellationToken cancellationToken)
     {
         var prefix =
-            $"INV-{DateTime.UtcNow:yyyyMMdd}";
+            $"INV-{DateTime.Now:yyyyMMdd}";
 
         var lastSession =
             await _context.InventorySessions

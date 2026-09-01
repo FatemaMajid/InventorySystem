@@ -84,7 +84,7 @@ public static class BranchSeeder
             new()
             {
                 BranchCode = "010",
-                BranchNameArabic = "فرع حي أور",
+                BranchNameArabic = "فرع حي اور",
                 BranchNameEnglish = "Ur District Branch",
                 IsActive = true
             },

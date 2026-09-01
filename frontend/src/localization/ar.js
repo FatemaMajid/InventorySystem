@@ -328,6 +328,53 @@ const ar = {
     version: 'الإصدار 1.0.0',
     allRightsReserved: 'جميع الحقوق محفوظة',
   },
+inventorySessions: {
+  title: "جلسات الجرد",
+  description: "عرض وإدارة جلسات الجرد.",
+
+  totalSessions: "مجموع الجلسات",
+  activeSessions: "الجلسات النشطة",
+  completedSessions: "الجلسات المكتملة",
+
+  searchPlaceholder: "البحث في جلسات الجرد...",
+
+  status: "الحالة",
+  branch: "الفرع",
+  store: "المستودع",
+
+  allStatuses: "كل الحالات",
+  allBranches: "كل الفروع",
+  allStores: "كل المستودعات",
+
+  active: "نشطة",
+  completed: "مكتملة",
+  inProgress: "قيد التنفيذ",
+  cancelled: "ملغاة",
+
+  clearFilters: "مسح",
+
+  sessionsList: "جلسات الجرد",
+  sessionsListDescription: "أحدث جلسات الجرد.",
+
+  sessionId: "رقم الجلسة",
+  date: "التاريخ",
+  items: "الأصناف",
+  actions: "الإجراءات",
+
+  view: "عرض",
+  loading: "جاري التحميل...",
+  noSessions: "لا توجد جلسات جرد.",
+  loadError: "فشل تحميل جلسات الجرد.",
+  noOptions: "لا توجد خيارات",
+},
+
+  pagination: {
+  showing: "عرض",
+  of: "من",
+  rowsPerPage: "عدد الصفوف",
+  previous: "السابق",
+  next: "التالي",
+},
 
 
 };

@@ -1,0 +1,157 @@
+/* =================================
+   Header
+================================= */
+
+.header {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: var(--space-5);
+
+  margin-bottom: var(--space-6);
+}
+
+
+/* =================================
+   Info
+================================= */
+
+.info {
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+
+  color: var(--color-text-primary);
+
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+
+  line-height: 1.25;
+}
+
+.description {
+  margin: var(--space-2) 0 0;
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-size-md);
+
+  line-height: 1.5;
+}
+
+
+/* =================================
+   New Session Button
+================================= */
+
+.newButton {
+  flex-shrink: 0;
+
+  min-height: 42px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: var(--space-2);
+
+  padding:
+    0
+    var(--space-4);
+
+  border: 1px solid var(--color-primary);
+
+  border-radius: var(--radius-md);
+
+  background: var(--color-primary);
+
+  color: var(--color-text-white);
+
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+
+  cursor: pointer;
+
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    transform var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.newButton:hover {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+
+  box-shadow: var(--shadow-sm);
+}
+
+.newButton:active {
+  transform: translateY(1px);
+}
+
+.newButton:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+
+/* =================================
+   RTL / LTR
+================================= */
+
+:global([dir="rtl"]) .header {
+  direction: rtl;
+}
+
+:global([dir="ltr"]) .header {
+  direction: ltr;
+}
+
+
+/* =================================
+   Responsive
+================================= */
+
+@media (max-width: 768px) {
+  .header {
+    align-items: flex-start;
+
+    gap: var(--space-4);
+
+    margin-bottom: var(--space-5);
+  }
+
+  .title {
+    font-size: var(--font-size-xl);
+  }
+
+  .description {
+    font-size: var(--font-size-sm);
+  }
+
+  .newButton {
+    min-height: 40px;
+
+    padding:
+      0
+      var(--space-3);
+  }
+}
+
+
+@media (max-width: 560px) {
+  .header {
+    flex-direction: column;
+  }
+
+  .newButton {
+    width: 100%;
+  }
+}

@@ -228,14 +228,13 @@ public static class StoreSeeder
                 IsActive = true
             },
 
-            // =====================================================
+            
             // 007 - فرع حي الحسين
-            // =====================================================
 
             new()
             {
                 StoreCode = "001",
-                StoreNameArabic = "مس. المعرض حي الحسين",
+                StoreNameArabic = "مس. حي الحسين المعرض",
                 StoreNameEnglish = "Al-Hussein Exhibition Store",
                 BranchCode = "007",
                 IsActive = true
@@ -243,7 +242,7 @@ public static class StoreSeeder
             new()
             {
                 StoreCode = "002",
-                StoreNameArabic = "مس. المخزن حي الحسين",
+                StoreNameArabic = "مس. حي الحسين المخزن",
                 StoreNameEnglish = "Al-Hussein Main Store",
                 BranchCode = "007",
                 IsActive = true
@@ -251,7 +250,7 @@ public static class StoreSeeder
             new()
             {
                 StoreCode = "003",
-                StoreNameArabic = "مس. الصيفي حي الحسين",
+                StoreNameArabic = "مس. حي الحسين الصيفي",
                 StoreNameEnglish = "Al-Hussein Summer Store",
                 BranchCode = "007",
                 IsActive = true
@@ -259,7 +258,7 @@ public static class StoreSeeder
             new()
             {
                 StoreCode = "004",
-                StoreNameArabic = "مس. الشتوي حي الحسين",
+                StoreNameArabic = "مس. حي الحسين الشتوي",
                 StoreNameEnglish = "Al-Hussein Winter Store",
                 BranchCode = "007",
                 IsActive = true
@@ -267,7 +266,7 @@ public static class StoreSeeder
             new()
             {
                 StoreCode = "005",
-                StoreNameArabic = "مس. المدرسي حي الحسين",
+                StoreNameArabic = "مس. حي الحسين المدرسي",
                 StoreNameEnglish = "Al-Hussein School Store",
                 BranchCode = "007",
                 IsActive = true
@@ -364,13 +363,13 @@ public static class StoreSeeder
             },
 
             // =====================================================
-            // 010 - فرع حي أور
+            // 010 - فرع حي اور
             // =====================================================
 
             new()
             {
                 StoreCode = "001",
-                StoreNameArabic = "مس. اور المعرض",
+                StoreNameArabic = "مس. حي اور المعرض",
                 StoreNameEnglish = "Ur Exhibition Store",
                 BranchCode = "010",
                 IsActive = true
@@ -378,7 +377,7 @@ public static class StoreSeeder
             new()
             {
                 StoreCode = "002",
-                StoreNameArabic = "مس. اور المخزن",
+                StoreNameArabic = "مس. حي اور المخزن",
                 StoreNameEnglish = "Ur Main Store",
                 BranchCode = "010",
                 IsActive = true
@@ -386,7 +385,7 @@ public static class StoreSeeder
             new()
             {
                 StoreCode = "003",
-                StoreNameArabic = "مس. اور الصيفي",
+                StoreNameArabic = "مس. حي اور الصيفي",
                 StoreNameEnglish = "Ur Summer Store",
                 BranchCode = "010",
                 IsActive = true
@@ -394,7 +393,7 @@ public static class StoreSeeder
             new()
             {
                 StoreCode = "004",
-                StoreNameArabic = "مس. اور الشتوي",
+                StoreNameArabic = "مس. حي اور الشتوي",
                 StoreNameEnglish = "Ur Winter Store",
                 BranchCode = "010",
                 IsActive = true
@@ -402,7 +401,7 @@ public static class StoreSeeder
             new()
             {
                 StoreCode = "005",
-                StoreNameArabic = "مس. اور المدرسي",
+                StoreNameArabic = "مس. حي اور المدرسي",
                 StoreNameEnglish = "Ur School Store",
                 BranchCode = "010",
                 IsActive = true

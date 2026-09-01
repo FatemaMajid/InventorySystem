@@ -1,53 +1,123 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
-
-import SessionHeader from '../../components/Inventory/SessionHeader/SessionHeader';
-import SessionInfoCard from '../../components/Inventory/SessionInfoCard/SessionInfoCard';
-import FileUpload from '../../components/Inventory/FileUpload/FileUpload';
-import RequiredColumns from '../../components/Inventory/RequiredColumns/RequiredColumns';
-import SessionActions from '../../components/Inventory/SessionActions/SessionActions';
-
-import {
-  previewInventoryFile,
-  confirmInventorySession,
-} from '../../services/inventorySessionService';
-
+import { useInventorySession } from '../../context/InventorySessionContext';
+import NewSessionHeader from '../../components/NewSession/NewSessionHeader/NewSessionHeader';
+import InventorySessionInfo from '../../components/NewSession/InventorySessionInfo/InventorySessionInfo';
+import InventoryFileUpload from '../../components/NewSession/InventoryFileUpload/InventoryFileUpload';
+import RequiredColumns from '../../components/NewSession/RequiredColumns/RequiredColumns';
+import NewSessionActions from '../../components/NewSession/NewSessionActions/NewSessionActions';
+import { getBranches, getStores } from '../../services/masterDataService';
+import { previewInventoryFile, confirmInventorySession } from '../../services/inventorySessionService';
 import styles from './NewInventorySession.module.css';
 
 function NewInventorySession() {
   const navigate = useNavigate();
-  const { translations } = useLanguage();
+  const { translations, direction } = useLanguage();
+  const { setActiveSession } = useInventorySession();
+  const t = translations.inventory;
 
-  const [inventoryType, setInventoryType] =
-    useState(0);
+  const [inventoryType, setInventoryType] = useState(0);
+  const [branchId, setBranchId] = useState('');
+  const [storeId, setStoreId] = useState('');
+  const [branches, setBranches] = useState([]);
+  const [stores, setStores] = useState([]);
+  const [beforeFile, setBeforeFile] = useState(null);
+  const [afterFile, setAfterFile] = useState(null);
+  const [beforePreview, setBeforePreview] = useState(null);
+  const [afterPreview, setAfterPreview] = useState(null);
+  const [previewingBefore, setPreviewingBefore] = useState(false);
+  const [previewingAfter, setPreviewingAfter] = useState(false);
+  const [loadingMasterData, setLoadingMasterData] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
 
-  const [beforeFile, setBeforeFile] =
-    useState(null);
+  useEffect(() => {
+    let cancelled = false;
 
-  const [afterFile, setAfterFile] =
-    useState(null);
+    const loadMasterData = async () => {
+      try {
+        setLoadingMasterData(true);
 
-  const [beforePreview, setBeforePreview] =
-    useState(null);
+        const [branchesResponse, storesResponse] = await Promise.all([getBranches(), getStores()]);
 
-  const [afterPreview, setAfterPreview] =
-    useState(null);
+        if (cancelled) return;
 
-  const [previewingBefore, setPreviewingBefore] =
-    useState(false);
+        const branchesData = branchesResponse?.data ?? branchesResponse;
+        const storesData = storesResponse?.data ?? storesResponse;
 
-  const [previewingAfter, setPreviewingAfter] =
-    useState(false);
+        setBranches(Array.isArray(branchesData) ? branchesData : branchesData?.items ?? []);
+        setStores(Array.isArray(storesData) ? storesData : storesData?.items ?? []);
+      } catch (err) {
+        if (!cancelled) {
+          console.error('Failed to load master data:', err);
+          setError(t.loadMasterDataError ?? 'Failed to load branches and stores.');
+        }
+      } finally {
+        if (!cancelled) {
+          setLoadingMasterData(false);
+        }
+      }
+    };
 
-  const [isSubmitting, setIsSubmitting] =
-    useState(false);
+    loadMasterData();
 
-  const [error, setError] =
-    useState('');
+    return () => {
+      cancelled = true;
+    };
+  }, [t]);
+
+  const handleBranchChange = (value) => {
+    setBranchId(value);
+    setStoreId('');
+  };
+
+  const handleBeforeFileChange = async (file) => {
+    setBeforeFile(file);
+    setBeforePreview(null);
+    setError('');
+
+    if (!file) return;
+
+    setPreviewingBefore(true);
+
+    try {
+      const response = await previewInventoryFile(file);
+      setBeforePreview(response?.data ?? response);
+    } catch (err) {
+      console.error('Before file preview failed:', err);
+      setBeforeFile(null);
+      setError(err?.message || t.previewError);
+    } finally {
+      setPreviewingBefore(false);
+    }
+  };
+
+  const handleAfterFileChange = async (file) => {
+    setAfterFile(file);
+    setAfterPreview(null);
+    setError('');
+
+    if (!file) return;
+
+    setPreviewingAfter(true);
+
+    try {
+      const response = await previewInventoryFile(file);
+      setAfterPreview(response?.data ?? response);
+    } catch (err) {
+      console.error('After file preview failed:', err);
+      setAfterFile(null);
+      setError(err?.message || t.previewError);
+    } finally {
+      setPreviewingAfter(false);
+    }
+  };
 
   const canSubmit =
     inventoryType !== 0 &&
+    branchId !== '' &&
+    storeId !== '' &&
     beforeFile !== null &&
     afterFile !== null &&
     beforePreview !== null &&
@@ -56,163 +126,80 @@ function NewInventorySession() {
     !previewingAfter &&
     !isSubmitting;
 
-  const handleBeforeFileChange = async (
-    file
-  ) => {
-    setBeforeFile(file);
-    setBeforePreview(null);
-    setError('');
-
-    if (!file) {
-      return;
-    }
-
-    setPreviewingBefore(true);
-
-    try {
-      const result =
-        await previewInventoryFile(file);
-
-      setBeforePreview(result);
-    } catch (err) {
-      setBeforeFile(null);
-
-      setError(
-        err.message ||
-          translations.inventory
-            .previewError
-      );
-    } finally {
-      setPreviewingBefore(false);
-    }
-  };
-
-  const handleAfterFileChange = async (
-    file
-  ) => {
-    setAfterFile(file);
-    setAfterPreview(null);
-    setError('');
-
-    if (!file) {
-      return;
-    }
-
-    setPreviewingAfter(true);
-
-    try {
-      const result =
-        await previewInventoryFile(file);
-
-      setAfterPreview(result);
-    } catch (err) {
-      setAfterFile(null);
-
-      setError(
-        err.message ||
-          translations.inventory
-            .previewError
-      );
-    } finally {
-      setPreviewingAfter(false);
-    }
-  };
-
   const handleCreateSession = async () => {
-    if (!canSubmit) {
-      return;
-    }
+    if (!canSubmit) return;
 
     setIsSubmitting(true);
     setError('');
 
     try {
-      const result =
-        await confirmInventorySession({
-          inventoryType,
-          beforeFile,
-          afterFile,
-        });
+      const response = await confirmInventorySession({
+        inventoryType,
+        beforeFile,
+        afterFile,
+      });
 
-      console.log(
-        'Inventory session created:',
-        result
-      );
+      const session = response?.data ?? response;
 
-      navigate('/inventory-sessions');
+      setActiveSession({
+        ...session,
+        id: session?.id ?? session?.sessionId ?? session?.inventorySessionId,
+        branchId,
+        storeId,
+        inventoryType,
+      });
+
+      navigate('/dashboard');
     } catch (err) {
-      setError(
-        err.message ||
-          translations.inventory
-            .createSessionError
-      );
+      console.error('Failed to create inventory session:', err);
+      setError(err?.message || t.createSessionError);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleCancel = () => {
-    if (isSubmitting) {
-      return;
-    }
-
+    if (isSubmitting) return;
     navigate('/inventory-sessions');
   };
 
   return (
-    <section className={styles.page}>
-      <SessionHeader />
+    <main className={styles.page} dir={direction}>
+      <NewSessionHeader />
 
-      <SessionInfoCard
-        value={inventoryType}
-        onChange={setInventoryType}
+      <InventorySessionInfo
+        inventoryType={inventoryType}
+        onInventoryTypeChange={setInventoryType}
+        branchId={branchId}
+        onBranchChange={handleBranchChange}
+        storeId={storeId}
+        onStoreChange={setStoreId}
+        branches={branches}
+        stores={stores}
+        loading={loadingMasterData}
       />
 
       <section className={styles.uploadSection}>
         <div className={styles.sectionHeader}>
-          <h2>
-            {translations.inventory.uploadFile}
-          </h2>
-
-          <p>
-            {
-              translations.inventory
-                .uploadFileDescription
-            }
-          </p>
+          <h2>{t.uploadFile}</h2>
+          <p>{t.uploadFileDescription}</p>
         </div>
 
         <div className={styles.uploadGrid}>
-          <FileUpload
-            title={
-              translations.inventory
-                .beforeInventory
-            }
-            description={
-              translations.inventory
-                .beforeInventoryDescription
-            }
+          <InventoryFileUpload
+            title={t.beforeInventory}
+            description={t.beforeInventoryDescription}
             file={beforeFile}
-            onFileChange={
-              handleBeforeFileChange
-            }
+            onFileChange={handleBeforeFileChange}
             preview={beforePreview}
             previewing={previewingBefore}
           />
 
-          <FileUpload
-            title={
-              translations.inventory
-                .afterInventory
-            }
-            description={
-              translations.inventory
-                .afterInventoryDescription
-            }
+          <InventoryFileUpload
+            title={t.afterInventory}
+            description={t.afterInventoryDescription}
             file={afterFile}
-            onFileChange={
-              handleAfterFileChange
-            }
+            onFileChange={handleAfterFileChange}
             preview={afterPreview}
             previewing={previewingAfter}
           />
@@ -222,18 +209,18 @@ function NewInventorySession() {
       <RequiredColumns />
 
       {error && (
-        <div className={styles.error}>
+        <div className={styles.error} role="alert">
           {error}
         </div>
       )}
 
-      <SessionActions
+      <NewSessionActions
         disabled={!canSubmit}
         loading={isSubmitting}
         onSubmit={handleCreateSession}
         onCancel={handleCancel}
       />
-    </section>
+    </main>
   );
 }
 

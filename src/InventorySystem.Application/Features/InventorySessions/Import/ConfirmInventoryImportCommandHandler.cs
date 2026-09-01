@@ -378,7 +378,7 @@ public class ConfirmInventoryImportCommandHandler
                 NewCustomerPrice = itemPrice.CustomerPrice,
                 OldConsumerPrice = itemPrice.ConsumerPrice,
                 NewConsumerPrice = price,
-                ChangedAt = DateTime.UtcNow,
+                ChangedAt = DateTime.Now,
                 ChangedBy = "Excel Import",
                 Source = "Excel Import"
             });

@@ -1,0 +1,288 @@
+/* =================================
+   Card
+================================= */
+
+.card {
+  width: 100%;
+
+  overflow: hidden;
+
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+
+  background: var(--color-surface);
+
+  box-shadow: var(--shadow-card);
+}
+
+
+/* =================================
+   Header
+================================= */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: var(--space-5);
+
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.title {
+  margin: 0;
+
+  color: var(--color-text-primary);
+
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+}
+
+.description {
+  margin: var(--space-1) 0 0;
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-size-sm);
+}
+
+
+/* =================================
+   Table Wrapper
+================================= */
+
+.tableWrapper {
+  width: 100%;
+
+  overflow-x: auto;
+
+  scrollbar-width: thin;
+}
+
+
+/* =================================
+   Table
+================================= */
+
+.table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  min-width: 850px;
+}
+
+.table th {
+  height: 46px;
+
+  padding:
+    0
+    var(--space-4);
+
+  background: var(--color-surface-secondary);
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+
+  text-align: start;
+
+  white-space: nowrap;
+
+  border-bottom: 1px solid var(--color-border);
+}
+
+.table td {
+  height: 58px;
+
+  padding:
+    var(--space-3)
+    var(--space-4);
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-size-sm);
+
+  border-bottom: 1px solid var(--color-border-light);
+
+  white-space: nowrap;
+}
+
+.table tbody tr {
+  transition:
+    background-color var(--transition-fast);
+}
+
+.table tbody tr:hover {
+  background: var(--color-surface-secondary);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+
+/* =================================
+   Session ID
+================================= */
+
+.sessionId {
+  color: var(--color-text-primary) !important;
+
+  font-weight: var(--font-weight-semibold);
+}
+
+
+/* =================================
+   Status
+================================= */
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 76px;
+
+  padding:
+    5px
+    var(--space-2);
+
+  border-radius: var(--radius-full);
+
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.status.active {
+  background: var(--color-primary-light);
+
+  color: var(--color-primary);
+}
+
+.status.completed {
+  background: var(--color-success-light);
+
+  color: var(--color-success-dark);
+}
+
+.status.cancelled {
+  background: var(--color-danger-light);
+
+  color: var(--color-danger-dark);
+}
+
+
+/* =================================
+   Actions
+================================= */
+
+.actionButton {
+  width: 34px;
+  height: 34px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid var(--color-border);
+
+  border-radius: var(--radius-md);
+
+  background: var(--color-surface);
+
+  color: var(--color-text-secondary);
+
+  cursor: pointer;
+
+  transition:
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.actionButton:hover {
+  border-color: var(--color-primary);
+
+  background: var(--color-primary-soft);
+
+  color: var(--color-primary);
+}
+
+
+/* =================================
+   Empty / Loading
+================================= */
+
+.empty {
+  height: 180px !important;
+
+  text-align: center !important;
+}
+
+.emptyContent {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+  gap: var(--space-3);
+
+  color: var(--color-text-muted);
+}
+
+.emptyIcon {
+  width: 46px;
+  height: 46px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: var(--radius-full);
+
+  background: var(--color-surface-tertiary);
+
+  color: var(--color-text-muted);
+}
+
+
+/* =================================
+   RTL / LTR
+================================= */
+
+:global([dir="rtl"]) .table {
+  direction: rtl;
+}
+
+:global([dir="ltr"]) .table {
+  direction: ltr;
+}
+
+
+/* =================================
+   Responsive
+================================= */
+
+@media (max-width: 768px) {
+  .header {
+    padding: var(--space-4);
+  }
+
+  .title {
+    font-size: var(--font-size-md);
+  }
+
+  .description {
+    font-size: var(--font-size-xs);
+  }
+
+  .table th,
+  .table td {
+    padding:
+      var(--space-3)
+      var(--space-3);
+  }
+}

@@ -52,6 +52,9 @@ import system from '../../../assets/icons/system.svg'
 import shield from '../../../assets/icons/shield.svg'
 import health from '../../../assets/icons/health.svg'
 import calendar from '../../../assets/icons/calendar.svg'
+import refresh from '../../../assets/icons/refresh.svg'
+
+import clipboard from "../../../assets/icons/clipboard.svg"
 
 
 const iconMap = {
@@ -106,7 +109,10 @@ const iconMap = {
   category,
   shield,
   calendar,
-  health
+  health,
+
+  refresh,
+  clipboard
 
 };
 

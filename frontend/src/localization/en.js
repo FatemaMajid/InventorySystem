@@ -333,6 +333,53 @@ const en = {
     allRightsReserved: 'All rights reserved',
   },
 
+inventorySessions: {
+  title: "Inventory Sessions",
+  description: "View and manage inventory sessions.",
+
+  totalSessions: "Total Sessions",
+  activeSessions: "Active Sessions",
+  completedSessions: "Completed Sessions",
+
+  searchPlaceholder: "Search sessions...",
+
+  status: "Status",
+  branch: "Branch",
+  store: "Store",
+
+  allStatuses: "All Statuses",
+  allBranches: "All Branches",
+  allStores: "All Stores",
+
+  active: "Active",
+  completed: "Completed",
+  inProgress: "In Progress",
+  cancelled: "Cancelled",
+
+  clearFilters: "Clear",
+
+  sessionsList: "Inventory Sessions",
+  sessionsListDescription: "Recent inventory sessions.",
+
+  sessionId: "Session ID",
+  date: "Date",
+  items: "Items",
+  actions: "Actions",
+
+  view: "View",
+  loading: "Loading...",
+  noSessions: "No inventory sessions.",
+  loadError: "Failed to load inventory sessions.",
+  noOptions: "No options",
+},
+pagination: {
+  showing: "Showing",
+  of: "of",
+  rowsPerPage: "Rows per page",
+  previous: "Previous",
+  next: "Next",
+},
+
 }
 
 export default en;
