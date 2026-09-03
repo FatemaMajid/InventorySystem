@@ -416,7 +416,7 @@ namespace InventorySystem.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CategoryId")
+                    b.Property<int?>("CategoryId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -820,8 +820,7 @@ namespace InventorySystem.Infrastructure.Migrations
                     b.HasOne("InventorySystem.Domain.Entities.Category", "Category")
                         .WithMany("Items")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("InventorySystem.Domain.Entities.Unit", "Unit")
                         .WithMany("Items")

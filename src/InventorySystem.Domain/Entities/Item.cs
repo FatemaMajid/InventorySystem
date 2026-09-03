@@ -8,7 +8,7 @@ public class Item : BaseAuditableEntity
     public string ItemName1 { get; set; } = string.Empty;
     public string ItemName2 { get; set; } = string.Empty;
 
-    public int CategoryId { get; set; }
+    public int? CategoryId { get; set; }
     public int? UnitId { get; set; }
 
     public bool IsActive { get; set; } = true;

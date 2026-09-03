@@ -13,7 +13,7 @@ export async function getInventoryDashboard(sessionId) {
 export async function getInventoryComparison({
   sessionId,
   pageNumber = 1,
-  pageSize = 10,
+  pageSize = 20,
   itemCode = "",
   itemName = "",
   categoryId = null,

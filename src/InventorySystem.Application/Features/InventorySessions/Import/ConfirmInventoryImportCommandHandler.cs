@@ -186,9 +186,9 @@ public class ConfirmInventoryImportCommandHandler
                 throw new InvalidOperationException(
                     LocalizationKeys.ItemNameRequired);
 
-            if (string.IsNullOrWhiteSpace(row.Category))
-                throw new InvalidOperationException(
-                    LocalizationKeys.Category.Required);
+            // if (string.IsNullOrWhiteSpace(row.Category))
+            //     throw new InvalidOperationException(
+            //         LocalizationKeys.Category.Required);
         }
     }
 
@@ -282,7 +282,7 @@ public class ConfirmInventoryImportCommandHandler
         string code,
         string name1,
         string name2,
-        Category category,
+        Category? category,
         DomainUnit? unit,
         CancellationToken ct)
     {
@@ -451,10 +451,13 @@ public class ConfirmInventoryImportCommandHandler
         };
     }
 
-    private async Task<Category> GetOrCreateCategory(
-        string name,
-        CancellationToken ct)
+    private async Task<Category?> GetOrCreateCategory(
+    string name,
+    CancellationToken ct)
     {
+        if (string.IsNullOrWhiteSpace(name))
+            return null;
+
         var category = await _context.Categories
             .FirstOrDefaultAsync(
                 x => x.CategoryNameArabic == name,
@@ -475,7 +478,6 @@ public class ConfirmInventoryImportCommandHandler
 
         return category;
     }
-
     private async Task<DomainUnit?> GetUnit(
         string? name,
         CancellationToken ct)

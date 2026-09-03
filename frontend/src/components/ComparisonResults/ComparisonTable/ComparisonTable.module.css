@@ -1,0 +1,146 @@
+.wrapper {
+  width: 100%;
+
+  overflow: hidden;
+
+  border:
+    1px solid var(--color-border);
+
+  border-radius: var(--radius-lg);
+
+  background: var(--color-surface);
+}
+
+.tableWrapper {
+  width: 100%;
+
+  overflow-x: auto;
+
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tableWrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.table {
+  width: 100%;
+  min-width: 1250px;
+
+  border-collapse: collapse;
+
+  color: var(--color-text-primary);
+
+  font-size: var(--font-size-sm);
+}
+
+.table th {
+  height: 48px;
+
+  padding:
+    0 var(--space-3);
+
+  white-space: nowrap;
+
+  text-align: center;
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+
+  border-bottom:
+    1px solid var(--color-border);
+
+  background: var(--color-surface-secondary);
+}
+
+.table td {
+  height: 46px;
+
+  padding:
+    0 var(--space-3);
+
+  white-space: nowrap;
+
+  text-align: center;
+
+  color: var(--color-text-secondary);
+
+  border-bottom:
+    1px solid var(--color-border-light);
+}
+
+.table tbody tr:hover {
+  background: var(--color-surface-secondary);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.empty {
+  height: 180px !important;
+
+  text-align: center !important;
+
+  color: var(--color-text-muted) !important;
+}
+
+.positive {
+  color: var(--color-success) !important;
+
+  font-weight: var(--font-weight-semibold);
+}
+
+.negative {
+  color: var(--color-danger) !important;
+
+  font-weight: var(--font-weight-semibold);
+}
+
+.status {
+  min-width: 90px;
+  height: 28px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 var(--space-2);
+
+  border-radius: var(--radius-full);
+
+  background: var(--color-surface-tertiary);
+
+  color: var(--color-text-secondary);
+
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.increase {
+  background: var(--color-success-light);
+  color: var(--color-success-dark);
+}
+
+.decrease {
+  background: var(--color-danger-light);
+  color: var(--color-danger-dark);
+}
+
+.noDifference {
+  background: var(--color-surface-tertiary);
+  color: var(--color-text-secondary);
+}
+
+.afterOnly {
+  background: var(--color-teal-light);
+  color: var(--color-teal);
+}
+
+.beforeOnly {
+  background: var(--color-warning-light);
+  color: var(--color-warning-dark);
+}

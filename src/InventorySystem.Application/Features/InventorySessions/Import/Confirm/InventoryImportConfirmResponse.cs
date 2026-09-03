@@ -14,7 +14,7 @@ public class InventoryImportConfirmResponse
 
     public int UpdatedItems { get; set; }
 
-    public int CreatedCategories { get; set; }
+    public int CreatedCategories { get; set; } 
 
     public int CreatedLocations { get; set; }
 

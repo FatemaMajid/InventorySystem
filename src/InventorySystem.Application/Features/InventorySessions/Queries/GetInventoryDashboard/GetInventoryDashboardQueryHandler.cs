@@ -1,3 +1,4 @@
+
 using InventorySystem.Application.Common.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -37,59 +38,70 @@ public class GetInventoryDashboardQueryHandler
                 x.InventorySessionId == request.SessionId &&
                 !x.Item!.IsDeleted);
 
-        var totalItems = await details.CountAsync(cancellationToken);
+        // Single grouped aggregation instead of ~9 separate round-trips.
+        // EF Core translates every branch below into one SQL statement
+        // with conditional (CASE WHEN) aggregates.
+        var stats = await details
+            .GroupBy(x => 1)
+            .Select(g => new
+            {
+                TotalItems = g.Count(),
 
-        var increase = await details.CountAsync(
-            x => x.QuantityBefore.HasValue &&
-                 x.QuantityAfter.HasValue &&
-                 x.QuantityAfter > x.QuantityBefore,
-            cancellationToken);
+                Increase = g.Count(x =>
+                    x.QuantityBefore.HasValue &&
+                    x.QuantityAfter.HasValue &&
+                    x.QuantityAfter > x.QuantityBefore),
 
-        var decrease = await details.CountAsync(
-            x => x.QuantityBefore.HasValue &&
-                 x.QuantityAfter.HasValue &&
-                 x.QuantityAfter < x.QuantityBefore,
-            cancellationToken);
+                Decrease = g.Count(x =>
+                    x.QuantityBefore.HasValue &&
+                    x.QuantityAfter.HasValue &&
+                    x.QuantityAfter < x.QuantityBefore),
 
-        var match = await details.CountAsync(
-            x => x.QuantityBefore.HasValue &&
-                 x.QuantityAfter.HasValue &&
-                 x.QuantityAfter == x.QuantityBefore,
-            cancellationToken);
+                Match = g.Count(x =>
+                    x.QuantityBefore.HasValue &&
+                    x.QuantityAfter.HasValue &&
+                    x.QuantityAfter == x.QuantityBefore),
 
-        var newlyCounted = await details.CountAsync(
-            x => !x.QuantityBefore.HasValue &&
-                 x.QuantityAfter.HasValue,
-            cancellationToken);
+                NewlyCounted = g.Count(x =>
+                    !x.QuantityBefore.HasValue &&
+                    x.QuantityAfter.HasValue),
 
-        var fullyDepleted = await details.CountAsync(
-            x => x.QuantityBefore.HasValue &&
-                 !x.QuantityAfter.HasValue,
-            cancellationToken);
+                FullyDepleted = g.Count(x =>
+                    x.QuantityBefore.HasValue &&
+                    !x.QuantityAfter.HasValue),
 
-        var priceChanged = await details.CountAsync(
-            x => x.ConsumerPriceBefore.HasValue &&
-                 x.ConsumerPriceAfter.HasValue &&
-                 x.ConsumerPriceBefore != x.ConsumerPriceAfter,
-            cancellationToken);
+                PriceChanged = g.Count(x =>
+                    x.ConsumerPriceBefore.HasValue &&
+                    x.ConsumerPriceAfter.HasValue &&
+                    x.ConsumerPriceBefore != x.ConsumerPriceAfter),
 
-        var unitNotDefined = await details.CountAsync(
-            x => !x.Item!.UnitId.HasValue,
-            cancellationToken);
+                UnitNotDefined = g.Count(x =>
+                    !x.Item!.UnitId.HasValue),
 
-        var totalValueBefore =
-            await details
-                .Where(x => x.BeforeValue.HasValue)
-                .SumAsync(
-                    x => x.BeforeValue!.Value,
-                    cancellationToken);
+                TotalValueBefore = g
+                    .Where(x => x.BeforeValue.HasValue)
+                    .Sum(x => x.BeforeValue!.Value),
 
-        var totalValueAfter =
-            await details
-                .Where(x => x.AfterValue.HasValue)
-                .SumAsync(
-                    x => x.AfterValue!.Value,
-                    cancellationToken);
+                TotalValueAfter = g
+                    .Where(x => x.AfterValue.HasValue)
+                    .Sum(x => x.AfterValue!.Value)
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+
+        // FirstOrDefaultAsync returns null when the session has zero
+        // detail rows (e.g. import failed partway) — the original code
+        // would have returned all zeros in that case too, via Count
+        // queries on an empty set, so we preserve that behavior here.
+        var totalItems = stats?.TotalItems ?? 0;
+        var increase = stats?.Increase ?? 0;
+        var decrease = stats?.Decrease ?? 0;
+        var match = stats?.Match ?? 0;
+        var newlyCounted = stats?.NewlyCounted ?? 0;
+        var fullyDepleted = stats?.FullyDepleted ?? 0;
+        var priceChanged = stats?.PriceChanged ?? 0;
+        var unitNotDefined = stats?.UnitNotDefined ?? 0;
+        var totalValueBefore = stats?.TotalValueBefore ?? 0m;
+        var totalValueAfter = stats?.TotalValueAfter ?? 0m;
 
         var totalDifference =
             totalValueAfter - totalValueBefore;
@@ -207,8 +219,7 @@ public class GetInventoryDashboardQueryHandler
         int total)
     {
         var percentage = total > 0
-            ? (decimal)count / total * 100
-            : 0;
+            ? (decimal)count / total * 100 : 0;
 
         return new StatusSummary
         {

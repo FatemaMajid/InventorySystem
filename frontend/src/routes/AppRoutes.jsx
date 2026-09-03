@@ -7,6 +7,7 @@ import Dashboard from '../screens/Dashboard/Dashboard';
 import InventorySessions from '../screens/InventorySessions/InventorySessions';
 import NewInventorySession from '../screens/NewInventorySession/NewInventorySession';
 import Reports from '../screens/Reports/Reports';
+import ComparisonResults from '../screens/ComparisonResults/ComparisonResults';
 
 function AppRoutes() {
   return (
@@ -27,6 +28,11 @@ function AppRoutes() {
         <Route
           path="/new-inventory-session"
           element={<NewInventorySession />}
+        />
+
+        <Route
+          path="/comparison-results"
+          element={<ComparisonResults />}
         />
 
         <Route

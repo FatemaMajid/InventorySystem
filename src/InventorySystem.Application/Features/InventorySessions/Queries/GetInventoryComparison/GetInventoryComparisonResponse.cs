@@ -25,7 +25,7 @@ public class InventoryComparisonItem
     public string ItemName1 { get; init; } = string.Empty;
     public string? ItemName2 { get; init; }
 
-    public int CategoryId { get; init; }
+    public int? CategoryId { get; init; }
     public string CategoryName { get; init; } = string.Empty;
 
     public int? UnitId { get; init; }

@@ -24,6 +24,9 @@ public class ItemConfiguration : IEntityTypeConfiguration<Item>
             .IsRequired(false)
             .HasMaxLength(300);
 
+        builder.Property(x => x.CategoryId)
+            .IsRequired(false);
+
         builder.Property(x => x.IsActive)
             .IsRequired()
             .HasDefaultValue(true);

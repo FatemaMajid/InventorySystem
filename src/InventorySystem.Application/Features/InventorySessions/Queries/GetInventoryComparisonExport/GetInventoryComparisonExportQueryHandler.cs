@@ -164,7 +164,7 @@ public class InventoryComparisonExportItem
     public string ItemCode { get; init; } = string.Empty;
     public string ItemName1 { get; init; } = string.Empty;
     public string? ItemName2 { get; init; }
-    public int CategoryId { get; init; }
+    public int? CategoryId { get; init; }
     public string CategoryName { get; init; } = string.Empty;
     public int? UnitId { get; init; }
     public string UnitName { get; init; } = string.Empty;
