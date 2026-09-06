@@ -7,6 +7,10 @@ const en = {
     notifications: 'Notifications',
     lightMode: 'Light Mode',
     darkMode: 'Dark Mode',
+    loading: "Loading...",
+    noResults: "No results found.",
+    error: "Something went wrong.",
+    retry: "Retry",
   },
 
   navigation: {
@@ -280,6 +284,10 @@ const en = {
       fullyDepleted: 'Fully Depleted',
       unitNotDefined: 'Unit Not Defined',
       priceChanged: 'Price Changed',
+      total: "Total Attention",
+      session: "Inventory Session",
+      selectSession: "Select Session",
+      attentionType: "Attention Type",
     },
 
     comparisonResults: {
@@ -385,6 +393,116 @@ const en = {
     rowsPerPage: "Rows per page",
     previous: "Previous",
     next: "Next",
+  },
+
+  reports: {
+    title: "Inventory Report",
+    description: "Review, analyze and export results for the selected inventory session.",
+    session: "Inventory Session",
+    date: "Inventory Date",
+    branch: "Branch",
+    store: "Store",
+    noActiveSession: "Select an inventory session to view its report.",
+    error: "An error occurred while loading the report.",
+    exportError: "An error occurred while exporting the report.",
+
+    summary: {
+      totalItems: "Total Items",
+      match: "Matched Items",
+      differences: "Items with Differences",
+      attention: "Attention Items",
+    },
+
+    financial: {
+      before: "Value Before",
+      after: "Value After",
+      difference: "Value Difference",
+      percentage: "Difference %",
+    },
+
+    tabs: {
+      overview: "Overview",
+      comparison: "Comparison",
+    },
+
+    actions: {
+      excel: "Export Excel",
+      pdf: "Export PDF",
+      print: "Print",
+    },
+
+    statusOverview: {
+      title: "Inventory Status",
+      description: "Distribution of counted inventory results.",
+    },
+
+    statuses: {
+      Increase: "Increase",
+      Decrease: "Decrease",
+      Match: "Matched",
+      NewlyCounted: "Newly Counted",
+      FullyDepleted: "Fully Depleted",
+    },
+
+    topDifferences: {
+      title: "Top Value Differences",
+      description: "Items with the largest value changes.",
+      empty: "No value differences found.",
+    },
+  },
+
+  attentionItems: {
+    title: "Attention Items",
+    description: "Items that require review or follow-up.",
+    session: "Inventory Session",
+    sessionDate: "Inventory Date",
+    branch: "Branch",
+    store: "Store",
+    inventoryType: "Inventory Type",
+
+    summary: {
+      total: "Total Attention Items",
+      newlyCounted: "Newly Counted",
+      fullyDepleted: "Fully Depleted",
+      unitNotDefined: "Unit Not Defined",
+      priceChanged: "Price Changed",
+    },
+
+    filters: {
+      search: "Search by item code",
+      attentionType: "Attention Type",
+      category: "Category",
+      unit: "Unit",
+      all: "All",
+      clear: "Clear",
+    },
+
+    types: {
+      newlyCounted: "Newly Counted",
+      fullyDepleted: "Fully Depleted",
+      unitNotDefined: "Unit Not Defined",
+      priceChanged: "Price Changed",
+    },
+
+    table: {
+      itemCode: "Item Code",
+      itemName: "Item Name",
+      category: "Category",
+      unit: "Unit",
+      quantityBefore: "Previous Quantity",
+      quantityAfter: "Current Quantity",
+      difference: "Difference",
+      consumerPriceBefore: "Previous Consumer Price",
+      consumerPriceAfter: "Current Consumer Price",
+      valueBefore: "Previous Value",
+      valueAfter: "Current Value",
+      valueDifference: "Value Difference",
+      attentionType: "Attention Type",
+    },
+
+    empty: "No attention items found.",
+    loading: "Loading data...",
+    error: "An error occurred while loading attention items.",
   },
 
 }

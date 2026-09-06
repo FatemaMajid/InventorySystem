@@ -1,5 +1,7 @@
 import Icon from "../../UI/Icon/Icon";
+import Skeleton from "../../UI/Loading/Skeleton/Skeleton";
 import { useLanguage } from "../../../context/LanguageContext";
+
 import styles from "./KpiCard.module.css";
 
 const DEFAULT_CARDS = [
@@ -66,7 +68,7 @@ function KpiCard({
     loading = false,
     onCardClick,
 }) {
-    const { translations, language } = useLanguage();
+    const { translations } = useLanguage();
 
     const t = translations.dashboard.kpiCards;
 
@@ -112,11 +114,16 @@ function KpiCard({
                             </span>
 
                             {loading ? (
-                                <div className={styles.skeletonValue} />
+                                <Skeleton
+                                    width="55px"
+                                    height="30px"
+                                    borderRadius="6px"
+                                />
                             ) : (
                                 <strong className={styles.value}>
-                                     {Number(card.value || 0).toLocaleString("en-US")}
-
+                                    {Number(
+                                        card.value || 0
+                                    ).toLocaleString("en-US")}
                                 </strong>
                             )}
                         </div>

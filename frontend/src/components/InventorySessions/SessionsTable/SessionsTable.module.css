@@ -1,18 +1,7 @@
-/* =================================
-   Card
-================================= */
-
 .card {
   width: 100%;
 
-  overflow: hidden;
-
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-
   background: var(--color-surface);
-
-  box-shadow: var(--shadow-card);
 }
 
 
@@ -22,12 +11,16 @@
 
 .header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
 
-  padding: var(--space-5);
+  padding:
+    var(--space-5)
+    var(--space-5)
+    var(--space-4);
 
-  border-bottom: 1px solid var(--color-border-light);
+  border-bottom: 1px solid
+    var(--color-border);
 }
 
 .title {
@@ -40,7 +33,10 @@
 }
 
 .description {
-  margin: var(--space-1) 0 0;
+  margin:
+    var(--space-1)
+    0
+    0;
 
   color: var(--color-text-secondary);
 
@@ -49,7 +45,7 @@
 
 
 /* =================================
-   Table Wrapper
+   Table
 ================================= */
 
 .tableWrapper {
@@ -57,20 +53,23 @@
 
   overflow-x: auto;
 
-  scrollbar-width: thin;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 
-
-/* =================================
-   Table
-================================= */
+.tableWrapper::-webkit-scrollbar {
+  display: none;
+}
 
 .table {
   width: 100%;
+  min-width: 850px;
 
   border-collapse: collapse;
 
-  min-width: 850px;
+  color: var(--color-text-primary);
+
+  font-size: var(--font-size-sm);
 }
 
 .table th {
@@ -80,47 +79,52 @@
     0
     var(--space-4);
 
-  background: var(--color-surface-secondary);
+  white-space: nowrap;
 
   color: var(--color-text-secondary);
 
-  font-size: var(--font-size-xs);
+  background:
+    var(--color-surface-secondary);
+
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
 
-  text-align: start;
+  text-align: center;
 
-  white-space: nowrap;
-
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid
+    var(--color-border);
 }
 
 .table td {
-  height: 58px;
+  height: 52px;
 
   padding:
-    var(--space-3)
+    0
     var(--space-4);
+
+  white-space: nowrap;
 
   color: var(--color-text-secondary);
 
-  font-size: var(--font-size-sm);
+  text-align: center;
 
-  border-bottom: 1px solid var(--color-border-light);
-
-  white-space: nowrap;
+  border-bottom: 1px solid
+    var(--color-border-light);
 }
 
 .table tbody tr {
   transition:
-    background-color var(--transition-fast);
+    background-color
+    var(--transition-fast);
 }
 
 .table tbody tr:hover {
-  background: var(--color-surface-secondary);
+  background:
+    var(--color-surface-secondary);
 }
 
 .table tbody tr:last-child td {
-  border-bottom: 0;
+  border-bottom: none;
 }
 
 
@@ -129,9 +133,11 @@
 ================================= */
 
 .sessionId {
-  color: var(--color-text-primary) !important;
+  color:
+    var(--color-text-primary) !important;
 
-  font-weight: var(--font-weight-semibold);
+  font-weight:
+    var(--font-weight-semibold);
 }
 
 
@@ -140,43 +146,60 @@
 ================================= */
 
 .status {
+  min-width: 88px;
+  height: 28px;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
-  min-width: 76px;
-
   padding:
-    5px
+    0
     var(--space-2);
 
-  border-radius: var(--radius-full);
+  border-radius:
+    var(--radius-full);
 
-  font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-semibold);
+  background:
+    var(--color-surface-tertiary);
+
+  color:
+    var(--color-text-secondary);
+
+  font-size:
+    var(--font-size-xs);
+
+  font-weight:
+    var(--font-weight-semibold);
 }
 
-.status.active {
-  background: var(--color-primary-light);
+.Completed {
+  background:
+    var(--color-success-light);
 
-  color: var(--color-primary);
+  color:
+    var(--color-success-dark);
 }
 
-.status.completed {
-  background: var(--color-success-light);
+.InProgress {
+  background:
+    var(--color-warning-light);
 
-  color: var(--color-success-dark);
+  color:
+    var(--color-warning-dark);
 }
 
-.status.cancelled {
-  background: var(--color-danger-light);
+.Cancelled {
+  background:
+    var(--color-danger-light);
 
-  color: var(--color-danger-dark);
+  color:
+    var(--color-danger-dark);
 }
 
 
 /* =================================
-   Actions
+   Action
 ================================= */
 
 .actionButton {
@@ -187,13 +210,19 @@
   align-items: center;
   justify-content: center;
 
-  border: 1px solid var(--color-border);
+  padding: 0;
 
-  border-radius: var(--radius-md);
+  border: 1px solid
+    var(--color-border);
 
-  background: var(--color-surface);
+  border-radius:
+    var(--radius-md);
 
-  color: var(--color-text-secondary);
+  background:
+    var(--color-surface);
+
+  color:
+    var(--color-text-secondary);
 
   cursor: pointer;
 
@@ -204,61 +233,60 @@
 }
 
 .actionButton:hover {
-  border-color: var(--color-primary);
+  color:
+    var(--color-primary);
 
-  background: var(--color-primary-soft);
+  border-color:
+    var(--color-primary-light);
 
-  color: var(--color-primary);
+  background:
+    var(--color-primary-soft);
+}
+
+.actionButton:active {
+  transform: translateY(1px);
 }
 
 
 /* =================================
-   Empty / Loading
+   Loading / Empty / Error
 ================================= */
 
-.empty {
-  height: 180px !important;
-
-  text-align: center !important;
-}
-
-.emptyContent {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-
-  gap: var(--space-3);
-
-  color: var(--color-text-muted);
-}
-
-.emptyIcon {
-  width: 46px;
-  height: 46px;
+.state {
+  min-height: 240px;
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  border-radius: var(--radius-full);
-
-  background: var(--color-surface-tertiary);
-
-  color: var(--color-text-muted);
+  padding:
+    var(--space-6);
 }
 
 
 /* =================================
-   RTL / LTR
+   RTL
 ================================= */
 
 :global([dir="rtl"]) .table {
   direction: rtl;
 }
 
+:global([dir="rtl"]) .header {
+  text-align: right;
+}
+
+
+/* =================================
+   LTR
+================================= */
+
 :global([dir="ltr"]) .table {
   direction: ltr;
+}
+
+:global([dir="ltr"]) .header {
+  text-align: left;
 }
 
 
@@ -268,21 +296,31 @@
 
 @media (max-width: 768px) {
   .header {
-    padding: var(--space-4);
+    padding:
+      var(--space-4);
   }
 
   .title {
-    font-size: var(--font-size-md);
+    font-size:
+      var(--font-size-md);
   }
 
   .description {
-    font-size: var(--font-size-xs);
+    font-size:
+      var(--font-size-xs);
   }
 
   .table th,
   .table td {
     padding:
-      var(--space-3)
+      0
       var(--space-3);
+  }
+
+  .state {
+    min-height: 220px;
+
+    padding:
+      var(--space-5);
   }
 }

@@ -2,28 +2,29 @@
    /* =================================
      Colors - Brand
   ================================= */
+
    --color-sidebar-active-text: #26332f;
-   --color-primary: #7fa574;
-   --color-primary-hover: #6e9464;
-   --color-primary-light: #e8efe4;
-   --color-primary-soft: #f3f6f0;
+   --color-primary: #769a6b;
+   --color-primary-hover: #668c5d;
+   --color-primary-light: #e2e9dd;
+   --color-primary-soft: #edf2e9;
 
    /* =================================
      Light Theme
   ================================= */
 
-   --color-background: #f8f8f4;
+   --color-background: #e9ebe5;
 
-   --color-surface: #ffffff;
-   --color-surface-secondary: #f4f5ef;
-   --color-surface-tertiary: #ecefe7;
+   --color-surface: #f7f8f4;
+   --color-surface-secondary: #e1e5dd;
+   --color-surface-tertiary: #d7ddd4;
 
-   --color-border: #dde3d8;
-   --color-border-light: #e9ede5;
+   --color-border: #c7d0c4;
+   --color-border-light: #d5ddd1;
 
-   --color-text-primary: #273129;
-   --color-text-secondary: #687269;
-   --color-text-muted: #929a92;
+   --color-text-primary: #252f28;
+   --color-text-secondary: #566158;
+   --color-text-muted: #7b857c;
    --color-text-white: #ffffff;
 
    /* =================================
@@ -33,7 +34,7 @@
    --color-sidebar: #26352b;
    --color-sidebar-dark: #1c2921;
    --color-sidebar-hover: #35483a;
-   --color-sidebar-active: #7fa574;
+   --color-sidebar-active: #769a6b;
 
    --color-sidebar-text: #e7eee8;
    --color-sidebar-muted: #a2afa5;
@@ -42,32 +43,32 @@
      Status Colors
   ================================= */
 
-   --color-success: #7fa574;
-   --color-success-light: #e8efe4;
-   --color-success-dark: #5f8056;
+   --color-success: #6f9966;
+   --color-success-light: #e1ecde;
+   --color-success-dark: #52794b;
 
-   --color-danger: #d37676;
-   --color-danger-light: #f7e6e6;
-   --color-danger-dark: #b85d5d;
+   --color-danger: #cf6d6d;
+   --color-danger-light: #f4dddd;
+   --color-danger-dark: #a95151;
 
-   --color-warning: #ebc49f;
-   --color-warning-light: #fbf0e2;
-   --color-warning-dark: #c99461;
+   --color-warning: #d99d61;
+   --color-warning-light: #f6e8d7;
+   --color-warning-dark: #b6783e;
 
-   --color-purple: #9a88ae;
-   --color-purple-light: #eeeaf2;
+   --color-purple: #8f78a6;
+   --color-purple-light: #e9e3ee;
 
-   --color-teal: #76a99c;
-   --color-teal-light: #e5f0ed;
+   --color-teal: #659f91;
+   --color-teal-light: #deece8;
 
-   --color-blue-light: #edf2ed;
+   --color-blue-light: #e4e9e5;
 
    /* =================================
      Highlight
   ================================= */
 
-   --color-yellow: #f1ef99;
-   --color-yellow-light: #faf9d9;
+   --color-yellow: #dedb78;
+   --color-yellow-light: #f4f2c9;
 
    /* =================================
      Layout
@@ -136,16 +137,16 @@
   ================================= */
 
    --shadow-sm:
-      0 1px 3px rgba(39, 49, 41, 0.05);
+      0 1px 3px rgba(39, 49, 41, 0.07);
 
    --shadow-md:
-      0 5px 16px rgba(39, 49, 41, 0.07);
+      0 5px 16px rgba(39, 49, 41, 0.09);
 
    --shadow-lg:
-      0 12px 32px rgba(39, 49, 41, 0.1);
+      0 12px 32px rgba(39, 49, 41, 0.12);
 
    --shadow-card:
-      0 2px 10px rgba(39, 49, 41, 0.045);
+      0 2px 10px rgba(39, 49, 41, 0.065);
 
    /* =================================
      Transitions
@@ -173,83 +174,84 @@
 
 [data-theme="dark"] {
    --color-sidebar-active-text: #17211f;
+
    /* =================================
      Background
   ================================= */
 
-   --color-background: #151a16;
+   --color-background: #1c211d;
 
-   --color-surface: #1d251f;
-   --color-surface-secondary: #242e26;
-   --color-surface-tertiary: #2c382e;
+   --color-surface: #242d26;
+   --color-surface-secondary: #2b362d;
+   --color-surface-tertiary: #333f35;
 
    /* =================================
      Borders
   ================================= */
 
-   --color-border: #3a483d;
-   --color-border-light: #303c33;
+   --color-border: #465449;
+   --color-border-light: #39463c;
 
    /* =================================
      Text
   ================================= */
 
    --color-text-primary: #f1f3ed;
-   --color-text-secondary: #c0c8be;
-   --color-text-muted: #899289;
+   --color-text-secondary: #cbd3c9;
+   --color-text-muted: #969f96;
    --color-text-white: #ffffff;
 
    /* =================================
      Brand
   ================================= */
 
-   --color-primary: #9dbb91;
-   --color-primary-hover: #b0cba5;
-   --color-primary-light: #29392c;
-   --color-primary-soft: #223026;
+   --color-primary: #a3bf98;
+   --color-primary-hover: #b5cea9;
+   --color-primary-light: #2b3c2e;
+   --color-primary-soft: #25352a;
 
    /* =================================
      Sidebar
   ================================= */
 
-   --color-sidebar: #101610;
-   --color-sidebar-dark: #0b100c;
-   --color-sidebar-hover: #253328;
-   --color-sidebar-active: #7fa574;
+   --color-sidebar: #121812;
+   --color-sidebar-dark: #0d120e;
+   --color-sidebar-hover: #28372b;
+   --color-sidebar-active: #86a97c;
 
    --color-sidebar-text: #dce6dd;
-   --color-sidebar-muted: #89968b;
+   --color-sidebar-muted: #8f9b91;
 
    /* =================================
      Status Colors
   ================================= */
 
-   --color-success: #9dbb91;
-   --color-success-light: #263829;
-   --color-success-dark: #b0cba5;
+   --color-success: #a3bf98;
+   --color-success-light: #293c2c;
+   --color-success-dark: #b5cea9;
 
-   --color-danger: #d98a8a;
-   --color-danger-light: #3a2525;
-   --color-danger-dark: #e5a0a0;
+   --color-danger: #db9090;
+   --color-danger-light: #3d2929;
+   --color-danger-dark: #e7a7a7;
 
-   --color-warning: #ebc49f;
-   --color-warning-light: #3a3025;
-   --color-warning-dark: #f0cea8;
+   --color-warning: #edc69f;
+   --color-warning-light: #3c3227;
+   --color-warning-dark: #f2d0ad;
 
-   --color-purple: #b09bc5;
-   --color-purple-light: #302a38;
+   --color-purple: #b49fc8;
+   --color-purple-light: #332d3b;
 
-   --color-teal: #88b7aa;
-   --color-teal-light: #253934;
+   --color-teal: #8dbbb0;
+   --color-teal-light: #293d38;
 
-   --color-blue-light: #293630;
+   --color-blue-light: #2b3931;
 
    /* =================================
      Highlight
   ================================= */
 
-   --color-yellow: #e9e58f;
-   --color-yellow-light: #383720;
+   --color-yellow: #ebe695;
+   --color-yellow-light: #3a3923;
 
    /* =================================
      Shadows
@@ -259,93 +261,11 @@
       0 1px 3px rgba(0, 0, 0, 0.22);
 
    --shadow-md:
-      0 5px 16px rgba(0, 0, 0, 0.28);
+      0 5px 16px rgba(0, 0, 0, 0.27);
 
    --shadow-lg:
-      0 12px 32px rgba(0, 0, 0, 0.38);
+      0 12px 32px rgba(0, 0, 0, 0.36);
 
    --shadow-card:
-      0 2px 10px rgba(0, 0, 0, 0.22);
-}
-
-
-/* =================================
-   Global Base
-================================= */
-
-* {
-   box-sizing: border-box;
-}
-
-html,
-body,
-#root {
-   min-height: 100%;
-}
-
-body {
-   margin: 0;
-
-   font-family: var(--font-family);
-
-   font-size: var(--font-size-md);
-   font-weight: var(--font-weight-normal);
-
-   color: var(--color-text-primary);
-   background: var(--color-background);
-
-   transition:
-      background-color var(--transition-normal),
-      color var(--transition-normal);
-}
-
-
-/* =================================
-   RTL Support
-================================= */
-
-html[dir="rtl"],
-body[dir="rtl"] {
-   direction: rtl;
-}
-
-html[dir="ltr"],
-body[dir="ltr"] {
-   direction: ltr;
-}
-
-
-/* =================================
-   Buttons / Inputs
-================================= */
-
-button,
-input,
-select,
-textarea {
-   font-family: inherit;
-}
-
-button {
-   cursor: pointer;
-}
-
-
-/* =================================
-   Links
-================================= */
-
-a {
-   color: inherit;
-   text-decoration: none;
-}
-
-
-/* =================================
-   Selection
-================================= */
-
-::selection {
-   background: var(--color-primary);
-   color: #ffffff;
+      0 2px 10px rgba(0, 0, 0, 0.20);
 }

@@ -1,0 +1,140 @@
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-4);
+}
+
+.card {
+  min-width: 0;
+  padding: var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--color-border-light);
+  color: var(--color-primary);
+}
+
+.cardHeader h2 {
+  margin: 0 0 var(--space-1);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+}
+
+.cardHeader p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+.statusList,
+.differenceList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-top: var(--space-4);
+}
+
+.statusRow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto 55px;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+}
+
+.statusRow:hover {
+  background: var(--color-surface-secondary);
+}
+
+.statusRow:last-child,
+.differenceRow:last-child {
+  border-bottom: 0;
+}
+
+.statusRow > span:first-child {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.statusRow strong {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+}
+
+.percentage {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  text-align: end;
+}
+
+.differenceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+}
+
+.differenceRow:hover {
+  background: var(--color-surface-secondary);
+}
+
+.differenceRow > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.differenceRow strong {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+}
+
+.differenceRow span {
+  overflow: hidden;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.differenceRow b {
+  flex-shrink: 0;
+  font-size: var(--font-size-sm);
+}
+
+.positive {
+  color: var(--color-success-dark);
+}
+
+.negative {
+  color: var(--color-danger-dark);
+}
+
+.empty {
+  padding: var(--space-5) 0;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  text-align: center;
+}
+
+@media (max-width: 850px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}

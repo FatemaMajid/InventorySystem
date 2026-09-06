@@ -40,12 +40,6 @@ export const navigationGroups = [
     key: 'results',
     items: [
       {
-        key: 'comparisonResults',
-        path: '/comparison-results',
-        icon: 'comparison',
-        permission: 'Comparison.View',
-      },
-      {
         key: 'attentionItems',
         path: '/attention-items',
         icon: 'attention',

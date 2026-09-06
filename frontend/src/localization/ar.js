@@ -7,6 +7,10 @@ const ar = {
     notifications: 'الإشعارات',
     lightMode: 'الوضع الفاتح',
     darkMode: 'الوضع الداكن',
+    loading: "جارٍ التحميل...",
+    noResults: "لا توجد نتائج.",
+    error: "حدث خطأ ما.",
+    retry: "إعادة المحاولة",
   },
 
   navigation: {
@@ -276,6 +280,10 @@ const ar = {
       fullyDepleted: 'غير موجود بعد الجرد',
       unitNotDefined: 'الوحدة غير معرفة',
       priceChanged: 'تغير في السعر',
+      total: "إجمالي حالات الانتباه",
+      session: "جلسة الجرد",
+      selectSession: "اختر جلسة الجرد",
+      attentionType: "نوع الحالة",
     },
 
     comparisonResults: {
@@ -383,6 +391,115 @@ const ar = {
     next: "التالي",
   },
 
+  reports: {
+    title: "تقرير الجرد",
+    description: "مراجعة وتحليل وتصدير نتائج جلسة الجرد المحددة.",
+    session: "جلسة الجرد",
+    date: "تاريخ الجرد",
+    branch: "الفرع",
+    store: "المخزن",
+    noActiveSession: "اختر جلسة جرد لعرض تقريرها.",
+    error: "حدث خطأ أثناء تحميل التقرير.",
+    exportError: "حدث خطأ أثناء تصدير التقرير.",
+
+    summary: {
+      totalItems: "إجمالي الأصناف",
+      match: "الأصناف المتطابقة",
+      differences: "الأصناف ذات الفروقات",
+      attention: "عناصر الانتباه",
+    },
+
+    financial: {
+      before: "القيمة قبل الجرد",
+      after: "القيمة بعد الجرد",
+      difference: "فرق القيمة",
+      percentage: "نسبة الفرق",
+    },
+
+    tabs: {
+      overview: "نظرة عامة",
+      comparison: "المقارنة",
+    },
+
+    actions: {
+      excel: "تصدير Excel",
+      pdf: "تصدير PDF",
+      print: "طباعة",
+    },
+
+    statusOverview: {
+      title: "حالة الجرد",
+      description: "توزيع نتائج الأصناف التي تم جردها.",
+    },
+
+    statuses: {
+      Increase: "زيادة",
+      Decrease: "نقصان",
+      Match: "متطابق",
+      NewlyCounted: "تم عدّه حديثًا",
+      FullyDepleted: "نفد بالكامل",
+    },
+
+    topDifferences: {
+      title: "أكبر فروقات القيمة",
+      description: "الأصناف ذات أكبر تغير في القيمة.",
+      empty: "لا توجد فروقات في القيمة.",
+    },
+  },
+
+  attentionItems: {
+    title: "عناصر الانتباه",
+    description: "العناصر التي تحتاج إلى مراجعة أو متابعة.",
+    session: "جلسة الجرد",
+    sessionDate: "تاريخ الجرد",
+    branch: "الفرع",
+    store: "المتجر",
+    inventoryType: "نوع الجرد",
+
+    summary: {
+      total: "إجمالي عناصر الانتباه",
+      newlyCounted: "تم عدّها حديثًا",
+      fullyDepleted: "نفدت بالكامل",
+      unitNotDefined: "الوحدة غير محددة",
+      priceChanged: "تغيّر السعر",
+    },
+
+    filters: {
+      search: "بحث بكود الصنف",
+      attentionType: "نوع الانتباه",
+      category: "التصنيف",
+      unit: "الوحدة",
+      all: "الكل",
+      clear: "مسح",
+    },
+
+    types: {
+      newlyCounted: "تم عدّها حديثًا",
+      fullyDepleted: "نفدت بالكامل",
+      unitNotDefined: "الوحدة غير محددة",
+      priceChanged: "تغيّر السعر",
+    },
+
+    table: {
+      itemCode: "كود الصنف",
+      itemName: "اسم الصنف",
+      category: "التصنيف",
+      unit: "الوحدة",
+      quantityBefore: "الكمية السابقة",
+      quantityAfter: "الكمية الحالية",
+      difference: "الفرق",
+      consumerPriceBefore: "سعر المستهلك السابق",
+      consumerPriceAfter: "سعر المستهلك الحالي",
+      valueBefore: "القيمة السابقة",
+      valueAfter: "القيمة الحالية",
+      valueDifference: "فرق القيمة",
+      attentionType: "نوع الانتباه",
+    },
+
+    empty: "لا توجد عناصر تحتاج إلى انتباه.",
+    loading: "جاري تحميل البيانات...",
+    error: "حدث خطأ أثناء تحميل عناصر الانتباه.",
+  },
 
 };
 

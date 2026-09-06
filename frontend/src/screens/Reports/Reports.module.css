@@ -1,20 +1,55 @@
 .page {
   width: 100%;
+  padding-bottom: var(--space-8);
 }
 
-.page h1 {
-  margin: 0 0 var(--space-2);
-
-  color: var(--color-text-primary);
-
-  font-size: var(--font-size-2xl);
-  font-weight: var(--font-weight-bold);
+.topRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-5);
 }
 
-.page p {
-  margin: 0;
+.topRow > :first-child {
+  flex: 1;
+  min-width: 0;
+}
 
+.error {
+  margin-bottom: var(--space-4);
+}
+
+.emptySession {
+  min-height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-lg);
   color: var(--color-text-secondary);
+}
 
-  font-size: var(--font-size-md);
+.comparisonSection {
+  width: 100%;
+}
+
+@media (max-width: 700px) {
+  .topRow {
+    flex-direction: column;
+  }
+}
+
+@media print {
+  .page {
+    padding: 0;
+  }
+
+  .topRow :global(button),
+  .comparisonSection :global(button),
+  .comparisonSection :global(select),
+  .comparisonSection :global(input) {
+    display: none;
+  }
 }

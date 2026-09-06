@@ -7,7 +7,7 @@ import Dashboard from '../screens/Dashboard/Dashboard';
 import InventorySessions from '../screens/InventorySessions/InventorySessions';
 import NewInventorySession from '../screens/NewInventorySession/NewInventorySession';
 import Reports from '../screens/Reports/Reports';
-import ComparisonResults from '../screens/ComparisonResults/ComparisonResults';
+import AttentionItems from '../screens/AttentionItems/AttentionItems';
 
 function AppRoutes() {
   return (
@@ -32,7 +32,12 @@ function AppRoutes() {
 
         <Route
           path="/comparison-results"
-          element={<ComparisonResults />}
+          element={<Navigate to="/reports" replace />}
+        />
+
+        <Route
+          path="/attention-items"
+          element={<AttentionItems />}
         />
 
         <Route

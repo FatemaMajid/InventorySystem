@@ -6,6 +6,7 @@ using InventorySystem.Application.Features.InventorySessions.Import.Preview;
 using InventorySystem.Application.Features.InventorySessions.Queries.GetInventoryComparison;
 using InventorySystem.Application.Features.InventorySessions.Queries.GetInventoryDashboard;
 using InventorySystem.Application.Features.InventorySessions.Queries.GetInventorySessions;
+using InventorySystem.Application.Features.InventorySessions.Queries.GetAttentionItems;
 using InventorySystem.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -42,6 +43,17 @@ public class InventorySessionsController : ControllerBase
     public async Task<IActionResult> GetAll(
         [FromQuery] GetInventorySessionsQuery query)
     {
+        return Ok(await _mediator.Send(query));
+    }
+
+    [HttpGet("{id:int}/attention")]
+    [HasPermission(PermissionCodes.AttentionView)]
+    public async Task<IActionResult> GetAttentionItems(
+    int id,
+    [FromQuery] GetAttentionItemsQuery query)
+    {
+        query = query with { SessionId = id };
+
         return Ok(await _mediator.Send(query));
     }
 
