@@ -1,3 +1,4 @@
+using System.Text.Json;
 using InventorySystem.Application.Common.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -11,31 +12,45 @@ public class DeleteBranchCommandHandler
     : IRequestHandler<DeleteBranchCommand, bool>
 {
     private readonly IApplicationDbContext _context;
+    private readonly IAuditLogService _auditLogService;
 
-    public DeleteBranchCommandHandler(IApplicationDbContext context)
+    public DeleteBranchCommandHandler(
+        IApplicationDbContext context,
+        IAuditLogService auditLogService)
     {
         _context = context;
+        _auditLogService = auditLogService;
     }
 
     public async Task<bool> Handle(
         DeleteBranchCommand request,
         CancellationToken cancellationToken)
     {
-        // Find the branch by ID.
         var branch = await _context.Branches
             .FirstOrDefaultAsync(
                 x => x.Id == request.Id,
                 cancellationToken);
 
-        // Branch does not exist.
         if (branch == null)
             return false;
 
-        // Remove the branch.
+        var details = JsonSerializer.Serialize(new
+        {
+            branchNameArabic = branch.BranchNameArabic,
+            branchNameEnglish = branch.BranchNameEnglish,
+            branchCode = branch.BranchCode
+        });
+
         _context.Branches.Remove(branch);
 
-        // Save changes to the database.
         await _context.SaveChangesAsync(cancellationToken);
+
+        await _auditLogService.LogAsync(
+            action: "Delete",
+            entity: "Branch",
+            entityId: request.Id.ToString(),
+            details: details,
+            cancellationToken: cancellationToken);
 
         return true;
     }

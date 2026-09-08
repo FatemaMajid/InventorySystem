@@ -27,6 +27,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using InventorySystem.Infrastructure.Persistence.Interceptors;
+using InventorySystem.Infrastructure.AuditLogs;
 
 
 // =====================================================
@@ -35,15 +37,24 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// =====================================================
+// Services
+// =====================================================
+
+builder.Services.AddScoped<AuditLogInterceptor>();
+builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 
 // =====================================================
 // Database
 // =====================================================
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString(
-            "DefaultConnection")));
+builder.Services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
+    options
+        .UseSqlServer(
+            builder.Configuration.GetConnectionString(
+                "DefaultConnection"))
+        .AddInterceptors(
+            serviceProvider.GetRequiredService<AuditLogInterceptor>()));
 
 builder.Services.AddScoped<
     IApplicationDbContext,

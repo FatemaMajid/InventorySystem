@@ -1,0 +1,199 @@
+.card {
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: 18px;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-card)
+}
+
+.tableHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--color-border);
+    background: linear-gradient(180deg, var(--color-surface), var(--color-surface-secondary))
+}
+
+.heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0
+}
+
+.headingIcon {
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 38px;
+    border: 1px solid var(--color-primary-light);
+    border-radius: 10px;
+    background: var(--color-primary-soft);
+    color: var(--color-primary)
+}
+
+.title {
+    margin: 0;
+    color: var(--color-text-primary);
+    font-size: 16px;
+    font-weight: 700
+}
+
+.description {
+    margin: 3px 0 0;
+    color: var(--color-text-secondary);
+    font-size: 12px
+}
+
+.count {
+    min-width: 38px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
+    font-size: 12px;
+    font-weight: 700
+}
+
+.tableWrapper {
+    width: 100%;
+    overflow-x: auto
+}
+
+.table {
+    width: 100%;
+    min-width: 1000px;
+    border-collapse: separate;
+    border-spacing: 0
+}
+
+.table th,
+.table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--color-border-light);
+    text-align: start;
+    vertical-align: middle;
+    font-size: 12px
+}
+
+.table th {
+    height: 48px;
+    background: var(--color-surface-secondary);
+    color: var(--color-text-secondary);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    white-space: nowrap
+}
+
+.table td {
+    height: 62px;
+    color: var(--color-text-primary)
+}
+
+.table tbody tr {
+    transition: background-color var(--transition-fast);
+}
+
+.table tbody tr:hover {
+    background: var(--color-primary-soft);
+}
+
+.table tbody tr:last-child td {
+    border-bottom: 0
+}
+
+.actionsHead {
+    text-align: center !important
+}
+
+.primaryText {
+    font-weight: 700
+}
+
+.code {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    padding: 0 10px;
+    border: 1px solid var(--color-primary-light);
+    border-radius: 8px;
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+    font-weight: 800;
+    letter-spacing: .02em
+}
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    min-height: 30px;
+    padding: 0 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap
+}
+
+.status i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor
+}
+
+.active {
+    background: var(--color-success-light);
+    color: var(--color-success-dark)
+}
+
+.inactive {
+    background: var(--color-danger-light);
+    color: var(--color-danger-dark)
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px
+}
+
+.actionButton {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-border);
+    border-radius: 9px;
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast)
+}
+
+.actionButton:hover {
+    border-color: var(--color-primary);
+    background: var(--color-primary-soft);
+    color: var(--color-primary);
+    transform: translateY(-1px)
+}
+
+.deleteButton:hover {
+    border-color: var(--color-danger);
+    background: var(--color-danger-light);
+    color: var(--color-danger-dark)
+}

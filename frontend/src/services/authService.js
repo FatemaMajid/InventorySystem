@@ -1,50 +1,65 @@
 import apiClient from "./api/apiClient";
 
-const ADMIN_USERNAME = "admin";
-const ADMIN_PASSWORD = "Admin@12345";
+const TOKEN_KEY = "inventory_token";
+const USER_KEY = "inventory_user";
 
-export async function loginAdmin() {
-  const response = await apiClient.post(
-    "/api/Auth/login",
-    {
-      username: ADMIN_USERNAME,
-      password: ADMIN_PASSWORD,
+export async function login(username, password) {
+    const response = await apiClient.post("/api/Auth/login", {
+        username,
+        password,
+    });
+
+    const token =
+        response?.token ||
+        response?.accessToken ||
+        response?.access_token;
+
+    if (!token) {
+        console.error("Login response:", response);
+        throw new Error("Login succeeded but JWT token was not found.");
     }
-  );
 
-  const token =
-    response?.token ||
-    response?.accessToken ||
-    response?.access_token;
+    const user = {
+        id: response?.userId ?? response?.id ?? null,
+        username: response?.username ?? username,
+        role: response?.role ?? "User",
+        expiresAt: response?.expiresAt ?? null,
+    };
 
-  if (!token) {
-    console.error("Login response:", response);
+    localStorage.setItem(TOKEN_KEY, token);
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
 
-    throw new Error(
-      "Login succeeded but JWT token was not found."
-    );
-  }
-
-  localStorage.setItem(
-    "inventory_token",
-    token
-  );
-
-  localStorage.setItem(
-    "inventory_user",
-    ADMIN_USERNAME
-  );
-
-  return response;
+    return {
+        ...response,
+        token,
+        user,
+    };
 }
 
 export function logout() {
-  localStorage.removeItem("inventory_token");
-  localStorage.removeItem("inventory_user");
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
+}
+
+export function getToken() {
+    return localStorage.getItem(TOKEN_KEY);
+}
+
+export function getCurrentUser() {
+    const storedUser = localStorage.getItem(USER_KEY);
+
+    if (!storedUser) {
+        return null;
+    }
+
+    try {
+        return JSON.parse(storedUser);
+    } catch {
+        localStorage.removeItem(USER_KEY);
+        return null;
+    }
 }
 
 export function isAuthenticated() {
-  return Boolean(
-    localStorage.getItem("inventory_token")
-  );
+    return Boolean(getToken());
 }

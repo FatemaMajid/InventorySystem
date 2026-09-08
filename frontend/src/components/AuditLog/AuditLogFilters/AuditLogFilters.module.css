@@ -1,0 +1,110 @@
+.filters {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+    padding: 18px 20px 20px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-card);
+}
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+.title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--color-text-primary);
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+}
+.title svg {
+    color: var(--color-teal);
+}
+.reset {
+    padding: 7px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-secondary);
+    color: var(--color-text-secondary);
+    font: inherit;
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition:
+        background var(--transition-normal),
+        color var(--transition-normal),
+        border-color var(--transition-normal);
+}
+.reset:hover {
+    border-color: var(--color-teal);
+    background: var(--color-teal-light);
+    color: var(--color-teal-dark);
+}
+.fields {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 14px;
+}
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+}
+.field span {
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+}
+.field input,
+.field select {
+    width: 100%;
+    min-height: 40px;
+    padding: 8px 11px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    outline: none;
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    font: inherit;
+    font-size: var(--font-size-sm);
+    transition:
+        border-color var(--transition-normal),
+        box-shadow var(--transition-normal),
+        background var(--transition-normal);
+}
+.field input:hover,
+.field select:hover {
+    border-color: var(--color-primary-muted);
+}
+.field input:focus,
+.field select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+@media (max-width: 1100px) {
+    .fields {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+@media (max-width: 760px) {
+    .fields {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+@media (max-width: 520px) {
+    .filters {
+        padding: 16px;
+    }
+    .header {
+        align-items: flex-start;
+    }
+    .fields {
+        grid-template-columns: 1fr;
+    }
+}

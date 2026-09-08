@@ -6,6 +6,7 @@
 // Description  : Handles branch creation requests.
 // ============================================================
 
+using System.Text.Json;
 using AutoMapper;
 using InventorySystem.Application.Common.Interfaces;
 using InventorySystem.Domain.Entities;
@@ -24,6 +25,7 @@ public class CreateBranchCommandHandler
 
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
+    private readonly IAuditLogService _auditLogService;
 
     #endregion
 
@@ -34,10 +36,12 @@ public class CreateBranchCommandHandler
     /// </summary>
     public CreateBranchCommandHandler(
         IApplicationDbContext context,
-        IMapper mapper)
+        IMapper mapper,
+        IAuditLogService auditLogService)
     {
         _context = context;
         _mapper = mapper;
+        _auditLogService = auditLogService;
     }
 
     #endregion
@@ -60,16 +64,26 @@ public class CreateBranchCommandHandler
         CreateBranchCommand request,
         CancellationToken cancellationToken)
     {
-        // Convert DTO into a Branch entity.
         var branch = _mapper.Map<Branch>(request.Branch);
 
-        // Add the new entity to the DbContext.
         _context.Branches.Add(branch);
 
-        // Save changes to the database.
         await _context.SaveChangesAsync(cancellationToken);
 
-        // Return the generated primary key.
+        var details = JsonSerializer.Serialize(new
+        {
+            branchNameArabic = branch.BranchNameArabic,
+            branchNameEnglish = branch.BranchNameEnglish,
+            branchCode = branch.BranchCode
+        });
+
+        await _auditLogService.LogAsync(
+            action: "Create",
+            entity: "Branch",
+            entityId: branch.Id.ToString(),
+            details: details,
+            cancellationToken: cancellationToken);
+
         return branch.Id;
     }
 

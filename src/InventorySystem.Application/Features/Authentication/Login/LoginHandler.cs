@@ -10,15 +10,18 @@ public sealed class LoginHandler
     private readonly IApplicationDbContext _context;
     private readonly IPasswordService _passwordService;
     private readonly IJwtService _jwtService;
+    private readonly IAuditLogService _auditLogService;
 
     public LoginHandler(
         IApplicationDbContext context,
         IPasswordService passwordService,
-        IJwtService jwtService)
+        IJwtService jwtService,
+        IAuditLogService auditLogService)
     {
         _context = context;
         _passwordService = passwordService;
         _jwtService = jwtService;
+        _auditLogService = auditLogService;
     }
 
     public async Task<LoginResponse> Handle(
@@ -31,22 +34,35 @@ public sealed class LoginHandler
                     .ThenInclude(x => x.Role)
                         .ThenInclude(x => x.RolePermissions)
                             .ThenInclude(x => x.Permission)
-
                 .Include(x => x.UserPermissions)
                     .ThenInclude(x => x.Permission)
-
                 .FirstOrDefaultAsync(
                     x => x.Username == request.Username,
                     cancellationToken);
 
         if (user is null)
         {
+            await _auditLogService.LogAsync(
+                action: "LoginFailed",
+                entity: "User",
+                details: $"Username: {request.Username}",
+                status: "Failed",
+                cancellationToken: cancellationToken);
+
             throw new UnauthorizedAccessException(
                 "Invalid username or password.");
         }
 
         if (!user.IsActive)
         {
+            await _auditLogService.LogAsync(
+                action: "LoginFailed",
+                entity: "User",
+                entityId: user.Id.ToString(),
+                details: $"Username: {user.Username}, Reason: Inactive account",
+                status: "Failed",
+                cancellationToken: cancellationToken);
+
             throw new UnauthorizedAccessException(
                 "This user account is inactive.");
         }
@@ -58,25 +74,23 @@ public sealed class LoginHandler
 
         if (!passwordValid)
         {
+            await _auditLogService.LogAsync(
+                action: "LoginFailed",
+                entity: "User",
+                entityId: user.Id.ToString(),
+                details: $"Username: {user.Username}",
+                status: "Failed",
+                cancellationToken: cancellationToken);
+
             throw new UnauthorizedAccessException(
                 "Invalid username or password.");
         }
-
-
-        // ==========================================
-        // Roles
-        // ==========================================
 
         var roles =
             user.UserRoles
                 .Select(x => x.Role.Name)
                 .Distinct()
                 .ToList();
-
-
-        // ==========================================
-        // Role Permissions
-        // ==========================================
 
         var rolePermissions =
             user.UserRoles
@@ -85,31 +99,16 @@ public sealed class LoginHandler
                 .Select(
                     x => x.Permission.Code);
 
-
-        // ==========================================
-        // User Permissions
-        // ==========================================
-
         var userPermissions =
             user.UserPermissions
                 .Select(
                     x => x.Permission.Code);
-
-
-        // ==========================================
-        // Combined Permissions
-        // ==========================================
 
         var permissions =
             rolePermissions
                 .Concat(userPermissions)
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToList();
-
-
-        // ==========================================
-        // JWT
-        // ==========================================
 
         var token =
             _jwtService.GenerateToken(
@@ -121,6 +120,12 @@ public sealed class LoginHandler
         var expiresAt =
             DateTime.UtcNow.AddHours(8);
 
+        await _auditLogService.LogAsync(
+            action: "Login",
+            entity: "User",
+            entityId: user.Id.ToString(),
+            details: $"Username: {user.Username}",
+            cancellationToken: cancellationToken);
 
         return new LoginResponse(
             user.Id,

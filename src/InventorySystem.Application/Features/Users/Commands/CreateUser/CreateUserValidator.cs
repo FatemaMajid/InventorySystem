@@ -2,8 +2,7 @@ using FluentValidation;
 
 namespace InventorySystem.Application.Features.Users.Commands.CreateUser;
 
-public sealed class CreateUserValidator
-    : AbstractValidator<CreateUserCommand>
+public sealed class CreateUserValidator : AbstractValidator<CreateUserCommand>
 {
     public CreateUserValidator()
     {

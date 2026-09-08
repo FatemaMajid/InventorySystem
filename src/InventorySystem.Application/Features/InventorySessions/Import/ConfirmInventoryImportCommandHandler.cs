@@ -15,10 +15,14 @@ public class ConfirmInventoryImportCommandHandler
     : IRequestHandler<ConfirmInventoryImportCommand, int>
 {
     private readonly IApplicationDbContext _context;
+    private readonly IAuditLogService _auditLogService;
 
-    public ConfirmInventoryImportCommandHandler(IApplicationDbContext context)
+    public ConfirmInventoryImportCommandHandler(
+        IApplicationDbContext context,
+        IAuditLogService auditLogService)
     {
         _context = context;
+        _auditLogService = auditLogService;
     }
 
     public async Task<int> Handle(
@@ -76,6 +80,14 @@ public class ConfirmInventoryImportCommandHandler
             }
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            await _auditLogService.LogAsync(
+                action: "Confirm",
+                entity: "InventorySession",
+                entityId: session.Id.ToString(),
+                details: $"SessionNumber: {session.SessionNumber}, BranchId: {session.BranchId}, StoreId: {session.StoreId}",
+                cancellationToken: cancellationToken);
+
             await transaction.CommitAsync(cancellationToken);
 
             return session.Id;
@@ -452,8 +464,8 @@ public class ConfirmInventoryImportCommandHandler
     }
 
     private async Task<Category?> GetOrCreateCategory(
-    string name,
-    CancellationToken ct)
+        string name,
+        CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(name))
             return null;
@@ -478,6 +490,7 @@ public class ConfirmInventoryImportCommandHandler
 
         return category;
     }
+
     private async Task<DomainUnit?> GetUnit(
         string? name,
         CancellationToken ct)

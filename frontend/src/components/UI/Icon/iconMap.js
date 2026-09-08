@@ -55,7 +55,11 @@ import calendar from '../../../assets/icons/calendar.svg'
 import refresh from '../../../assets/icons/refresh.svg'
 
 import clipboard from "../../../assets/icons/clipboard.svg"
+import edit from "../../../assets/icons/edit.svg"
+import inactive from "../../../assets/icons/inactive.svg"
+import deleteIcon from "../../../assets/icons/delete.svg"
 
+import history from "../../../assets/icons/history.svg"
 
 const iconMap = {
   home,
@@ -112,8 +116,11 @@ const iconMap = {
   health,
 
   refresh,
-  clipboard
-
+  clipboard,
+  edit,
+  inactive,
+  deleteIcon,
+  history,
 };
 
 export default iconMap;

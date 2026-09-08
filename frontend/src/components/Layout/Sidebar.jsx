@@ -1,95 +1,149 @@
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 import { useLanguage } from "../../context/LanguageContext";
 import { navigationGroups } from "../Navigation/navigationItems";
 import Icon from "../UI/Icon/Icon";
+import logo from "../../assets/logo/logo2.png";
 import styles from "./Sidebar.module.css";
 
 function Sidebar({
-  isOpen = false,
-  onClose,
+    isOpen = false,
+    onClose,
 }) {
-  const { translations } = useLanguage();
+    const { translations } = useLanguage();
+    const { user, signOut } = useAuth();
 
-  return (
-    <aside
-      className={`${styles.sidebar} ${
-        isOpen ? styles.open : ""
-      }`}
-    >
-      <div className={styles.logo}>
-        <div className={styles.logoIcon}>
-          <span>
-            {translations.common.systemName
-              .split(" ")
-              .map((word) => word.charAt(0))
-              .slice(0, 2)
-              .join("")}
-          </span>
-        </div>
+    const getPermissions = () => {
+        const token = localStorage.getItem("inventory_token");
 
-        <div className={styles.logoText}>
-          {translations.common.systemName}
-        </div>
-      </div>
+        if (!token) {
+            return [];
+        }
 
-      <nav className={styles.navigation}>
-        {navigationGroups.map((group) => (
-          <div
-            key={group.key}
-            className={styles.group}
-          >
-            <div className={styles.groupTitle}>
-              {translations.navigationGroups[group.key]}
-            </div>
+        try {
+            const payload = JSON.parse(atob(token.split(".")[1]));
+            const permissions = payload.permission || [];
 
-            <div className={styles.groupItems}>
-              {group.items.map((item) => (
-                <NavLink
-                  key={item.key}
-                  to={item.path}
-                  onClick={onClose}
-                  className={({ isActive }) =>
-                    `${styles.navItem} ${
-                      isActive ? styles.active : ""
-                    }`
-                  }
-                >
-                  <span className={styles.navIcon}>
-                    <Icon
-                      name={item.icon}
-                      size={18}
-                    />
-                  </span>
+            return Array.isArray(permissions)
+                ? permissions
+                : [permissions];
+        } catch {
+            return [];
+        }
+    };
 
-                  <span className={styles.navLabel}>
-                    {translations.navigation[item.key]}
-                  </span>
-                </NavLink>
-              ))}
-            </div>
-          </div>
-        ))}
-      </nav>
+    const permissions = getPermissions();
 
-      <div className={styles.footer}>
-        <button
-          type="button"
-          className={styles.logout}
+    const hasPermission = (permission) => {
+        if (!permission) {
+            return true;
+        }
+
+        return permissions.some(
+            (item) =>
+                item.toLowerCase() === permission.toLowerCase()
+        );
+    };
+
+    const isUserRole =
+        user?.role?.toLowerCase() === "user";
+
+    const visibleGroups = navigationGroups
+        .filter(
+            (group) =>
+                !(isUserRole && group.key === "masterData")
+        )
+        .map((group) => ({
+            ...group,
+            items: group.items.filter(
+                (item) =>
+                    item.key === "home" ||
+                    hasPermission(item.permission)
+            ),
+        }))
+        .filter((group) => group.items.length > 0);
+
+    const handleLogout = () => {
+        signOut();
+        onClose?.();
+        window.location.href = "/login";
+    };
+
+    return (
+        <aside
+            className={`${styles.sidebar} ${
+                isOpen ? styles.open : ""
+            }`}
         >
-          <span className={styles.logoutIcon}>
-            <Icon
-              name="logout"
-              size={18}
-            />
-          </span>
+            <div className={styles.logo}>
+                <img
+                    src={logo}
+                    alt=""
+                    className={styles.logoImage}
+                />
+            </div>
 
-          <span className={styles.logoutLabel}>
-            {translations.common.logout}
-          </span>
-        </button>
-      </div>
-    </aside>
-  );
+            <nav className={styles.navigation}>
+                {visibleGroups.map((group) => (
+                    <div
+                        key={group.key}
+                        className={styles.group}
+                    >
+                        <div className={styles.groupTitle}>
+                            {translations.navigationGroups[group.key]}
+                        </div>
+
+                        <div className={styles.groupItems}>
+                            {group.items.map((item) => (
+                                <NavLink
+                                    key={item.key}
+                                    to={item.path}
+                                    onClick={onClose}
+                                    className={({ isActive }) =>
+                                        `${styles.navItem} ${
+                                            isActive
+                                                ? styles.active
+                                                : ""
+                                        }`
+                                    }
+                                >
+                                    <span className={styles.navIcon}>
+                                        <Icon
+                                            name={item.icon}
+                                            size={18}
+                                        />
+                                    </span>
+
+                                    <span className={styles.navLabel}>
+                                        {translations.navigation[item.key]}
+                                    </span>
+                                </NavLink>
+                            ))}
+                        </div>
+                    </div>
+                ))}
+            </nav>
+
+            <div className={styles.footer}>
+                <button
+                    type="button"
+                    className={styles.logout}
+                    onClick={handleLogout}
+                >
+                    <span className={styles.logoutIcon}>
+                        <Icon
+                            name="logout"
+                            size={18}
+                        />
+                    </span>
+
+                    <span className={styles.logoutLabel}>
+                        {translations.common.logout}
+                    </span>
+                </button>
+            </div>
+        </aside>
+    );
 }
 
 export default Sidebar;

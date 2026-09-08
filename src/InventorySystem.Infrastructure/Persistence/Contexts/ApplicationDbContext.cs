@@ -50,6 +50,8 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public DbSet<UserPermission> UserPermissions => Set<UserPermission>(); public new DatabaseFacade Database
             => base.Database;
 
+    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+
     protected override void OnModelCreating(
         ModelBuilder modelBuilder)
     {

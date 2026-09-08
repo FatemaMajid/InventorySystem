@@ -1,170 +1,199 @@
 :root {
-   /* =================================
-     Colors - Brand
-  ================================= */
+    /* =================================
+       Colors - Brand
+    ================================= */
 
-   --color-sidebar-active-text: #26332f;
-   --color-primary: #769a6b;
-   --color-primary-hover: #668c5d;
-   --color-primary-light: #e2e9dd;
-   --color-primary-soft: #edf2e9;
+    --color-sidebar-active-text: #1f2c24;
+    --color-primary: #5f844f;
+    --color-primary-hover: #4f743f;
+    --color-primary-dark: #3f6133;
+    --color-primary-light: #c8d9bf;
+    --color-primary-soft: #dce8d5;
+    --color-primary-muted: #879f7d;
 
-   /* =================================
-     Light Theme
-  ================================= */
+    /* =================================
+       Light Theme
+    ================================= */
 
-   --color-background: #e9ebe5;
+    --color-background: #e1e4dd;
+    --color-surface: #f8f8f4;
+    --color-surface-secondary: #d6ddd2;
+    --color-surface-tertiary: #c6d0c3;
 
-   --color-surface: #f7f8f4;
-   --color-surface-secondary: #e1e5dd;
-   --color-surface-tertiary: #d7ddd4;
+    --color-border: #aebbac;
+    --color-border-light: #c3cdc0;
 
-   --color-border: #c7d0c4;
-   --color-border-light: #d5ddd1;
+    --color-text-primary: #202a23;
+    --color-text-secondary: #465348;
+    --color-text-muted: #6d786f;
+    --color-text-white: #ffffff;
 
-   --color-text-primary: #252f28;
-   --color-text-secondary: #566158;
-   --color-text-muted: #7b857c;
-   --color-text-white: #ffffff;
+    /* =================================
+       Sidebar
+    ================================= */
 
-   /* =================================
-     Sidebar
-  ================================= */
+    --color-sidebar: #26352b;
+    --color-sidebar-dark: #17231b;
+    --color-sidebar-hover: #35483a;
+    --color-sidebar-active: #6f964f;
 
-   --color-sidebar: #26352b;
-   --color-sidebar-dark: #1c2921;
-   --color-sidebar-hover: #35483a;
-   --color-sidebar-active: #769a6b;
+    --color-sidebar-text: #e8eee8;
+    --color-sidebar-muted: #a0aea3;
 
-   --color-sidebar-text: #e7eee8;
-   --color-sidebar-muted: #a2afa5;
+    /* =================================
+       Accent Colors
+    ================================= */
 
-   /* =================================
-     Status Colors
-  ================================= */
+    --color-sage: #78986b;
+    --color-sage-light: #d7e3d1;
+    --color-sage-dark: #527348;
 
-   --color-success: #6f9966;
-   --color-success-light: #e1ecde;
-   --color-success-dark: #52794b;
+    --color-olive: #92952f;
+    --color-olive-light: #e3e4c4;
+    --color-olive-dark: #6d701f;
 
-   --color-danger: #cf6d6d;
-   --color-danger-light: #f4dddd;
-   --color-danger-dark: #a95151;
+    --color-teal: #287f73;
+    --color-teal-light: #c9e2dc;
+    --color-teal-dark: #1d6259;
 
-   --color-warning: #d99d61;
-   --color-warning-light: #f6e8d7;
-   --color-warning-dark: #b6783e;
+    --color-blue: #4d7f98;
+    --color-blue-light: #d1e0e7;
+    --color-blue-dark: #365f75;
 
-   --color-purple: #8f78a6;
-   --color-purple-light: #e9e3ee;
+    --color-purple: #76518f;
+    --color-purple-light: #ded2e5;
+    --color-purple-dark: #593c70;
 
-   --color-teal: #659f91;
-   --color-teal-light: #deece8;
+    --color-amber: #c47728;
+    --color-amber-light: #edd7bb;
+    --color-amber-dark: #955817;
 
-   --color-blue-light: #e4e9e5;
+    --color-coral: #c65b5b;
+    --color-coral-light: #efd0d0;
+    --color-coral-dark: #963f3f;
 
-   /* =================================
-     Highlight
-  ================================= */
+    /* =================================
+       Status Colors
+    ================================= */
 
-   --color-yellow: #dedb78;
-   --color-yellow-light: #f4f2c9;
+    --color-success: #4f8247;
+    --color-success-light: #d2e3ce;
+    --color-success-dark: #396537;
 
-   /* =================================
-     Layout
-  ================================= */
+    --color-danger: #c45151;
+    --color-danger-light: #efd0d0;
+    --color-danger-dark: #963c3c;
 
-   --sidebar-width: 220px;
-   --header-height: 64px;
+    --color-warning: #c47728;
+    --color-warning-light: #edd7bb;
+    --color-warning-dark: #955817;
 
-   --content-max-width: 1600px;
+    /* =================================
+       Highlight
+    ================================= */
 
-   /* =================================
-     Spacing
-  ================================= */
+    --color-yellow: #b8b22f;
+    --color-yellow-light: #e8e6c1;
+    --color-yellow-dark: #89841f;
 
-   --space-1: 4px;
-   --space-2: 8px;
-   --space-3: 12px;
-   --space-4: 16px;
-   --space-5: 20px;
-   --space-6: 24px;
-   --space-7: 28px;
-   --space-8: 32px;
-   --space-9: 36px;
-   --space-10: 40px;
-   --space-12: 48px;
-   --space-14: 56px;
+    --color-highlight: #aa9435;
+    --color-highlight-light: #e8dfc1;
+    --color-highlight-dark: #7d6b24;
 
-   /* =================================
-     Border Radius
-  ================================= */
+    /* =================================
+       Layout
+    ================================= */
 
-   --radius-sm: 6px;
-   --radius-md: 10px;
-   --radius-lg: 14px;
-   --radius-xl: 18px;
-   --radius-2xl: 22px;
-   --radius-full: 9999px;
+    --sidebar-width: 220px;
+    --header-height: 64px;
+    --content-max-width: 1600px;
 
-   /* =================================
-     Typography
-  ================================= */
+    /* =================================
+       Spacing
+    ================================= */
 
-   --font-family:
-      Inter,
-      "Segoe UI",
-      Tahoma,
-      Arial,
-      sans-serif;
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-7: 28px;
+    --space-8: 32px;
+    --space-9: 36px;
+    --space-10: 40px;
+    --space-12: 48px;
+    --space-14: 56px;
 
-   --font-size-xs: 11px;
-   --font-size-sm: 13px;
-   --font-size-md: 14px;
-   --font-size-lg: 16px;
-   --font-size-xl: 18px;
-   --font-size-2xl: 22px;
-   --font-size-3xl: 28px;
-   --font-size-4xl: 32px;
+    /* =================================
+       Border Radius
+    ================================= */
 
-   --font-weight-normal: 400;
-   --font-weight-medium: 500;
-   --font-weight-semibold: 600;
-   --font-weight-bold: 700;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 18px;
+    --radius-2xl: 22px;
+    --radius-full: 9999px;
 
-   /* =================================
-     Shadows
-  ================================= */
+    /* =================================
+       Typography
+    ================================= */
 
-   --shadow-sm:
-      0 1px 3px rgba(39, 49, 41, 0.07);
+    --font-family:
+        Inter,
+        "Segoe UI",
+        Tahoma,
+        Arial,
+        sans-serif;
 
-   --shadow-md:
-      0 5px 16px rgba(39, 49, 41, 0.09);
+    --font-size-xs: 11px;
+    --font-size-sm: 13px;
+    --font-size-md: 14px;
+    --font-size-lg: 16px;
+    --font-size-xl: 18px;
+    --font-size-2xl: 22px;
+    --font-size-3xl: 28px;
+    --font-size-4xl: 32px;
 
-   --shadow-lg:
-      0 12px 32px rgba(39, 49, 41, 0.12);
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
 
-   --shadow-card:
-      0 2px 10px rgba(39, 49, 41, 0.065);
+    /* =================================
+       Shadows
+    ================================= */
 
-   /* =================================
-     Transitions
-  ================================= */
+    --shadow-sm:
+        0 1px 3px rgba(31, 42, 35, 0.10);
 
-   --transition-fast: 150ms ease;
-   --transition-normal: 200ms ease;
-   --transition-slow: 300ms ease;
+    --shadow-md:
+        0 5px 16px rgba(31, 42, 35, 0.13);
 
-   /* =================================
-     Z-Index
-  ================================= */
+    --shadow-lg:
+        0 12px 32px rgba(31, 42, 35, 0.16);
 
-   --z-sidebar: 100;
-   --z-header: 200;
-   --z-dropdown: 300;
-   --z-modal: 1000;
-   --z-toast: 1100;
+    --shadow-card:
+        0 2px 10px rgba(31, 42, 35, 0.09);
+
+    /* =================================
+       Transitions
+    ================================= */
+
+    --transition-fast: 150ms ease;
+    --transition-normal: 200ms ease;
+    --transition-slow: 300ms ease;
+
+    /* =================================
+       Z-Index
+    ================================= */
+
+    --z-sidebar: 100;
+    --z-header: 200;
+    --z-dropdown: 300;
+    --z-modal: 1000;
+    --z-toast: 1100;
 }
 
 
@@ -173,99 +202,117 @@
 ================================= */
 
 [data-theme="dark"] {
-   --color-sidebar-active-text: #17211f;
+    --color-sidebar-active-text: #17211f;
 
-   /* =================================
-     Background
-  ================================= */
+    --color-background: #1c211d;
+    --color-surface: #242d26;
+    --color-surface-secondary: #2b362d;
+    --color-surface-tertiary: #333f35;
 
-   --color-background: #1c211d;
+    --color-border: #465449;
+    --color-border-light: #39463c;
 
-   --color-surface: #242d26;
-   --color-surface-secondary: #2b362d;
-   --color-surface-tertiary: #333f35;
+    --color-text-primary: #f1f3ed;
+    --color-text-secondary: #cbd3c9;
+    --color-text-muted: #969f96;
+    --color-text-white: #ffffff;
 
-   /* =================================
-     Borders
-  ================================= */
+    /* =================================
+       Brand
+    ================================= */
 
-   --color-border: #465449;
-   --color-border-light: #39463c;
+    --color-primary: #9dbc8f;
+    --color-primary-hover: #b0cc9f;
+    --color-primary-dark: #789a6c;
+    --color-primary-light: #2b3c2e;
+    --color-primary-soft: #25352a;
+    --color-primary-muted: #71886a;
 
-   /* =================================
-     Text
-  ================================= */
+    /* =================================
+       Sidebar
+    ================================= */
 
-   --color-text-primary: #f1f3ed;
-   --color-text-secondary: #cbd3c9;
-   --color-text-muted: #969f96;
-   --color-text-white: #ffffff;
+    --color-sidebar: #121812;
+    --color-sidebar-dark: #0d120e;
+    --color-sidebar-hover: #28372b;
+    --color-sidebar-active: #86a97c;
 
-   /* =================================
-     Brand
-  ================================= */
+    --color-sidebar-text: #dce6dd;
+    --color-sidebar-muted: #8f9b91;
 
-   --color-primary: #a3bf98;
-   --color-primary-hover: #b5cea9;
-   --color-primary-light: #2b3c2e;
-   --color-primary-soft: #25352a;
+    /* =================================
+       Accent Colors
+    ================================= */
 
-   /* =================================
-     Sidebar
-  ================================= */
+    --color-sage: #91ad89;
+    --color-sage-light: #2d3b2f;
+    --color-sage-dark: #6f8d68;
 
-   --color-sidebar: #121812;
-   --color-sidebar-dark: #0d120e;
-   --color-sidebar-hover: #28372b;
-   --color-sidebar-active: #86a97c;
+    --color-olive: #b4b65d;
+    --color-olive-light: #383923;
+    --color-olive-dark: #909244;
 
-   --color-sidebar-text: #dce6dd;
-   --color-sidebar-muted: #8f9b91;
+    --color-teal: #69b0a3;
+    --color-teal-light: #293d38;
+    --color-teal-dark: #4f9589;
 
-   /* =================================
-     Status Colors
-  ================================= */
+    --color-blue: #7da6b8;
+    --color-blue-light: #2b393f;
+    --color-blue-dark: #5f899d;
 
-   --color-success: #a3bf98;
-   --color-success-light: #293c2c;
-   --color-success-dark: #b5cea9;
+    --color-purple: #b49fc8;
+    --color-purple-light: #332d3b;
+    --color-purple-dark: #947bad;
 
-   --color-danger: #db9090;
-   --color-danger-light: #3d2929;
-   --color-danger-dark: #e7a7a7;
+    --color-amber: #dfa364;
+    --color-amber-light: #3c3227;
+    --color-amber-dark: #c4844b;
 
-   --color-warning: #edc69f;
-   --color-warning-light: #3c3227;
-   --color-warning-dark: #f2d0ad;
+    --color-coral: #df8585;
+    --color-coral-light: #3d2929;
+    --color-coral-dark: #bd6666;
 
-   --color-purple: #b49fc8;
-   --color-purple-light: #332d3b;
+    /* =================================
+       Status Colors
+    ================================= */
 
-   --color-teal: #8dbbb0;
-   --color-teal-light: #293d38;
+    --color-success: #a3bf98;
+    --color-success-light: #293c2c;
+    --color-success-dark: #b5cea9;
 
-   --color-blue-light: #2b3931;
+    --color-danger: #db8585;
+    --color-danger-light: #3d2929;
+    --color-danger-dark: #e7a0a0;
 
-   /* =================================
-     Highlight
-  ================================= */
+    --color-warning: #edb978;
+    --color-warning-light: #3c3227;
+    --color-warning-dark: #f2ca9b;
 
-   --color-yellow: #ebe695;
-   --color-yellow-light: #3a3923;
+    /* =================================
+       Highlight
+    ================================= */
 
-   /* =================================
-     Shadows
-  ================================= */
+    --color-yellow: #d4d05f;
+    --color-yellow-light: #3a3923;
+    --color-yellow-dark: #b5b04b;
 
-   --shadow-sm:
-      0 1px 3px rgba(0, 0, 0, 0.22);
+    --color-highlight: #c1b15e;
+    --color-highlight-light: #3b3825;
+    --color-highlight-dark: #a4934b;
 
-   --shadow-md:
-      0 5px 16px rgba(0, 0, 0, 0.27);
+    /* =================================
+       Shadows
+    ================================= */
 
-   --shadow-lg:
-      0 12px 32px rgba(0, 0, 0, 0.36);
+    --shadow-sm:
+        0 1px 3px rgba(0, 0, 0, 0.22);
 
-   --shadow-card:
-      0 2px 10px rgba(0, 0, 0, 0.20);
+    --shadow-md:
+        0 5px 16px rgba(0, 0, 0, 0.27);
+
+    --shadow-lg:
+        0 12px 32px rgba(0, 0, 0, 0.36);
+
+    --shadow-card:
+        0 2px 10px rgba(0, 0, 0, 0.20);
 }

@@ -7,6 +7,7 @@
 // Author       : Fatema Majid
 // ============================================================
 
+using System.Text.Json;
 using AutoMapper;
 using InventorySystem.Application.Common.Interfaces;
 using MediatR;
@@ -22,16 +23,19 @@ public class UpdateBranchCommandHandler
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
+    private readonly IAuditLogService _auditLogService;
 
     /// <summary>
     /// Initializes the handler with the required dependencies.
     /// </summary>
     public UpdateBranchCommandHandler(
         IApplicationDbContext context,
-        IMapper mapper)
+        IMapper mapper,
+        IAuditLogService auditLogService)
     {
         _context = context;
         _mapper = mapper;
+        _auditLogService = auditLogService;
     }
 
     /// <summary>
@@ -41,21 +45,31 @@ public class UpdateBranchCommandHandler
         UpdateBranchCommand request,
         CancellationToken cancellationToken)
     {
-        // Find the existing branch in the database.
         var branch = await _context.Branches
             .FirstOrDefaultAsync(
                 x => x.Id == request.Id,
                 cancellationToken);
 
-        // Return false if the branch does not exist.
         if (branch == null)
             return false;
 
-        // Update the entity using the values from the DTO.
         _mapper.Map(request.Branch, branch);
 
-        // Save the changes to the database.
         await _context.SaveChangesAsync(cancellationToken);
+
+        var details = JsonSerializer.Serialize(new
+        {
+            branchNameArabic = branch.BranchNameArabic,
+            branchNameEnglish = branch.BranchNameEnglish,
+            branchCode = branch.BranchCode
+        });
+
+        await _auditLogService.LogAsync(
+            action: "Update",
+            entity: "Branch",
+            entityId: branch.Id.ToString(),
+            details: details,
+            cancellationToken: cancellationToken);
 
         return true;
     }

@@ -1,144 +1,155 @@
-import { useState } from 'react';
-import { useLanguage } from '../../context/LanguageContext';
-import { useTheme } from '../../context/ThemeContext';
-import Icon from '../UI/Icon/Icon';
-import styles from './MainHeader.module.css';
+import { useState } from "react";
+import { useLanguage } from "../../context/LanguageContext";
+import { useTheme } from "../../context/ThemeContext";
+import { useAuth } from "../../context/AuthContext";
+import Icon from "../UI/Icon/Icon";
+import styles from "./MainHeader.module.css";
 
 function MainHeader({ onMenuClick }) {
-  const {
-    language,
-    setLanguage,
-    translations,
-  } = useLanguage();
+    const {
+        language,
+        setLanguage,
+        translations,
+    } = useLanguage();
 
-  const {
-    isDark,
-    toggleTheme,
-  } = useTheme();
+    const {
+        isDark,
+        toggleTheme,
+    } = useTheme();
 
-  const [changingLanguage, setChangingLanguage] =
-    useState(false);
+    const {
+        user,
+    } = useAuth();
 
-  const nextLanguage =
-    language === 'ar' ? 'en' : 'ar';
+    const [changingLanguage, setChangingLanguage] = useState(false);
 
-  const handleLanguageChange = () => {
-    if (changingLanguage) {
-      return;
-    }
+    const nextLanguage = language === "ar" ? "en" : "ar";
 
-    setChangingLanguage(true);
+    const username =
+        user?.username ||
+        translations.common.user;
 
-    setTimeout(() => {
-      setLanguage(nextLanguage);
-      setChangingLanguage(false);
-    }, 250);
-  };
+    const role =
+        user?.role ||
+        translations.common.inventoryUser;
 
-  return (
-    <header className={styles.header}>
-      {/* Title */}
-      <div className={styles.titleSection}>
-        <button
-          type="button"
-          className={styles.menuButton}
-          onClick={onMenuClick}
-          aria-label="Open navigation"
-        >
-          ☰
-        </button>
+    const avatar =
+        username?.trim()?.charAt(0)?.toUpperCase() ||
+        "U";
 
-        <h1 className={styles.title}>
-          {translations.common.systemName}
-        </h1>
-      </div>
+    const handleLanguageChange = () => {
+        if (changingLanguage) {
+            return;
+        }
 
-      {/* Actions */}
-      <div className={styles.actions}>
-        {/* Theme */}
-        <button
-          type="button"
-          className={styles.iconButton}
-          onClick={toggleTheme}
-          aria-label={
-            isDark
-              ? translations.common.lightMode
-              : translations.common.darkMode
-          }
-        >
-          <Icon
-            name={isDark ? 'sun' : 'moon'}
-            size={19}
-          />
-        </button>
+        setChangingLanguage(true);
 
-        {/* Notifications */}
-        <button
-          type="button"
-          className={styles.iconButton}
-          aria-label={translations.common.notifications}
-        >
-          <Icon
-            name="notification"
-            size={19}
-          />
-        </button>
+        setTimeout(() => {
+            setLanguage(nextLanguage);
+            setChangingLanguage(false);
+        }, 250);
+    };
 
-        {/* Language */}
-        <button
-          type="button"
-          className={styles.languageButton}
-          onClick={handleLanguageChange}
-          disabled={changingLanguage}
-          aria-label={
-            language === 'ar'
-              ? 'Change language to English'
-              : 'تغيير اللغة إلى العربية'
-          }
-        >
-          {changingLanguage ? (
-            <span className={styles.languageLoader} />
-          ) : (
-            <>
-              <Icon
-                name="language"
-                size={18}
-              />
+    return (
+        <header className={styles.header}>
+            <div className={styles.titleSection}>
+                <button
+                    type="button"
+                    className={styles.menuButton}
+                    onClick={onMenuClick}
+                    aria-label={translations.common.menu}
+                >
+                    <Icon
+                        name="menu"
+                        size={20}
+                    />
+                </button>
 
-              <span>
-                {language === 'ar'
-                  ? 'English'
-                  : 'العربية'}
-              </span>
-            </>
-          )}
-        </button>
+                <h1 className={styles.title}>
+                    {translations.common.systemName}
+                </h1>
+            </div>
 
-        {/* Divider */}
-        <div className={styles.divider} />
+            <div className={styles.actions}>
+                <button
+                    type="button"
+                    className={styles.iconButton}
+                    onClick={toggleTheme}
+                    aria-label={
+                        isDark
+                            ? translations.common.lightMode
+                            : translations.common.darkMode
+                    }
+                >
+                    <Icon
+                        name={isDark ? "sun" : "moon"}
+                        size={19}
+                    />
+                </button>
 
-        {/* User */}
-        <button
-          type="button"
-          className={styles.userButton}
-        >
-          <div className={styles.avatar}>
-            U
-          </div>
+                <button
+                    type="button"
+                    className={styles.iconButton}
+                    aria-label={translations.common.notifications}
+                >
+                    <Icon
+                        name="notification"
+                        size={19}
+                    />
+                </button>
 
-          <div className={styles.userInfo}>
-            <span className={styles.userName}>
-              {translations.common.user}
-            </span>
+                <button
+                    type="button"
+                    className={styles.languageButton}
+                    onClick={handleLanguageChange}
+                    disabled={changingLanguage}
+                    aria-label={
+                        language === "ar"
+                            ? translations.common.changeLanguageToEnglish
+                            : translations.common.changeLanguageToArabic
+                    }
+                >
+                    {changingLanguage ? (
+                        <span className={styles.languageLoader} />
+                    ) : (
+                        <>
+                            <Icon
+                                name="language"
+                                size={18}
+                            />
 
-            <span className={styles.userRole}>
-              {translations.common.inventoryUser}
-            </span>
-          </div>
-        </button>
-      </div>
-    </header>
-  );
+                            <span>
+                                {language === "ar"
+                                    ? translations.common.english
+                                    : translations.common.arabic}
+                            </span>
+                        </>
+                    )}
+                </button>
+
+                <div className={styles.divider} />
+
+                <button
+                    type="button"
+                    className={styles.userButton}
+                >
+                    <div className={styles.avatar}>
+                        {avatar}
+                    </div>
+
+                    <div className={styles.userInfo}>
+                        <span className={styles.userName}>
+                            {username}
+                        </span>
+
+                        <span className={styles.userRole}>
+                            {role}
+                        </span>
+                    </div>
+                </button>
+            </div >
+        </header >
+    );
 }
 
 export default MainHeader;

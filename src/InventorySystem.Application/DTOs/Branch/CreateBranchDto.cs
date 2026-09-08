@@ -12,7 +12,5 @@ public class CreateBranchDto
 
     public string? Phone { get; set; }
 
-   // public string? ManagerName { get; set; }
-
     public bool IsActive { get; set; } = true;
 }

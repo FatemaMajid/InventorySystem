@@ -10,7 +10,11 @@ import Footer from "./Footer";
 import styles from "./Layout.module.css";
 
 function Layout() {
-  const { language, direction } = useLanguage();
+  const {
+    language,
+    direction,
+    translations,
+  } = useLanguage();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -42,7 +46,10 @@ function Layout() {
           type="button"
           className={styles.overlay}
           onClick={closeSidebar}
-          aria-label="Close navigation"
+          aria-label={
+            translations.common.close ||
+            translations.common.menu
+          }
         />
       )}
 

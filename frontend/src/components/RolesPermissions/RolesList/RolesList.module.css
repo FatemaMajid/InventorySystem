@@ -1,0 +1,283 @@
+.card {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-card);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 20px;
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.header h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--color-text-primary);
+}
+
+.header p {
+    margin: 5px 0 0;
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+}
+
+.count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    min-width: 30px;
+    height: 30px;
+    padding: 0 9px;
+    border-radius: var(--radius-full);
+    background: var(--color-primary);
+    color: var(--color-text-white);
+    font-size: 12px;
+    font-weight: 700;
+    box-shadow: 0 3px 8px color-mix(in srgb, var(--color-primary) 25%, transparent);
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 10px;
+}
+
+.roleItem {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    gap: 11px;
+    padding: 11px;
+    overflow: hidden;
+    border: 1px solid transparent;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--color-text-primary);
+    font-family: inherit;
+    text-align: start;
+    cursor: pointer;
+    transition:
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        transform var(--transition-fast);
+}
+
+.roleItem::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 3px;
+    border-radius: var(--radius-full);
+    background: transparent;
+    transition: background var(--transition-fast);
+}
+
+.roleItem:hover {
+    background: var(--color-primary-soft);
+    border-color: var(--color-primary-light);
+    transform: translateX(2px);
+}
+
+.roleItem.selected {
+    border-color: var(--color-primary-light);
+    background: var(--color-primary-soft);
+}
+
+.roleItem.selected::before {
+    background: var(--color-primary);
+}
+
+.roleIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: var(--color-surface-secondary);
+    color: var(--color-text-secondary);
+    transition:
+        background var(--transition-fast),
+        color var(--transition-fast);
+}
+
+.roleItem:nth-child(2) .roleIcon {
+    background: var(--color-teal-light);
+    color: var(--color-teal-dark);
+}
+
+.roleItem:nth-child(3) .roleIcon {
+    background: var(--color-purple-light);
+    color: var(--color-purple-dark);
+}
+
+.roleItem:nth-child(4) .roleIcon {
+    background: var(--color-amber-light);
+    color: var(--color-amber-dark);
+}
+
+.selected .roleIcon {
+    background: var(--color-primary);
+    color: var(--color-text-white);
+}
+
+.roleInfo {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.roleInfo strong {
+    overflow: hidden;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--color-text-primary);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.roleInfo small {
+    overflow: hidden;
+    font-size: 11px;
+    line-height: 1.4;
+    color: var(--color-text-muted);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.roleMeta {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    flex: 0 0 auto;
+    color: var(--color-text-muted);
+}
+
+.roleMeta span {
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+}
+
+.loader {
+    width: 28px;
+    height: 28px;
+    border: 3px solid var(--color-primary-light);
+    border-top-color: var(--color-primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+.error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 220px;
+    padding: 24px;
+    text-align: center;
+}
+
+.errorIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-full);
+    background: color-mix(
+        in srgb,
+        var(--color-danger) 14%,
+        transparent
+    );
+    color: var(--color-danger);
+}
+
+.error p {
+    max-width: 320px;
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--color-text-secondary);
+}
+
+.retryButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 36px;
+    padding: 0 13px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        color var(--transition-fast);
+}
+
+.retryButton:hover {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: var(--color-text-white);
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 640px) {
+    .header {
+        padding: 16px;
+    }
+
+    .list {
+        gap: 5px;
+        padding: 8px;
+    }
+
+    .roleItem {
+        padding: 10px;
+    }
+
+    .roleIcon {
+        flex-basis: 38px;
+        width: 38px;
+        height: 38px;
+    }
+}

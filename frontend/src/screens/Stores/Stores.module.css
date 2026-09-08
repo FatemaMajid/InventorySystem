@@ -1,0 +1,1 @@
+.page{width:100%;max-width:var(--content-max-width);margin:0 auto;padding:22px 24px 36px;color:var(--color-text-primary)}@media(max-width:1200px){.page{padding-left:18px;padding-right:18px}}@media(max-width:700px){.page{padding:14px 12px 28px}}

@@ -39,6 +39,8 @@ public interface IApplicationDbContext
 
     DbSet<UserPermission> UserPermissions { get; }
 
+    DbSet<AuditLog> AuditLogs { get; }
+
     DatabaseFacade Database { get; }
 
     Task<int> SaveChangesAsync(

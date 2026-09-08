@@ -11,22 +11,24 @@ public sealed class CreateUserHandler
     private readonly IApplicationDbContext _context;
     private readonly IPasswordService _passwordService;
     private readonly ICurrentUserService _currentUser;
+    private readonly IAuditLogService _auditLogService;
 
     public CreateUserHandler(
         IApplicationDbContext context,
         IPasswordService passwordService,
-        ICurrentUserService currentUser)
+        ICurrentUserService currentUser,
+        IAuditLogService auditLogService)
     {
         _context = context;
         _passwordService = passwordService;
         _currentUser = currentUser;
+        _auditLogService = auditLogService;
     }
 
     public async Task<CreateUserResponse> Handle(
         CreateUserCommand request,
         CancellationToken cancellationToken)
     {
-        // Only Manager and Admin can create users
         if (!_currentUser.IsManager && !_currentUser.IsAdmin)
         {
             throw new UnauthorizedAccessException(
@@ -36,7 +38,6 @@ public sealed class CreateUserHandler
         var username = request.Username.Trim();
         var roleName = request.Role.Trim();
 
-        // Username must be unique
         var usernameExists =
             await _context.Users.AnyAsync(
                 x => x.Username == username,
@@ -48,7 +49,6 @@ public sealed class CreateUserHandler
                 "Username already exists.");
         }
 
-        // Find requested role
         var role =
             await _context.Roles.FirstOrDefaultAsync(
                 x => x.Name == roleName,
@@ -60,7 +60,6 @@ public sealed class CreateUserHandler
                 $"Role '{roleName}' was not found.");
         }
 
-        // Admin cannot create Manager
         if (_currentUser.IsAdmin &&
             role.Name.Equals(
                 "Manager",
@@ -70,7 +69,6 @@ public sealed class CreateUserHandler
                 "Admin cannot create a Manager.");
         }
 
-        // Get requested permissions
         var requestedPermissions =
             request.Permissions
                 .Where(x => !string.IsNullOrWhiteSpace(x))
@@ -101,7 +99,6 @@ public sealed class CreateUserHandler
                 $"Invalid permissions: {string.Join(", ", missing)}");
         }
 
-        // Create user
         var user = new User
         {
             Username = username,
@@ -117,7 +114,6 @@ public sealed class CreateUserHandler
         await _context.SaveChangesAsync(
             cancellationToken);
 
-        // Assign role
         _context.UserRoles.Add(
             new UserRole
             {
@@ -125,7 +121,6 @@ public sealed class CreateUserHandler
                 RoleId = role.Id
             });
 
-        // Assign individual permissions
         foreach (var permission in permissions)
         {
             _context.UserPermissions.Add(
@@ -138,6 +133,13 @@ public sealed class CreateUserHandler
 
         await _context.SaveChangesAsync(
             cancellationToken);
+
+        await _auditLogService.LogAsync(
+            action: "Create",
+            entity: "User",
+            entityId: user.Id.ToString(),
+            details: $"Username: {user.Username}, Role: {role.Name}",
+            cancellationToken: cancellationToken);
 
         return new CreateUserResponse(
             user.Id,
