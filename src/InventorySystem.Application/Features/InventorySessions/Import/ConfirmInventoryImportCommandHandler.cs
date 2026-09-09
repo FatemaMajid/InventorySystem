@@ -492,43 +492,21 @@ public class ConfirmInventoryImportCommandHandler
     }
 
     private async Task<DomainUnit?> GetUnit(
-        string? name,
-        CancellationToken ct)
+     string? name,
+     CancellationToken ct)
     {
         var normalized = UnitNormalizer.Normalize(name);
 
         if (normalized == null)
             return null;
 
-        var supportedUnits = new HashSet<string>(
-            StringComparer.OrdinalIgnoreCase)
-        {
-            "قطعة",
-            "درزن",
-            "سيت",
-            "غم",
-            "سم",
-            "كغم",
-            "علبة"
-        };
-
-        if (!supportedUnits.Contains(normalized))
-            throw new InvalidOperationException(
-                $"الوحدة غير مدعومة: '{name}'");
-
         var units = await _context.Units
             .ToListAsync(ct);
 
-        var unit = units.FirstOrDefault(
+        return units.FirstOrDefault(
             x => string.Equals(
                 UnitNormalizer.Normalize(x.UnitNameArabic),
                 normalized,
                 StringComparison.OrdinalIgnoreCase));
-
-        if (unit == null)
-            throw new InvalidOperationException(
-                LocalizationKeys.Unit.NotFound);
-
-        return unit;
     }
 }
