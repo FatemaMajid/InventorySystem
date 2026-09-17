@@ -5,7 +5,7 @@ function ValueChart({
   beforeValue = 0,
   afterValue = 0,
 }) {
-  const { translations, language } = useLanguage();
+  const { translations } = useLanguage();
 
   const t = translations.dashboard.valueChart;
 

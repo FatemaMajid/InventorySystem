@@ -13,7 +13,7 @@ namespace InventorySystem.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[Authorize(Roles = "Manager")]
 public class RolesController : ControllerBase
 {
     private readonly IMediator _mediator;

@@ -2,7 +2,7 @@ import { useLanguage } from "../../../context/LanguageContext";
 import Icon from "../../UI/Icon/Icon";
 import styles from "./UserHeader.module.css";
 
-function UserHeader({ onAdd }) {
+function UserHeader({ onAdd, canCreate = false }) {
     const { translations, direction } = useLanguage();
     const t = translations.users;
 
@@ -24,14 +24,17 @@ function UserHeader({ onAdd }) {
                     </p>
                 </div>
             </div>
-            <button
-                type="button"
-                className={styles.addButton}
-                onClick={onAdd}
-            >
-                <Icon name="plus" size={18} />
-                <span>{t.addUser}</span>
-            </button>
+
+            {canCreate && (
+                <button
+                    type="button"
+                    className={styles.addButton}
+                    onClick={onAdd}
+                >
+                    <Icon name="plus" size={18} />
+                    <span>{t.addUser}</span>
+                </button>
+            )}
         </header>
     );
 }

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useLanguage } from "../../context/LanguageContext";
+import { hasPermission } from "../../services/permissionService";
 
 import UserHeader from "../../components/Users/UserHeader/UserHeader";
 import UserStats from "../../components/Users/UserStats/UserStats";
@@ -22,6 +23,10 @@ import styles from "./Users.module.css";
 function Users() {
     const { translations, direction } = useLanguage();
     const t = translations.users || {};
+
+    const canCreate = hasPermission("User.Create");
+    const canEdit = hasPermission("User.Edit");
+    const canDeactivate = hasPermission("User.Deactivate");
 
     const [users, setUsers] = useState([]);
     const [roles, setRoles] = useState([]);
@@ -186,12 +191,20 @@ function Users() {
     };
 
     const openCreate = () => {
+        if (!canCreate) {
+            return;
+        }
+
         setEditingUser(null);
         setFormError("");
         setFormOpen(true);
     };
 
     const openEdit = async (user) => {
+        if (!canEdit) {
+            return;
+        }
+
         try {
             setFormError("");
 
@@ -223,6 +236,14 @@ function Users() {
     };
 
     const saveUser = async (form) => {
+        if (editingUser && !canEdit) {
+            return;
+        }
+
+        if (!editingUser && !canCreate) {
+            return;
+        }
+
         setSaving(true);
         setFormError("");
 
@@ -250,6 +271,10 @@ function Users() {
     };
 
     const removeUser = async (user) => {
+        if (!canDeactivate) {
+            return;
+        }
+
         const confirmed = window.confirm(
             (
                 t.deleteConfirmation ||
@@ -285,6 +310,7 @@ function Users() {
         >
             <UserHeader
                 onAdd={openCreate}
+                canCreate={canCreate}
             />
 
             <UserStats
@@ -314,6 +340,8 @@ function Users() {
                 onRetry={loadData}
                 onEdit={openEdit}
                 onDelete={removeUser}
+                canEdit={canEdit}
+                canDeactivate={canDeactivate}
                 currentPage={currentPage}
                 totalPages={totalPages}
                 pageSize={pageSize}

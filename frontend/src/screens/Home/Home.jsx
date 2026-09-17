@@ -1,120 +1,141 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import HomeHero from "../../components/HomeComponents/HomeHero/HomeHero";
 import QuickActions from "../../components/HomeComponents/QuickActions/QuickActions";
 import RecentSessions from "../../components/HomeComponents/RecentSessions/RecentSessions";
 import Overview from "../../components/HomeComponents/Overview/Overview";
 import SystemStatus from "../../components/HomeComponents/SystemStatus/SystemStatus";
-
 import { getHomeDashboard } from "../../services/homeService";
-
+import { hasPermission } from "../../services/permissionService";
+import { getCurrentUser } from "../../services/authService";
+import { useInventorySession } from "../../context/InventorySessionContext";
 import styles from "./Home.module.css";
 
 function Home() {
-  const navigate = useNavigate();
+    const navigate = useNavigate();
+    const { setActiveSession } = useInventorySession();
+    const [dashboard, setDashboard] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-  const [dashboard, setDashboard] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+    const canViewDashboard = hasPermission("Dashboard.View");
+    const canCreateInventory = hasPermission("InventorySession.Create");
+    const canViewInventorySessions = hasPermission("InventorySession.View");
+    const canViewReports = hasPermission("Report.View");
 
-  useEffect(() => {
-    let mounted = true;
+    const currentUser = getCurrentUser();
+    const canViewOverview =
+        currentUser?.role?.toLowerCase() === "admin" ||
+        currentUser?.role?.toLowerCase() === "manager";
 
-    async function loadDashboard() {
-      try {
-        setLoading(true);
-        setError(null);
-
-        const response = await getHomeDashboard();
-
-        if (!mounted) return;
-
-        setDashboard(response);
-      } catch (err) {
-        console.error("Failed to load home dashboard:", err);
-
-        if (!mounted) return;
-
-        setError(err);
-      } finally {
-        if (mounted) {
-          setLoading(false);
+    useEffect(() => {
+        if (!canViewDashboard) {
+            setLoading(false);
+            return;
         }
-      }
-    }
 
-    loadDashboard();
+        let mounted = true;
 
-    return () => {
-      mounted = false;
+        async function loadDashboard() {
+            try {
+                setLoading(true);
+                setError(null);
+
+                const response = await getHomeDashboard();
+
+                if (!mounted) return;
+
+                setDashboard(response);
+            } catch (err) {
+                console.error("Failed to load home dashboard:", err);
+
+                if (!mounted) return;
+
+                setError(err);
+            } finally {
+                if (mounted) {
+                    setLoading(false);
+                }
+            }
+        }
+
+        loadDashboard();
+
+        return () => {
+            mounted = false;
+        };
+    }, [canViewDashboard]);
+
+    const statistics = dashboard?.statistics ?? {};
+
+    const recentSessions = (dashboard?.recentSessions ?? []).map((session) => ({
+        ...session,
+        id: session.id,
+        sessionId: session.sessionNumber,
+        date: session.inventoryDate,
+        branch: session.branchName,
+        store: session.storeName,
+        status: session.status,
+        items: session.totalItems,
+    }));
+
+    const overview = dashboard?.overview ?? {};
+    const systemStatus = dashboard?.systemStatus ?? {};
+
+    const handleViewSession = (session) => {
+        if (!session?.id) return;
+
+        setActiveSession(session);
+        navigate("/dashboard");
     };
-  }, []);
 
-  const statistics = dashboard?.statistics ?? {};
+    return (
+        <section className={styles.home}>
+            {canViewDashboard && (
+                <HomeHero
+                    activeSessions={statistics.activeSessions ?? 0}
+                    totalSessions={statistics.totalSessions ?? 0}
+                    attentionItems={statistics.attentionItems ?? 0}
+                    canCreateInventory={canCreateInventory}
+                />
+            )}
 
-  const recentSessions = (
-    dashboard?.recentSessions ?? []
-  ).map((session) => ({
-    id: session.id,
+            <QuickActions
+                canCreateInventory={canCreateInventory}
+                canViewInventorySessions={canViewInventorySessions}
+                canViewReports={canViewReports}
+            />
 
-    sessionId: session.sessionNumber,
+            <div className={styles.bottomGrid}>
+                {canViewInventorySessions && (
+                    <RecentSessions
+                        sessions={recentSessions}
+                        loading={loading}
+                        error={error}
+                        onViewAll={() => navigate("/inventory-sessions")}
+                        onViewSession={handleViewSession}
+                    />
+                )}
 
-    date: session.inventoryDate,
+                {canViewOverview && (
+                    <Overview
+                        branches={overview.branches ?? 0}
+                        stores={overview.stores ?? 0}
+                        itemCategories={overview.categories ?? 0}
+                        items={overview.items ?? 0}
+                    />
+                )}
+            </div>
 
-    branch: session.branchName,
-
-    store: session.storeName,
-
-    status: session.status,
-
-    items: session.totalItems,
-  }));
-
-  const overview = dashboard?.overview ?? {};
-
-  const systemStatus = dashboard?.systemStatus ?? {};
-
-  return (
-    <section className={styles.home}>
-      <HomeHero
-        activeSessions={statistics.activeSessions ?? 0}
-        totalSessions={statistics.totalSessions ?? 0}
-        attentionItems={statistics.attentionItems ?? 0}
-      />
-
-      <QuickActions />
-
-      <div className={styles.bottomGrid}>
-        <RecentSessions
-          sessions={recentSessions}
-          loading={loading}
-          error={error}
-          onViewAll={() =>
-            navigate("/inventory-sessions")
-          }
-          onViewSession={(session) =>
-            navigate(
-              `/inventory-sessions/${session.id}`
-            )
-          }
-        />
-
-        <Overview
-          branches={overview.branches ?? 0}
-          stores={overview.stores ?? 0}
-          itemCategories={overview.categories ?? 0}
-          items={overview.items ?? 0}
-        />
-      </div>
-
-      <SystemStatus
-        api={systemStatus.api}
-        database={systemStatus.database}
-        health={systemStatus.health}
-      />
-    </section>
-  );
+            {canViewDashboard && (
+                <SystemStatus
+                    api={systemStatus.api}
+                    database={systemStatus.database}
+                    health={systemStatus.health}
+                />
+            )}
+        </section>
+    );
 }
 
 export default Home;

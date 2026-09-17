@@ -15,7 +15,7 @@ function AttentionTable({ items = [], loading = false, error = "", onRetry }) {
     value === null || value === undefined || value === ""
       ? "—"
       : Number(value).toLocaleString(
-          isArabic ? "ar-IQ" : "en-US",
+          isArabic ? "en-US" : "en-US",
           { maximumFractionDigits: 3 }
         );
 

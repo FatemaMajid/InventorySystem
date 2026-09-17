@@ -8,11 +8,20 @@ function NewSessionActions({ disabled, loading, onSubmit, onCancel }) {
 
   return (
     <div className={styles.actions} dir={direction}>
-      <button type="button" className={styles.cancel} onClick={onCancel} disabled={loading}>
+      <button
+        type="button"
+        className={styles.cancel}
+        onClick={onCancel}
+        disabled={loading}
+      >
         {t.cancel}
       </button>
-
-      <button type="button" className={styles.submit} onClick={onSubmit} disabled={disabled || loading}>
+      <button
+        type="button"
+        className={styles.submit}
+        onClick={onSubmit}
+        disabled={disabled || loading}
+      >
         {loading ? (
           <span>{t.creatingSession}</span>
         ) : (

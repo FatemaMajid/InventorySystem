@@ -10,7 +10,7 @@ function FinancialSummary({
   const { translations } = useLanguage();
 
   const formatNumber = (value) =>
-    Number(value || 0).toLocaleString();
+    Number(value || 0).toLocaleString("en-US");
 
   const formatPercentage = (value) =>
     `${Number(value || 0).toFixed(2)}%`;

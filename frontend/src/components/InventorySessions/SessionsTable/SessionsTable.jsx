@@ -1,12 +1,10 @@
 import { useLanguage } from "../../../context/LanguageContext";
 import { useInventorySession } from "../../../context/InventorySessionContext";
 import { useNavigate } from "react-router-dom";
-
 import Icon from "../../UI/Icon/Icon";
 import LoadingState from "../../UI/Loading/LoadingState/LoadingState";
 import EmptyState from "../../UI/EmptyState/EmptyState";
 import ErrorState from "../../UI/ErrorState/ErrorState";
-
 import styles from "./SessionsTable.module.css";
 
 function SessionsTable({
@@ -15,102 +13,64 @@ function SessionsTable({
   error = "",
   onRetry,
 }) {
-  const {
-    translations,
-    direction,
-  } = useLanguage();
+  const { translations, direction } = useLanguage();
+  const { setActiveSession } = useInventorySession();
+  const navigate = useNavigate();
+  const t = translations.inventorySessions;
 
-  const {
-    setActiveSession,
-  } = useInventorySession();
-
-  const navigate =
-    useNavigate();
-
-  const t =
-    translations.inventorySessions;
-
-  const openSession = (
-    session
-  ) => {
+  const openSession = (session) => {
     setActiveSession(session);
     navigate("/dashboard");
   };
 
-  const statusLabel = (
-    status
-  ) => {
-    if (
-      status === "Completed"
-    ) {
+  const statusLabel = (status) => {
+    if (status === "Completed") {
       return t.completed;
     }
 
-    if (
-      status === "InProgress"
-    ) {
+    if (status === "InProgress") {
       return t.inProgress;
     }
 
-    if (
-      status === "Cancelled"
-    ) {
+    if (status === "Cancelled") {
       return t.cancelled;
     }
 
     return status || "—";
   };
 
-  const formatDate = (
-    date
-  ) => {
+  const formatDate = (date) => {
     if (!date) {
       return "—";
     }
 
-    const utcDate =
-      new Date(
-        date.endsWith("Z")
-          ? date
-          : `${date}Z`
-      );
-
-    return utcDate.toLocaleString(
-      direction === "rtl"
-        ? "ar-IQ"
-        : "en-US",
-      {
-        year: "numeric",
-        month: "short",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-      }
+    const utcDate = new Date(
+      date.endsWith("Z")
+        ? date
+        : `${date}Z`
     );
+
+    return utcDate.toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   const renderState = () => {
     if (loading) {
       return (
-        <div
-          className={
-            styles.state
-          }
-        >
-          <LoadingState
-            message={t.loading}
-          />
+        <div className={styles.state}>
+          <LoadingState message={t.loading} />
         </div>
       );
     }
 
     if (error) {
       return (
-        <div
-          className={
-            styles.state
-          }
-        >
+        <div className={styles.state}>
           <ErrorState
             message={error}
             onRetry={onRetry}
@@ -121,14 +81,8 @@ function SessionsTable({
 
     if (sessions.length === 0) {
       return (
-        <div
-          className={
-            styles.state
-          }
-        >
-          <EmptyState
-            message={t.noSessions}
-          />
+        <div className={styles.state}>
+          <EmptyState message={t.noSessions} />
         </div>
       );
     }
@@ -141,170 +95,96 @@ function SessionsTable({
       className={styles.card}
       dir={direction}
     >
-      <div
-        className={
-          styles.header
-        }
-      >
+      <div className={styles.header}>
         <div>
-          <h2
-            className={
-              styles.title
-            }
-          >
+          <h2 className={styles.title}>
             {t.sessionsList}
           </h2>
-
-          <p
-            className={
-              styles.description
-            }
-          >
-            {
-              t.sessionsListDescription
-            }
+          <p className={styles.description}>
+            {t.sessionsListDescription}
           </p>
         </div>
       </div>
 
       {loading ||
-      error ||
-      sessions.length === 0 ? (
+        error ||
+        sessions.length === 0 ? (
         renderState()
       ) : (
-        <div
-          className={
-            styles.tableWrapper
-          }
-        >
-          <table
-            className={
-              styles.table
-            }
-          >
+        <div className={styles.tableWrapper}>
+          <table className={styles.table}>
             <thead>
               <tr>
-                <th>
-                  {t.sessionId}
-                </th>
-
-                <th>
-                  {t.date}
-                </th>
-
-                <th>
-                  {t.branch}
-                </th>
-
-                <th>
-                  {t.store}
-                </th>
-
-                <th>
-                  {t.status}
-                </th>
-
-                <th>
-                  {t.items}
-                </th>
-
-                <th>
-                  {t.actions}
-                </th>
+                <th>{t.sessionId}</th>
+                <th>{t.date}</th>
+                <th>{t.branch}</th>
+                <th>{t.store}</th>
+                <th>{t.status}</th>
+                <th>{t.items}</th>
+                <th>{t.actions}</th>
               </tr>
             </thead>
 
             <tbody>
-              {sessions.map(
-                (session) => (
-                  <tr
-                    key={
-                      session.id
-                    }
-                  >
-                    <td
-                      className={
-                        styles.sessionId
-                      }
-                    >
-                      {
-                        session.sessionNumber
-                      }
-                    </td>
+              {sessions.map((session) => (
+                <tr key={session.id}>
+                  <td className={styles.sessionId}>
+                    {session.sessionNumber}
+                  </td>
 
-                    <td>
-                      {formatDate(
-                        session.inventoryDate
-                      )}
-                    </td>
+                  <td>
+                    {formatDate(
+                      session.inventoryDate
+                    )}
+                  </td>
 
-                    <td>
-                      {
-                        session.branchName ||
-                        "—"
-                      }
-                    </td>
+                  <td>
+                    {session.branchName || "—"}
+                  </td>
 
-                    <td>
-                      {
-                        session.storeName ||
-                        "—"
-                      }
-                    </td>
+                  <td>
+                    {session.storeName || "—"}
+                  </td>
 
-                    <td>
-                      <span
-                        className={`${styles.status} ${
-                          styles[
-                            session.status
-                          ] || ""
+                  <td>
+                    <span
+                      className={`${styles.status} ${styles[
+                        session.status
+                        ] || ""
                         }`}
-                      >
-                        {statusLabel(
-                          session.status
-                        )}
-                      </span>
-                    </td>
-
-                    <td>
-                      {Number(
-                        session.totalItems ||
-                          0
-                      ).toLocaleString(
-                        direction ===
-                          "rtl"
-                          ? "ar-IQ"
-                          : "en-US"
+                    >
+                      {statusLabel(
+                        session.status
                       )}
-                    </td>
+                    </span>
+                  </td>
 
-                    <td>
-                      <button
-                        type="button"
-                        className={
-                          styles.actionButton
-                        }
-                        onClick={() =>
-                          openSession(
-                            session
-                          )
-                        }
-                        title={
-                          t.view
-                        }
-                        aria-label={
-                          t.view
-                        }
-                      >
-                        <Icon
-                          name="eye"
-                          size={17}
-                        />
-                      </button>
-                    </td>
-                  </tr>
-                )
-              )}
+                  <td>
+                    {Number(
+                      session.totalItems || 0
+                    ).toLocaleString("en-US")}
+                  </td>
+
+                  <td>
+                    <button
+                      type="button"
+                      className={
+                        styles.actionButton
+                      }
+                      onClick={() =>
+                        openSession(session)
+                      }
+                      title={t.view}
+                      aria-label={t.view}
+                    >
+                      <Icon
+                        name="eye"
+                        size={17}
+                      />
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

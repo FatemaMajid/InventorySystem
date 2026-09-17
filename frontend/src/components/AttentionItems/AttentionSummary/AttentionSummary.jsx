@@ -58,7 +58,7 @@ function AttentionSummary({ data, loading = false }) {
 
   const formatNumber = (value) =>
     Number(value || 0).toLocaleString(
-      language === "ar" ? "ar-IQ" : "en-US"
+      language === "en-US"
     );
 
   return (

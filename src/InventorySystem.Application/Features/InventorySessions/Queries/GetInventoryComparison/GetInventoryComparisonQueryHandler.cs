@@ -92,24 +92,35 @@ public class GetInventoryComparisonQueryHandler
     }
 
     private static IQueryable<Domain.Entities.InventoryDetail> ApplyFilters(
-        IQueryable<Domain.Entities.InventoryDetail> query,
-        GetInventoryComparisonQuery request)
+    IQueryable<Domain.Entities.InventoryDetail> query,
+    GetInventoryComparisonQuery request)
     {
-        if (!string.IsNullOrWhiteSpace(request.ItemCode))
+        var itemCode = request.ItemCode?.Trim();
+        var itemName = request.ItemName?.Trim();
+
+        if (!string.IsNullOrWhiteSpace(itemCode) &&
+            !string.IsNullOrWhiteSpace(itemName) &&
+            string.Equals(itemCode, itemName, StringComparison.OrdinalIgnoreCase))
         {
-            var itemCode = request.ItemCode.Trim();
-
             query = query.Where(x =>
-                x.Item!.ItemCode.Contains(itemCode));
-        }
-
-        if (!string.IsNullOrWhiteSpace(request.ItemName))
-        {
-            var itemName = request.ItemName.Trim();
-
-            query = query.Where(x =>
-                x.Item!.ItemName1.Contains(itemName) ||
+                x.Item!.ItemCode.Contains(itemCode) ||
+                x.Item.ItemName1.Contains(itemName) ||
                 x.Item.ItemName2.Contains(itemName));
+        }
+        else
+        {
+            if (!string.IsNullOrWhiteSpace(itemCode))
+            {
+                query = query.Where(x =>
+                    x.Item!.ItemCode.Contains(itemCode));
+            }
+
+            if (!string.IsNullOrWhiteSpace(itemName))
+            {
+                query = query.Where(x =>
+                    x.Item!.ItemName1.Contains(itemName) ||
+                    x.Item.ItemName2.Contains(itemName));
+            }
         }
 
         if (request.CategoryId.HasValue)

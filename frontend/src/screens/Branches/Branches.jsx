@@ -1,17 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-
 import { useLanguage } from "../../context/LanguageContext";
-
+import { hasPermission } from "../../services/permissionService";
 import BranchHeader from "../../components/Branches/BranchHeader/BranchHeader";
-
 import BranchStats from "../../components/Branches/BranchStats/BranchStats";
-
 import BranchFilters from "../../components/Branches/BranchFilters/BranchFilters";
-
 import BranchesTable from "../../components/Branches/BranchesTable/BranchesTable";
-
 import BranchForm from "../../components/Branches/BranchForm/BranchForm";
-
 import {
   createBranch,
   deleteBranch,
@@ -19,12 +13,14 @@ import {
   getBranchById,
   updateBranch,
 } from "../../services/branchService";
-
 import styles from "./Branches.module.css";
 
 function Branches() {
   const { translations, direction } = useLanguage();
   const t = translations.branches;
+
+  const canCreate = hasPermission("Branch.Create");
+  const canEdit = hasPermission("Branch.Edit");
 
   const [branches, setBranches] = useState([]);
   const [filters, setFilters] = useState({
@@ -73,31 +69,34 @@ function Branches() {
 
     return branches
       .filter((branch) => {
-      const matchesSearch = !search || [
-        branch.branchCode,
-        branch.branchNameArabic,
-        branch.branchNameEnglish,
-        branch.address,
-        branch.phone,
-      ].some((value) =>
-        String(value || "")
-          .toLowerCase()
-          .includes(search)
-      );
+        const matchesSearch = !search || [
+          branch.branchCode,
+          branch.branchNameArabic,
+          branch.branchNameEnglish,
+          branch.address,
+          branch.phone,
+        ].some((value) =>
+          String(value || "")
+            .toLowerCase()
+            .includes(search)
+        );
 
-      const matchesStatus =
-        !filters.status ||
-        (filters.status === "active"
-          ? branch.isActive
-          : !branch.isActive);
+        const matchesStatus =
+          !filters.status ||
+          (filters.status === "active"
+            ? branch.isActive
+            : !branch.isActive);
 
-      return matchesSearch && matchesStatus;
+        return matchesSearch && matchesStatus;
       })
       .sort((a, b) =>
         String(a.branchCode ?? "").localeCompare(
           String(b.branchCode ?? ""),
           undefined,
-          { numeric: true, sensitivity: "base" }
+          {
+            numeric: true,
+            sensitivity: "base",
+          }
         )
       );
   }, [branches, filters]);
@@ -136,12 +135,16 @@ function Branches() {
   }, [branches]);
 
   const openCreate = () => {
+    if (!canCreate) return;
+
     setEditingBranch(null);
     setFormError("");
     setFormOpen(true);
   };
 
   const openEdit = async (branch) => {
+    if (!canEdit) return;
+
     try {
       setFormError("");
       setFormLoading(true);
@@ -169,6 +172,9 @@ function Branches() {
   };
 
   const saveBranch = async (form) => {
+    if (editingBranch && !canEdit) return;
+    if (!editingBranch && !canCreate) return;
+
     try {
       setFormLoading(true);
       setFormError("");
@@ -195,6 +201,8 @@ function Branches() {
   };
 
   const removeBranch = async (branch) => {
+    if (!canEdit) return;
+
     const confirmed = window.confirm(
       t.deleteConfirmation.replace(
         "{name}",
@@ -231,7 +239,10 @@ function Branches() {
       className={styles.page}
       dir={direction}
     >
-      <BranchHeader onAdd={openCreate} />
+      <BranchHeader
+        onAdd={openCreate}
+        canCreate={canCreate}
+      />
 
       <BranchStats
         totalBranches={stats.total}
@@ -258,6 +269,7 @@ function Branches() {
         onRetry={loadBranches}
         onEdit={openEdit}
         onDelete={removeBranch}
+        canEdit={canEdit}
         currentPage={page}
         totalPages={totalPages}
         pageSize={pageSize}

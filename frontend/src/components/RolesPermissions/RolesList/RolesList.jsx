@@ -19,6 +19,20 @@ function RolesList({
     const getRoleDescription = (name, description) =>
         t.roleDescriptions?.[name] || description;
 
+    const sortedRoles = [...roles].sort((a, b) => {
+        const order = {
+            manager: 0,
+            administrator: 1,
+            admin: 1,
+            user: 2,
+        };
+
+        return (
+            (order[String(a.name ?? "").toLowerCase()] ?? 99) -
+            (order[String(b.name ?? "").toLowerCase()] ?? 99)
+        );
+    });
+
     if (loading) {
         return (
             <section className={styles.card}>
@@ -80,7 +94,7 @@ function RolesList({
             </div>
 
             <div className={styles.list}>
-                {roles.map((role) => {
+                {sortedRoles.map((role) => {
                     const isSelected =
                         selectedRole?.id === role.id;
 
@@ -95,11 +109,10 @@ function RolesList({
                         <button
                             key={role.id}
                             type="button"
-                            className={`${styles.roleItem} ${
-                                isSelected
+                            className={`${styles.roleItem} ${isSelected
                                     ? styles.selected
                                     : ""
-                            }`}
+                                }`}
                             onClick={() => onSelect(role)}
                         >
                             <span className={styles.roleIcon}>

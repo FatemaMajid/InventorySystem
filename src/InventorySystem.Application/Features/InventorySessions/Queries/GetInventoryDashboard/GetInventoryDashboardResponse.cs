@@ -3,17 +3,13 @@ namespace InventorySystem.Application.Features.InventorySessions.Queries.GetInve
 public class GetInventoryDashboardResponse
 {
     public SessionInfo Session { get; init; } = new();
-
     public DashboardSummary Summary { get; init; } = new();
-
+    public InventoryQuantitySummary InventoryQuantity { get; init; } = new();
     public FinancialSummary Financial { get; init; } = new();
-
     public IReadOnlyList<StatusSummary> Statuses { get; init; } =
         Array.Empty<StatusSummary>();
-
     public IReadOnlyList<ValueDifferenceItem> TopValueDifferences { get; init; } =
         Array.Empty<ValueDifferenceItem>();
-
     public AttentionSummary Attention { get; init; } = new();
 }
 
@@ -24,13 +20,10 @@ public class SessionInfo
     public string Status { get; init; } = string.Empty;
     public string InventoryType { get; init; } = string.Empty;
     public DateTime InventoryDate { get; init; }
-
     public int BranchId { get; init; }
     public string BranchName { get; init; } = string.Empty;
-
     public int StoreId { get; init; }
     public string StoreName { get; init; } = string.Empty;
-
     public string? BeforeFileName { get; init; }
     public string? AfterFileName { get; init; }
 }
@@ -45,6 +38,15 @@ public class DashboardSummary
     public int FullyDepleted { get; init; }
     public int PriceChanged { get; init; }
     public int UnitNotDefined { get; init; }
+}
+
+public class InventoryQuantitySummary
+{
+    public decimal TotalQuantityBefore { get; init; }
+    public decimal TotalQuantityAfter { get; init; }
+    public decimal QuantityDifference { get; init; }
+    public decimal QuantityIncrease { get; init; }
+    public decimal QuantityDecrease { get; init; }
 }
 
 public class FinancialSummary

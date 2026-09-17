@@ -1,10 +1,12 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { getToken } from "../services/authService";
+import { getCurrentUser } from "../services/authService";
+import { hasPermission } from "../services/permissionService";
 
 function PermissionRoute({ permission }) {
     const { authenticated } = useAuth();
     const location = useLocation();
+    const user = getCurrentUser();
 
     if (!authenticated) {
         return <Navigate to="/login" replace state={{ from: location }} />;
@@ -14,42 +16,15 @@ function PermissionRoute({ permission }) {
         return <Outlet />;
     }
 
-    const token = getToken();
-
-    if (!token) {
-        return <Navigate to="/login" replace state={{ from: location }} />;
+    if (user?.role?.toLowerCase() === "manager") {
+        return <Outlet />;
     }
 
-    try {
-        const tokenPayload = token.split(".")[1];
-        const normalizedPayload = tokenPayload
-            .replace(/-/g, "+")
-            .replace(/_/g, "/");
-
-        const paddedPayload =
-            normalizedPayload +
-            "=".repeat((4 - (normalizedPayload.length % 4)) % 4);
-
-        const payload = JSON.parse(atob(paddedPayload));
-        const permissions = payload.permission || [];
-
-        const userPermissions = Array.isArray(permissions)
-            ? permissions
-            : [permissions];
-
-        const hasPermission = userPermissions.some(
-            (userPermission) =>
-                userPermission.toLowerCase() === permission.toLowerCase()
-        );
-
-        if (!hasPermission) {
-            return <Navigate to="/" replace />;
-        }
-    } catch {
-        return <Navigate to="/login" replace state={{ from: location }} />;
+    if (hasPermission(permission)) {
+        return <Outlet />;
     }
 
-    return <Outlet />;
+    return <Navigate to="/" replace />;
 }
 
 export default PermissionRoute;

@@ -9,7 +9,6 @@ function Overview({
   items = 1842,
 }) {
   const { translations, isArabic } = useLanguage();
-
   const t = translations.home;
 
   const overviewItems = [
@@ -47,23 +46,18 @@ function Overview({
     new Intl.NumberFormat("en-US").format(Number(value) || 0);
 
   return (
-    <section
-      className={styles.wrapper}
-      dir={isArabic ? "rtl" : "ltr"}
-    >
+    <section className={styles.wrapper} dir={isArabic ? "rtl" : "ltr"}>
       <div className={styles.header}>
         <div className={styles.titleWrapper}>
           <div className={styles.titleIcon}>
             <Icon name="reports" size={18} />
           </div>
-
           <div className={styles.titleContent}>
             <h2>{t.overview}</h2>
             <p>{t.overviewSubtitle}</p>
           </div>
         </div>
       </div>
-
       <div className={styles.grid}>
         {overviewItems.map((item) => (
           <div
@@ -71,21 +65,15 @@ function Overview({
             className={`${styles.card} ${styles[item.variant]}`}
           >
             <div className={styles.iconWrapper}>
-              <Icon
-                name={item.icon}
-                size={22}
-              />
+              <Icon name={item.icon} size={22} />
             </div>
-
             <div className={styles.content}>
               <span className={styles.label}>
                 {t[item.key]}
               </span>
-
               <strong className={styles.value}>
                 {formatNumber(item.value)}
               </strong>
-
               <span className={styles.description}>
                 {item.description}
               </span>

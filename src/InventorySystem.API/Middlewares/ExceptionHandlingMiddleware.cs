@@ -33,6 +33,12 @@ public class ExceptionHandlingMiddleware
                 context,
                 ex);
         }
+        catch (KeyNotFoundException ex)
+        {
+            await HandleNotFoundException(
+                context,
+                ex);
+        }
         catch (Exception ex)
         {
             await HandleException(
@@ -79,24 +85,31 @@ public class ExceptionHandlingMiddleware
             null);
     }
 
-    private static async Task HandleException(
+    private static async Task HandleNotFoundException(
         HttpContext context,
-        Exception ex)
+        KeyNotFoundException ex)
     {
         var language = GetLanguage(context);
 
-        var message = ex is InvalidOperationException
-            ? ex.Message
-            : LocalizationService.Get(
-                LocalizationKeys.Common.OperationFailed,
-                language);
+        await WriteResponse(
+            context,
+            HttpStatusCode.NotFound,
+            ex.Message,
+            null);
+    }
+
+    private static async Task HandleException(HttpContext context, Exception ex){
+        var language = GetLanguage(context);
+
+        var message = LocalizationService.Get(
+            LocalizationKeys.Common.OperationFailed,
+            language);
 
         await WriteResponse(
             context,
             HttpStatusCode.InternalServerError,
             message);
     }
-
     private static string GetLanguage(
         HttpContext context)
     {

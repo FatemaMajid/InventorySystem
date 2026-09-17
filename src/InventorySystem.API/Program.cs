@@ -1,35 +1,30 @@
 using System.Globalization;
 using System.Text;
+using System.Threading.RateLimiting;
 using Microsoft.OpenApi;
 using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
-
+using Microsoft.AspNetCore.RateLimiting;
 using InventorySystem.API.Middleware;
 using InventorySystem.API.Authorization;
-
 using InventorySystem.Infrastructure.Reports;
-
 using InventorySystem.Application.Common.Behaviors;
 using InventorySystem.Application.Common.Interfaces;
 using InventorySystem.Application.Features.Branches.Commands.CreateBranch;
 using InventorySystem.Application.Features.Branches.Queries.GetAllBranches;
 using InventorySystem.Application.Features.InventorySessions.Import.Confirm;
 using InventorySystem.Application.Features.InventorySessions.Import.Preview;
-
 using InventorySystem.Infrastructure.Authentication;
 using InventorySystem.Infrastructure.Persistence.Contexts;
 using InventorySystem.Infrastructure.Seed;
-
 using MediatR;
-
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using InventorySystem.Infrastructure.Persistence.Interceptors;
 using InventorySystem.Infrastructure.AuditLogs;
-
 
 // =====================================================
 // Builder
@@ -60,7 +55,6 @@ builder.Services.AddScoped<
     IApplicationDbContext,
     ApplicationDbContext>();
 
-
 // =====================================================
 // Inventory Import
 // =====================================================
@@ -71,13 +65,11 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<
     InventoryImportConfirmService>();
 
-
 // =====================================================
 // Localization
 // =====================================================
 
 builder.Services.AddLocalization();
-
 
 // =====================================================
 // MediatR
@@ -85,7 +77,6 @@ builder.Services.AddLocalization();
 
 builder.Services.AddMediatR(
     typeof(GetAllBranchesQuery).Assembly);
-
 
 // =====================================================
 // FluentValidation
@@ -98,14 +89,12 @@ builder.Services.AddTransient(
     typeof(IPipelineBehavior<,>),
     typeof(ValidationBehavior<,>));
 
-
 // =====================================================
 // AutoMapper
 // =====================================================
 
 builder.Services.AddAutoMapper(
     typeof(GetAllBranchesQuery).Assembly);
-
 
 // =====================================================
 // Authentication Services
@@ -135,12 +124,11 @@ builder.Services.AddScoped<
 
 builder.Services.AddScoped<
     IDashboardExportService,
-    DashboardExportService>();    
+    DashboardExportService>();
 
 builder.Services.AddScoped<
     IComparisonExportService,
     ComparisonExportService>();
-
 
 // =====================================================
 // JWT Authentication
@@ -174,27 +162,19 @@ builder.Services
             new TokenValidationParameters
             {
                 ValidateIssuer = true,
-
                 ValidateAudience = true,
-
                 ValidateLifetime = true,
-
                 ValidateIssuerSigningKey = true,
-
                 ValidIssuer = jwtIssuer,
-
                 ValidAudience = jwtAudience,
-
                 IssuerSigningKey =
                     new SymmetricSecurityKey(
                         Encoding.UTF8.GetBytes(
                             jwtSecret)),
-
                 ClockSkew =
                     TimeSpan.FromMinutes(1)
             };
     });
-
 
 // =====================================================
 // Authorization
@@ -202,6 +182,55 @@ builder.Services
 
 builder.Services.AddAuthorization();
 
+// =====================================================
+// Rate Limiting
+// =====================================================
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter =
+        PartitionedRateLimiter.Create<HttpContext, string>(
+            httpContext =>
+            {
+                if (!httpContext.Request.Path
+                    .StartsWithSegments("/api/Auth/login"))
+                {
+                    return RateLimitPartition.GetNoLimiter(
+                        "no-limit");
+                }
+
+                var ipAddress =
+                    httpContext.Connection.RemoteIpAddress?
+                        .ToString()
+                    ?? "unknown";
+
+                return RateLimitPartition.GetSlidingWindowLimiter(
+                    ipAddress,
+                    _ => new SlidingWindowRateLimiterOptions
+                    {
+                        PermitLimit = 5,
+                        Window = TimeSpan.FromMinutes(1),
+                        SegmentsPerWindow = 5,
+                        QueueLimit = 0,
+                        AutoReplenishment = true
+                    });
+            });
+
+    options.OnRejected = async (
+        context,
+        cancellationToken) =>
+    {
+        context.HttpContext.Response.StatusCode =
+            StatusCodes.Status429TooManyRequests;
+
+        context.HttpContext.Response.ContentType =
+            "application/json";
+
+        await context.HttpContext.Response.WriteAsync(
+            "{\"message\":\"Too many login attempts. Please try again later.\"}",
+            cancellationToken);
+    };
+});
 
 // =====================================================
 // Controllers & Swagger
@@ -238,7 +267,6 @@ builder.Services.AddSwaggerGen(options =>
             });
 });
 
-
 // =====================================================
 // CORS
 // =====================================================
@@ -255,20 +283,43 @@ builder.Services.AddCors(options =>
     });
 });
 
-
 // =====================================================
 // Build
 // =====================================================
 
 var app = builder.Build();
 
+// =====================================================
+// Security Headers
+// =====================================================
+
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHsts();
+}
+
+app.Use(async (context, next) =>
+{
+    context.Response.Headers["X-Content-Type-Options"] =
+        "nosniff";
+
+    context.Response.Headers["X-Frame-Options"] =
+        "DENY";
+
+    context.Response.Headers["Referrer-Policy"] =
+        "strict-origin-when-cross-origin";
+
+    context.Response.Headers["Permissions-Policy"] =
+        "camera=(), microphone=(), geolocation=()";
+
+    await next();
+});
 
 // =====================================================
 // CORS
 // =====================================================
 
 app.UseCors("Frontend");
-
 
 // =====================================================
 // Request Localization
@@ -285,10 +336,8 @@ var localizationOptions =
     {
         DefaultRequestCulture =
             new RequestCulture("ar"),
-
         SupportedCultures =
             supportedCultures,
-
         SupportedUICultures =
             supportedCultures
     };
@@ -296,14 +345,12 @@ var localizationOptions =
 app.UseRequestLocalization(
     localizationOptions);
 
-
 // =====================================================
 // Exception Handling
 // =====================================================
 
 app.UseMiddleware<
     ExceptionHandlingMiddleware>();
-
 
 // =====================================================
 // Swagger
@@ -316,13 +363,18 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
 // =====================================================
 // HTTPS
 // =====================================================
 
 app.UseHttpsRedirection();
 
+// =====================================================
+// Rate Limiting
+// IMPORTANT: Must run before Authentication
+// =====================================================
+
+app.UseRateLimiter();
 
 // =====================================================
 // Authentication
@@ -333,13 +385,11 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-
 // =====================================================
 // Controllers
 // =====================================================
 
 app.MapControllers();
-
 
 // =====================================================
 // Database Seed
@@ -374,7 +424,6 @@ using (var scope = app.Services.CreateScope())
         context,
         configuration);
 }
-
 
 // =====================================================
 // Run

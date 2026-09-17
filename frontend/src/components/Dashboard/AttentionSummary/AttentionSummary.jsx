@@ -70,7 +70,7 @@ function AttentionSummary({
                             <span className={styles.total}>
                                 {" "}
                                 (
-                                {Number(data.value || 0).toLocaleString("en-US")}
+                                {Number(data.total || 0).toLocaleString("en-US")}
                                 )
                             </span>
                         </h2>
@@ -84,10 +84,9 @@ function AttentionSummary({
                 <button
                     type="button"
                     className={styles.viewAll}
-                    onClick={onViewAll}
+                    onClick={() => onViewAll?.()}
                 >
                     <span>{t.viewAll}</span>
-
                     <Icon
                         name={isArabic ? "arrowLeft" : "arrowRight"}
                         size={16}
@@ -108,7 +107,6 @@ function AttentionSummary({
 
                             <strong className={styles.itemValue}>
                                 {Number(item.value || 0).toLocaleString("en-US")}
-
                             </strong>
                         </div>
 
@@ -118,13 +116,8 @@ function AttentionSummary({
                             onClick={() => onViewAll?.(item.key)}
                         >
                             <span>{t.view}</span>
-
                             <Icon
-                                name={
-                                    isArabic
-                                        ? "arrowLeft"
-                                        : "arrowRight"
-                                }
+                                name={isArabic ? "arrowLeft" : "arrowRight"}
                                 size={14}
                             />
                         </button>

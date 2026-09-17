@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../context/LanguageContext";
+import { hasPermission } from "../../services/permissionService";
 import StoreHeader from "../../components/Stores/StoreHeader/StoreHeader";
 import StoreStats from "../../components/Stores/StoreStats/StoreStats";
 import StoreFilters from "../../components/Stores/StoreFilters/StoreFilters";
@@ -12,6 +13,8 @@ import styles from "./Stores.module.css";
 function Stores() {
   const { translations, direction } = useLanguage();
   const t = translations.stores;
+  const canCreate = hasPermission("Store.Create");
+  const canEdit = hasPermission("Store.Edit");
   const [stores, setStores] = useState([]);
   const [branches, setBranches] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +35,15 @@ function Stores() {
       const storesData = storesResponse?.data ?? storesResponse;
       const branchesData = branchesResponse?.data ?? branchesResponse;
       setStores(Array.isArray(storesData) ? storesData : storesData?.items ?? []);
-      setBranches(Array.isArray(branchesData) ? branchesData : branchesData?.items ?? []);
+      setBranches(
+        (Array.isArray(branchesData) ? branchesData : branchesData?.items ?? []).sort((a, b) =>
+          String(a.branchCode ?? "").localeCompare(
+            String(b.branchCode ?? ""),
+            undefined,
+            { numeric: true, sensitivity: "base" }
+          )
+        )
+      );
     } catch (err) {
       console.error("Failed to load stores:", err);
       setError(err?.message || t.loadError);
@@ -47,18 +58,40 @@ function Stores() {
 
   const filteredStores = useMemo(() => {
     const query = filters.search.trim().toLowerCase();
+
     return stores
       .filter((store) => {
-        const matchesSearch = !query || [store.storeCode, store.storeNameArabic, store.storeNameEnglish, store.branchCode].some((value) => String(value ?? "").toLowerCase().includes(query));
-        const matchesStatus = filters.status === "all" || (filters.status === "active" ? store.isActive : !store.isActive);
-        const matchesBranch = !filters.branchCode || String(store.branchCode ?? "") === String(filters.branchCode);
+        const matchesSearch =
+          !query ||
+          [store.storeCode, store.storeNameArabic, store.storeNameEnglish, store.branchCode].some(
+            (value) => String(value ?? "").toLowerCase().includes(query)
+          );
+
+        const matchesStatus =
+          filters.status === "all" ||
+          (filters.status === "active" ? store.isActive : !store.isActive);
+
+        const matchesBranch =
+          !filters.branchCode ||
+          String(store.branchCode ?? "") === String(filters.branchCode);
+
         return matchesSearch && matchesStatus && matchesBranch;
       })
-      .sort((a, b) => String(a.storeCode ?? "").localeCompare(String(b.storeCode ?? ""), undefined, { numeric: true, sensitivity: "base" }));
+      .sort((a, b) =>
+        String(a.branchCode ?? "").localeCompare(
+          String(b.branchCode ?? ""),
+          undefined,
+          {
+            numeric: true,
+            sensitivity: "base",
+          }
+        )
+      );
   }, [stores, filters]);
 
   const totalItems = filteredStores.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
+
   const paginatedStores = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
     return filteredStores.slice(start, start + pageSize);
@@ -79,12 +112,14 @@ function Stores() {
   };
 
   const openCreate = () => {
+    if (!canCreate) return;
     setEditingStore(null);
     setFormError("");
     setFormOpen(true);
   };
 
   const openEdit = (store) => {
+    if (!canEdit) return;
     setEditingStore(store);
     setFormError("");
     setFormOpen(true);
@@ -98,11 +133,19 @@ function Stores() {
   };
 
   const handleSubmit = async (form) => {
+    if (editingStore && !canEdit) return;
+    if (!editingStore && !canCreate) return;
+
     setSaving(true);
     setFormError("");
+
     try {
-      if (editingStore) await updateStore(editingStore.id, form);
-      else await createStore(form);
+      if (editingStore) {
+        await updateStore(editingStore.id, form);
+      } else {
+        await createStore(form);
+      }
+
       setFormOpen(false);
       setEditingStore(null);
       await loadData();
@@ -115,9 +158,19 @@ function Stores() {
   };
 
   const handleDelete = async (store) => {
-    const name = store.storeNameArabic || store.storeNameEnglish || store.storeCode;
-    const confirmed = window.confirm(t.deleteConfirmation.replace("{name}", name));
+    if (!canEdit) return;
+
+    const name =
+      store.storeNameArabic ||
+      store.storeNameEnglish ||
+      store.storeCode;
+
+    const confirmed = window.confirm(
+      t.deleteConfirmation.replace("{name}", name)
+    );
+
     if (!confirmed) return;
+
     try {
       setError("");
       await deleteStore(store.id);
@@ -134,11 +187,66 @@ function Stores() {
 
   return (
     <main className={styles.page} dir={direction}>
-      <StoreHeader onNewStore={openCreate} />
-      <StoreStats totalStores={totalStores} activeStores={activeStores} inactiveStores={inactiveStores} loading={loading} />
-      <StoreFilters search={filters.search} status={filters.status} branchCode={filters.branchCode} branches={branches} onSearchChange={(search) => handleFiltersChange({ search })} onStatusChange={(status) => handleFiltersChange({ status })} onBranchChange={(branchCode) => handleFiltersChange({ branchCode })} onReset={() => handleFiltersChange({ search: "", status: "all", branchCode: "" })} />
-      <StoresTable stores={paginatedStores} loading={loading} error={error} onRetry={loadData} onEdit={openEdit} onDelete={handleDelete} currentPage={currentPage} totalPages={totalPages} pageSize={pageSize} totalItems={totalItems} onPageChange={setCurrentPage} onPageSizeChange={handlePageSizeChange} />
-      <StoreForm open={formOpen} store={editingStore} branches={branches} saving={saving} error={formError} onClose={closeForm} onSubmit={handleSubmit} />
+      <StoreHeader
+        onNewStore={openCreate}
+        canCreate={canCreate}
+      />
+
+      <StoreStats
+        totalStores={totalStores}
+        activeStores={activeStores}
+        inactiveStores={inactiveStores}
+        loading={loading}
+      />
+
+      <StoreFilters
+        search={filters.search}
+        status={filters.status}
+        branchCode={filters.branchCode}
+        branches={branches}
+        onSearchChange={(search) =>
+          handleFiltersChange({ search })
+        }
+        onStatusChange={(status) =>
+          handleFiltersChange({ status })
+        }
+        onBranchChange={(branchCode) =>
+          handleFiltersChange({ branchCode })
+        }
+        onReset={() =>
+          handleFiltersChange({
+            search: "",
+            status: "all",
+            branchCode: "",
+          })
+        }
+      />
+
+      <StoresTable
+        stores={paginatedStores}
+        loading={loading}
+        error={error}
+        onRetry={loadData}
+        onEdit={openEdit}
+        onDelete={handleDelete}
+        canEdit={canEdit}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        pageSize={pageSize}
+        totalItems={totalItems}
+        onPageChange={setCurrentPage}
+        onPageSizeChange={handlePageSizeChange}
+      />
+
+      <StoreForm
+        open={formOpen}
+        store={editingStore}
+        branches={branches}
+        saving={saving}
+        error={formError}
+        onClose={closeForm}
+        onSubmit={handleSubmit}
+      />
     </main>
   );
 }

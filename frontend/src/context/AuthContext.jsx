@@ -18,10 +18,8 @@ export function AuthProvider({ children }) {
 
         try {
             const response = await login(username, password);
-
             setUser(response.user);
             setAuthenticated(true);
-
             return response;
         } finally {
             setLoading(false);

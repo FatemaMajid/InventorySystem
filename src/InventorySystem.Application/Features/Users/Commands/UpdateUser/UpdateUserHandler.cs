@@ -28,10 +28,18 @@ public sealed class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Updat
         UpdateUserCommand request,
         CancellationToken cancellationToken)
     {
+        if (!_currentUser.IsManager)
+        {
+            throw new UnauthorizedAccessException(
+                "Only Manager can update users.");
+        }
+
         var user = await _context.Users
             .Include(x => x.UserRoles)
             .Include(x => x.UserPermissions)
-            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+            .FirstOrDefaultAsync(
+                x => x.Id == request.Id,
+                cancellationToken);
 
         if (user is null)
         {
@@ -49,7 +57,8 @@ public sealed class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Updat
 
         var usernameExists = await _context.Users
             .AnyAsync(
-                x => x.Id != user.Id && x.Username == username,
+                x => x.Id != user.Id &&
+                     x.Username == username,
                 cancellationToken);
 
         if (usernameExists)
@@ -67,15 +76,6 @@ public sealed class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Updat
         {
             throw new InvalidOperationException(
                 $"Role '{roleName}' was not found.");
-        }
-
-        if (_currentUser.IsAdmin &&
-            role.Name.Equals(
-                "Manager",
-                StringComparison.OrdinalIgnoreCase))
-        {
-            throw new UnauthorizedAccessException(
-                "Admin cannot assign the Manager role.");
         }
 
         var requestedPermissions = request.Permissions

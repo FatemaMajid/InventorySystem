@@ -66,7 +66,7 @@ function BranchStats({
             ) : (
               <strong className={styles.value}>
                 {Number(stat.value || 0).toLocaleString(
-                  direction === "rtl" ? "ar-IQ" : "en-US"
+                  direction === "rtl" ?  "en-US" : "en-US"
                 )}
               </strong>
             )}

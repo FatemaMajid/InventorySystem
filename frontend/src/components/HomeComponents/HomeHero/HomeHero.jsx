@@ -1,4 +1,5 @@
 import { useLanguage } from "../../../context/LanguageContext";
+import { useNavigate } from "react-router-dom";
 import Icon from "../../UI/Icon/Icon";
 import styles from "./HomeHero.module.css";
 
@@ -6,10 +7,10 @@ function HomeHero({
   activeSessions = 0,
   totalSessions = 0,
   attentionItems = 0,
-  // onNewInventory,
+  canCreateInventory = false,
 }) {
   const { translations, isArabic } = useLanguage();
-
+  const navigate = useNavigate();
   const t = translations.home;
 
   const formatNumber = (value) =>
@@ -51,15 +52,10 @@ function HomeHero({
           <span className={styles.greetingLabel}>
             {t.welcomeLabel}
           </span>
-
           <span className={styles.greetingUser}>
             {t.userName}
           </span>
-
-          <Icon
-            name="wave"
-            size={15}
-          />
+          <Icon name="wave" size={15} />
         </div>
 
         <h1 className={styles.title}>
@@ -77,21 +73,15 @@ function HomeHero({
               className={`${styles.statCard} ${styles[stat.variant]}`}
             >
               <div className={styles.statIcon}>
-                <Icon
-                  name={stat.icon}
-                  size={25}
-                />
+                <Icon name={stat.icon} size={25} />
               </div>
-
               <div className={styles.statContent}>
                 <span className={styles.statLabel}>
                   {t[stat.key]}
                 </span>
-
                 <strong className={styles.statValue}>
                   {formatNumber(stat.value)}
                 </strong>
-
                 <span className={styles.statDescription}>
                   {stat.description}
                 </span>
@@ -107,23 +97,19 @@ function HomeHero({
         <div className={styles.illustration}>
           <div className={styles.clipboard}>
             <div className={styles.clip} />
-
             <div className={styles.paper}>
               <div className={styles.line}>
                 <span />
                 <i />
               </div>
-
               <div className={styles.line}>
                 <span />
                 <i />
               </div>
-
               <div className={styles.line}>
                 <span />
                 <i />
               </div>
-
               <div className={styles.line}>
                 <span />
                 <i />
@@ -131,52 +117,35 @@ function HomeHero({
             </div>
           </div>
 
-          <div
-            className={`${styles.box} ${styles.boxOne}`}
-          />
-
-          <div
-            className={`${styles.box} ${styles.boxTwo}`}
-          />
+          <div className={`${styles.box} ${styles.boxOne}`} />
+          <div className={`${styles.box} ${styles.boxTwo}`} />
 
           <div className={styles.plant}>
             <div className={styles.stem} />
-
-            <div
-              className={`${styles.leaf} ${styles.leafOne}`}
-            />
-
-            <div
-              className={`${styles.leaf} ${styles.leafTwo}`}
-            />
-
-            <div
-              className={`${styles.leaf} ${styles.leafThree}`}
-            />
+            <div className={`${styles.leaf} ${styles.leafOne}`} />
+            <div className={`${styles.leaf} ${styles.leafTwo}`} />
+            <div className={`${styles.leaf} ${styles.leafThree}`} />
           </div>
         </div>
 
-        <button
-          type="button"
-          className={styles.newInventoryButton}
-          onClick={() => window.location.href = "/new-inventory-session"}
-        >
-          <Icon
-            name="plus"
-            size={17}
-          />
-
-          <span>
-            {t.newInventory}
-          </span>
-
-          <span className={styles.arrow}>
-            <Icon
-              name={isArabic ? "arrowLeft" : "arrowRight"}
-              size={17}
-            />
-          </span>
-        </button>
+        {canCreateInventory && (
+          <button
+            type="button"
+            className={styles.newInventoryButton}
+            onClick={() =>
+              navigate("/new-inventory-session")
+            }
+          >
+            <Icon name="plus" size={17} />
+            <span>{t.newInventory}</span>
+            <span className={styles.arrow}>
+              <Icon
+                name={isArabic ? "arrowLeft" : "arrowRight"}
+                size={17}
+              />
+            </span>
+          </button>
+        )}
       </div>
     </section>
   );

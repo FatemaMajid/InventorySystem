@@ -1,16 +1,18 @@
 using InventorySystem.Application.DTOs.Store;
 using InventorySystem.Application.Features.Stores.Commands.CreateStore;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
+using InventorySystem.Application.Features.Stores.Commands.DeleteStore;
+using InventorySystem.Application.Features.Stores.Commands.UpdateStore;
 using InventorySystem.Application.Features.Stores.Queries.GetAllStores;
 using InventorySystem.Application.Features.Stores.Queries.GetStoreById;
-using InventorySystem.Application.Features.Stores.Commands.UpdateStore;
-using InventorySystem.Application.Features.Stores.Commands.DeleteStore;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace InventorySystem.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class StoresController : ControllerBase
 {
     private readonly IMediator _mediator;
@@ -20,12 +22,9 @@ public class StoresController : ControllerBase
         _mediator = mediator;
     }
 
-    /// <summary>
-    /// Creates a new store.
-    /// </summary>
     [HttpPost]
-    public async Task<IActionResult> Create(
-        [FromBody] CreateStoreDto dto)
+    [Authorize(Policy = "Permission:Store.Create")]
+    public async Task<IActionResult> Create([FromBody] CreateStoreDto dto)
     {
         var command = new CreateStoreCommand
         {
@@ -34,37 +33,32 @@ public class StoresController : ControllerBase
 
         var id = await _mediator.Send(command);
 
-        return Created(
-            $"api/Stores/{id}",
-            id);
+        return Created($"api/Stores/{id}", id);
     }
 
     [HttpGet]
+    [Authorize(Policy = "Permission:Store.View")]
     public async Task<IActionResult> GetAll()
     {
-        var result = await _mediator.Send(
-            new GetAllStoresQuery());
-
+        var result = await _mediator.Send(new GetAllStoresQuery());
         return Ok(result);
     }
+
     [HttpGet("{id:int}")]
+    [Authorize(Policy = "Permission:Store.View")]
     public async Task<IActionResult> GetById(int id)
     {
         var result = await _mediator.Send(
             new GetStoreByIdQuery { Id = id });
 
         if (result == null)
-            return NotFound(new
-            {
-                message = "Store not found."
-            });
+            return NotFound(new { message = "Store not found." });
 
         return Ok(result);
     }
-    /// <summary>
-    /// Updates an existing store.
-    /// </summary>
+
     [HttpPut("{id:int}")]
+    [Authorize(Policy = "Permission:Store.Edit")]
     public async Task<IActionResult> Update(
         int id,
         [FromBody] UpdateStoreDto dto)
@@ -78,27 +72,20 @@ public class StoresController : ControllerBase
         var result = await _mediator.Send(command);
 
         if (!result)
-            return NotFound(new
-            {
-                message = "Store not found."
-            });
+            return NotFound(new { message = "Store not found." });
 
         return NoContent();
     }
-    /// <summary>
-    /// Deletes an existing store.
-    /// </summary>
+
     [HttpDelete("{id:int}")]
+    [Authorize(Policy = "Permission:Store.Edit")]
     public async Task<IActionResult> Delete(int id)
     {
         var result = await _mediator.Send(
             new DeleteStoreCommand { Id = id });
 
         if (!result)
-            return NotFound(new
-            {
-                message = "Store not found."
-            });
+            return NotFound(new { message = "Store not found." });
 
         return NoContent();
     }

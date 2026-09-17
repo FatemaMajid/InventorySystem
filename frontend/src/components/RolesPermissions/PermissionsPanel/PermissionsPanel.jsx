@@ -8,6 +8,7 @@ function PermissionsPanel({
     permissions = [],
     loading = false,
     onEdit,
+    canEdit = false,
 }) {
     const { translations } = useLanguage();
     const t = translations.rolesPermissions || {};
@@ -79,14 +80,16 @@ function PermissionsPanel({
                     </div>
                 </div>
 
-                <button
-                    type="button"
-                    className={styles.editButton}
-                    onClick={onEdit}
-                >
-                    <Icon name="edit" size={16} />
-                    <span>{t.editRole}</span>
-                </button>
+                {canEdit && (
+                    <button
+                        type="button"
+                        className={styles.editButton}
+                        onClick={onEdit}
+                    >
+                        <Icon name="edit" size={16} />
+                        <span>{t.editRole}</span>
+                    </button>
+                )}
             </div>
 
             <div className={styles.summary}>
@@ -166,8 +169,8 @@ function PermissionsPanel({
                                                             permission.id
                                                         }
                                                         className={`${styles.permissionItem} ${selected
-                                                                ? styles.selected
-                                                                : ""
+                                                            ? styles.selected
+                                                            : ""
                                                             }`}
                                                     >
                                                         <span

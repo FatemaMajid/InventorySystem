@@ -1,8 +1,6 @@
 import { useLanguage } from "../../../context/LanguageContext";
-
 import Icon from "../../UI/Icon/Icon";
 import Skeleton from "../../UI/Loading/Skeleton/Skeleton";
-
 import styles from "./SessionStats.module.css";
 
 function SessionStats({
@@ -11,13 +9,8 @@ function SessionStats({
   completedSessions = 0,
   loading = false,
 }) {
-  const {
-    translations,
-    direction,
-  } = useLanguage();
-
-  const t =
-    translations.inventorySessions;
+  const { translations, direction } = useLanguage();
+  const t = translations.inventorySessions;
 
   const stats = [
     {
@@ -44,39 +37,19 @@ function SessionStats({
   ];
 
   return (
-    <div
-      className={styles.grid}
-      dir={direction}
-    >
+    <div className={styles.grid} dir={direction}>
       {stats.map((stat) => (
         <article
           key={stat.key}
           className={`${styles.card} ${styles[stat.variant]}`}
         >
-          <div
-            className={
-              styles.iconWrapper
-            }
-          >
-            <Icon
-              name={stat.icon}
-              size={20}
-            />
+          <div className={styles.iconWrapper}>
+            <Icon name={stat.icon} size={20} />
           </div>
-
-          <div
-            className={
-              styles.content
-            }
-          >
-            <span
-              className={
-                styles.label
-              }
-            >
+          <div className={styles.content}>
+            <span className={styles.label}>
               {stat.label}
             </span>
-
             {loading ? (
               <Skeleton
                 width="65px"
@@ -84,16 +57,8 @@ function SessionStats({
                 borderRadius="6px"
               />
             ) : (
-              <strong
-                className={
-                  styles.value
-                }
-              >
-                {Number(
-                  stat.value || 0
-                ).toLocaleString(
-                  "en-US"
-                )}
+              <strong className={styles.value}>
+                {Number(stat.value || 0).toLocaleString("en-US")}
               </strong>
             )}
           </div>

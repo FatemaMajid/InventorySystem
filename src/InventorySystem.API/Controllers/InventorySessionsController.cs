@@ -17,6 +17,8 @@ namespace InventorySystem.API.Controllers;
 [Route("api/[controller]")]
 public class InventorySessionsController : ControllerBase
 {
+    private const long MaxExcelFileSize = 50 * 1024 * 1024;
+
     private readonly IMediator _mediator;
     private readonly InventoryImportPreviewService _previewService;
     private readonly InventoryImportConfirmService _confirmService;
@@ -74,6 +76,15 @@ public class InventorySessionsController : ControllerBase
         if (file == null || file.Length == 0)
             return BadRequest("Excel file is required.");
 
+        if (file.Length > MaxExcelFileSize)
+            return BadRequest("Excel file size cannot exceed 10 MB.");
+
+        if (!string.Equals(
+                Path.GetExtension(file.FileName),
+                ".xlsx",
+                StringComparison.OrdinalIgnoreCase))
+            return BadRequest("Only .xlsx Excel files are allowed.");
+
         await using var stream = file.OpenReadStream();
 
         var request = new InventoryImportPreviewRequest
@@ -97,6 +108,24 @@ public class InventorySessionsController : ControllerBase
 
         if (afterFile == null || afterFile.Length == 0)
             return BadRequest("After inventory Excel file is required.");
+
+        if (beforeFile.Length > MaxExcelFileSize)
+            return BadRequest("Before inventory Excel file size cannot exceed 10 MB.");
+
+        if (afterFile.Length > MaxExcelFileSize)
+            return BadRequest("After inventory Excel file size cannot exceed 10 MB.");
+
+        if (!string.Equals(
+                Path.GetExtension(beforeFile.FileName),
+                ".xlsx",
+                StringComparison.OrdinalIgnoreCase))
+            return BadRequest("Before inventory file must be an .xlsx Excel file.");
+
+        if (!string.Equals(
+                Path.GetExtension(afterFile.FileName),
+                ".xlsx",
+                StringComparison.OrdinalIgnoreCase))
+            return BadRequest("After inventory file must be an .xlsx Excel file.");
 
         await using var beforeStream = beforeFile.OpenReadStream();
         await using var afterStream = afterFile.OpenReadStream();
@@ -171,7 +200,6 @@ public class InventorySessionsController : ControllerBase
 
         return File(file, "application/pdf", fileName);
     }
-
 
     // ==========================================
     // Export Comparison Excel

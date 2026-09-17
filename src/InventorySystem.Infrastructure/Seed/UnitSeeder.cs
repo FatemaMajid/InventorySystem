@@ -25,7 +25,48 @@ public static class UnitSeeder
                 UnitNameArabic = "درزن",
                 UnitNameEnglish = "Dozen",
                 IsActive = true
-            }
+            },
+
+            new()
+            {
+                UnitCode = "3",
+                UnitNameArabic = "سيت",
+                UnitNameEnglish = "Set",
+                IsActive = true
+            },
+
+            new()
+            {
+                UnitCode = "4",
+                UnitNameArabic = "غم",
+                UnitNameEnglish = "g",
+                IsActive = true
+            },
+
+            new()
+            {
+                UnitCode = "5",
+                UnitNameArabic = "كغم",
+                UnitNameEnglish = "kg",
+                IsActive = true
+            },
+            new()
+            {
+                UnitCode = "6",
+                UnitNameArabic = "سم",
+                UnitNameEnglish = "cm",
+                IsActive = true
+            },
+
+            new()
+            {
+                UnitCode = "7",
+                UnitNameArabic = "علبة",
+                UnitNameEnglish = "Box",
+                IsActive = true
+            },
+
+            
         };
 
         foreach (var unit in units)

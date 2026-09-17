@@ -4,18 +4,12 @@ import styles from "./TopDifferences.module.css";
 function TopDifferences({ items = [] }) {
   const { translations } = useLanguage();
 
-
   const maxPositive = 2450000;
   const maxNegative = 2100000;
 
   const formatValue = (value) => {
     const abs = Math.abs(value);
-
-    if (abs >= 1000000) {
-      return `${value < 0 ? "-" : "+"}${(abs / 1000).toLocaleString()}K`;
-    }
-
-    return `${value < 0 ? "-" : "+"}${(abs / 1000).toLocaleString()}K`;
+    return `${value < 0 ? "-" : "+"}${(abs / 1000).toLocaleString("en-US")}K`;
   };
 
   return (
@@ -34,37 +28,28 @@ function TopDifferences({ items = [] }) {
 
           return (
             <div className={styles.row} key={item.itemCode}>
-
-              {/* ITEM CODE */}
-              <div className={styles.code}>
-                {item.itemCode}
+              <div className={styles.itemName}>
+                {item.itemName}
               </div>
 
-              {/* BAR AREA */}
               <div className={styles.barArea}>
-
                 <div
-                  className={`${styles.bar} ${
-                    positive
+                  className={`${styles.bar} ${positive
                       ? styles.barPositive
                       : styles.barNegative
-                  }`}
+                    }`}
                   style={{ width: `${width}%` }}
                 />
-
               </div>
 
-              {/* VALUE */}
               <div
-                className={`${styles.value} ${
-                  positive
+                className={`${styles.value} ${positive
                     ? styles.valuePositive
                     : styles.valueNegative
-                }`}
+                  }`}
               >
                 {formatValue(item.valueDifference)}
               </div>
-
             </div>
           );
         })}

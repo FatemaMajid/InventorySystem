@@ -1,4 +1,3 @@
-
 using InventorySystem.Application.Common.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -38,9 +37,6 @@ public class GetInventoryDashboardQueryHandler
                 x.InventorySessionId == request.SessionId &&
                 !x.Item!.IsDeleted);
 
-        // Single grouped aggregation instead of ~9 separate round-trips.
-        // EF Core translates every branch below into one SQL statement
-        // with conditional (CASE WHEN) aggregates.
         var stats = await details
             .GroupBy(x => 1)
             .Select(g => new
@@ -78,6 +74,14 @@ public class GetInventoryDashboardQueryHandler
                 UnitNotDefined = g.Count(x =>
                     !x.Item!.UnitId.HasValue),
 
+                TotalQuantityBefore = g
+                    .Where(x => x.QuantityBefore.HasValue)
+                    .Sum(x => x.QuantityBefore!.Value),
+
+                TotalQuantityAfter = g
+                    .Where(x => x.QuantityAfter.HasValue)
+                    .Sum(x => x.QuantityAfter!.Value),
+
                 TotalValueBefore = g
                     .Where(x => x.BeforeValue.HasValue)
                     .Sum(x => x.BeforeValue!.Value),
@@ -88,10 +92,6 @@ public class GetInventoryDashboardQueryHandler
             })
             .FirstOrDefaultAsync(cancellationToken);
 
-        // FirstOrDefaultAsync returns null when the session has zero
-        // detail rows (e.g. import failed partway) — the original code
-        // would have returned all zeros in that case too, via Count
-        // queries on an empty set, so we preserve that behavior here.
         var totalItems = stats?.TotalItems ?? 0;
         var increase = stats?.Increase ?? 0;
         var decrease = stats?.Decrease ?? 0;
@@ -100,8 +100,45 @@ public class GetInventoryDashboardQueryHandler
         var fullyDepleted = stats?.FullyDepleted ?? 0;
         var priceChanged = stats?.PriceChanged ?? 0;
         var unitNotDefined = stats?.UnitNotDefined ?? 0;
-        var totalValueBefore = stats?.TotalValueBefore ?? 0m;
-        var totalValueAfter = stats?.TotalValueAfter ?? 0m;
+
+        var totalQuantityBefore =
+            stats?.TotalQuantityBefore ?? 0m;
+
+        var totalQuantityAfter =
+            stats?.TotalQuantityAfter ?? 0m;
+
+        var totalValueBefore =
+            stats?.TotalValueBefore ?? 0m;
+
+        var totalValueAfter =
+            stats?.TotalValueAfter ?? 0m;
+
+        var quantityDifference =
+            totalQuantityAfter - totalQuantityBefore;
+
+        var quantityIncrease =
+            increase > 0
+                ? await details
+                    .Where(x =>
+                        x.QuantityBefore.HasValue &&
+                        x.QuantityAfter.HasValue &&
+                        x.QuantityAfter > x.QuantityBefore)
+                    .SumAsync(
+                        x => x.QuantityAfter!.Value - x.QuantityBefore!.Value,
+                        cancellationToken)
+                : 0m;
+
+        var quantityDecrease =
+            decrease > 0
+                ? await details
+                    .Where(x =>
+                        x.QuantityBefore.HasValue &&
+                        x.QuantityAfter.HasValue &&
+                        x.QuantityAfter < x.QuantityBefore)
+                    .SumAsync(
+                        x => x.QuantityBefore!.Value - x.QuantityAfter!.Value,
+                        cancellationToken)
+                : 0m;
 
         var totalDifference =
             totalValueAfter - totalValueBefore;
@@ -167,13 +204,10 @@ public class GetInventoryDashboardQueryHandler
                 Status = session.Status,
                 InventoryType = session.InventoryType.ToString(),
                 InventoryDate = session.InventoryDate,
-
                 BranchId = session.BranchId,
                 BranchName = session.Branch?.BranchNameArabic ?? string.Empty,
-
                 StoreId = session.StoreId,
                 StoreName = session.Store?.StoreNameArabic ?? string.Empty,
-
                 BeforeFileName = session.BeforeFileName,
                 AfterFileName = session.AfterFileName
             },
@@ -188,6 +222,15 @@ public class GetInventoryDashboardQueryHandler
                 FullyDepleted = fullyDepleted,
                 PriceChanged = priceChanged,
                 UnitNotDefined = unitNotDefined
+            },
+
+            InventoryQuantity = new InventoryQuantitySummary
+            {
+                TotalQuantityBefore = totalQuantityBefore,
+                TotalQuantityAfter = totalQuantityAfter,
+                QuantityDifference = quantityDifference,
+                QuantityIncrease = quantityIncrease,
+                QuantityDecrease = quantityDecrease
             },
 
             Financial = new FinancialSummary
@@ -219,15 +262,14 @@ public class GetInventoryDashboardQueryHandler
         int total)
     {
         var percentage = total > 0
-            ? (decimal)count / total * 100 : 0;
+            ? (decimal)count / total * 100
+            : 0;
 
         return new StatusSummary
         {
             Status = status,
             Count = count,
-            Percentage = Math.Round(
-                percentage,
-                2)
+            Percentage = Math.Round(percentage,2)
         };
     }
 }

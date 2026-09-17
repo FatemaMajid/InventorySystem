@@ -7,12 +7,14 @@ using InventorySystem.Application.Features.Users.Queries.GetAllUsers;
 using InventorySystem.Application.Features.Users.Queries.GetUserById;
 using InventorySystem.Application.Features.Users.Queries.GetUserOptions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventorySystem.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(Roles = "Manager")]
 public sealed class UsersController : ControllerBase
 {
     private readonly ISender _sender;

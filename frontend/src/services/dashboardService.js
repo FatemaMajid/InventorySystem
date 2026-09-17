@@ -10,6 +10,28 @@ export async function getInventoryDashboard(sessionId) {
   );
 }
 
+export async function exportDashboardExcel(sessionId, language = "ar") {
+  if (!sessionId) {
+    throw new Error("Session ID is required.");
+  }
+
+  return apiClient.get(
+    `/api/InventorySessions/${sessionId}/dashboard/export/excel?language=${language}`,
+    { responseType: "blob" }
+  );
+}
+
+export async function exportDashboardPdf(sessionId, language = "ar") {
+  if (!sessionId) {
+    throw new Error("Session ID is required.");
+  }
+
+  return apiClient.get(
+    `/api/InventorySessions/${sessionId}/dashboard/export/pdf?language=${language}`,
+    { responseType: "blob" }
+  );
+}
+
 export async function getInventoryComparison({
   sessionId,
   pageNumber = 1,

@@ -11,9 +11,7 @@ function ReportSession({ data }) {
 
   const session = data.session ?? {};
   const date = session.inventoryDate
-    ? new Date(session.inventoryDate).toLocaleDateString(
-        language === "ar" ? "ar-IQ" : "en-US"
-      )
+    ? new Date(session.inventoryDate).toLocaleDateString( "en-US")
     : "—";
 
   return (

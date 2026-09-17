@@ -1,3 +1,5 @@
+using InventorySystem.API.Authorization;
+using InventorySystem.Application.Common.Authorization;
 using InventorySystem.Application.Features.InventorySessions.Commands.ConfirmInventoryImport;
 using InventorySystem.Application.Features.InventorySessions.Import.Preview;
 using MediatR;
@@ -20,11 +22,8 @@ public class InventoryImportController : ControllerBase
         _mediator = mediator;
     }
 
-    // =========================================================
-    // PREVIEW
-    // =========================================================
-
     [HttpPost("preview")]
+    [HasPermission(PermissionCodes.InventorySessionCreate)]
     [Consumes("multipart/form-data")]
     public ActionResult<InventoryImportPreviewResponse> Preview(
         IFormFile file)
@@ -72,11 +71,8 @@ public class InventoryImportController : ControllerBase
         return Ok(response);
     }
 
-    // =========================================================
-    // CONFIRM
-    // =========================================================
-
     [HttpPost("confirm")]
+    [HasPermission(PermissionCodes.InventorySessionCreate)]
     public async Task<IActionResult> Confirm(
         [FromBody] ConfirmInventoryImportCommand command,
         CancellationToken cancellationToken)

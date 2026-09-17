@@ -15,7 +15,6 @@ export async function login(username, password) {
         response?.access_token;
 
     if (!token) {
-        console.error("Login response:", response);
         throw new Error("Login succeeded but JWT token was not found.");
     }
 
@@ -53,13 +52,35 @@ export function getCurrentUser() {
     }
 
     try {
-        return JSON.parse(storedUser);
+        const user = JSON.parse(storedUser);
+
+        if (user?.expiresAt) {
+            const expiresAt = new Date(user.expiresAt).getTime();
+
+            if (
+                !Number.isNaN(expiresAt) &&
+                expiresAt <= Date.now()
+            ) {
+                logout();
+                return null;
+            }
+        }
+
+        return user;
     } catch {
-        localStorage.removeItem(USER_KEY);
+        logout();
         return null;
     }
 }
 
 export function isAuthenticated() {
-    return Boolean(getToken());
+    const token = getToken();
+
+    if (!token) {
+        return false;
+    }
+
+    const user = getCurrentUser();
+
+    return Boolean(user);
 }

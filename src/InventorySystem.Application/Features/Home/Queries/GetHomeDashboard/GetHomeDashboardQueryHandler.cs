@@ -22,36 +22,22 @@ public sealed class GetHomeDashboardQueryHandler
         GetHomeDashboardQuery request,
         CancellationToken cancellationToken)
     {
-        // =========================================
-        // Active Sessions
-        // Last 7 days regardless of status
-        // =========================================
-
         var sevenDaysAgo = DateTime.UtcNow.AddDays(-7);
 
-        var activeSessions = await _context.InventorySessions
+        var sessionStatistics = await _context.InventorySessions
             .AsNoTracking()
-            .CountAsync(
-                x =>
+            .GroupBy(_ => 1)
+            .Select(g => new
+            {
+                ActiveSessions = g.Count(x =>
                     !x.IsDeleted &&
-                    x.InventoryDate >= sevenDaysAgo,
-                cancellationToken);
+                    x.InventoryDate >= sevenDaysAgo),
+                TotalSessions = g.Count(x => !x.IsDeleted)
+            })
+            .FirstOrDefaultAsync(cancellationToken);
 
-
-        // =========================================
-        // Total Sessions
-        // =========================================
-
-        var totalSessions = await _context.InventorySessions
-            .AsNoTracking()
-            .CountAsync(
-                x => !x.IsDeleted,
-                cancellationToken);
-
-
-        // =========================================
-        // Recent Sessions
-        // =========================================
+        var activeSessions = sessionStatistics?.ActiveSessions ?? 0;
+        var totalSessions = sessionStatistics?.TotalSessions ?? 0;
 
         var recentSessions = await _context.InventorySessions
             .AsNoTracking()
@@ -62,95 +48,54 @@ public sealed class GetHomeDashboardQueryHandler
             .Select(x => new HomeRecentSession
             {
                 Id = x.Id,
-
                 SessionNumber = x.SessionNumber,
-
                 InventoryType = x.InventoryType.ToString(),
-
                 InventoryDate = x.InventoryDate,
-
                 BranchId = x.BranchId,
-
                 BranchName = x.Branch != null
                     ? x.Branch.BranchNameArabic
                     : string.Empty,
-
                 StoreId = x.StoreId,
-
                 StoreName = x.Store != null
                     ? x.Store.StoreNameArabic
                     : string.Empty,
-
                 Status = x.Status,
-
-                TotalItems = x.Details
-                    .Count(d => !d.IsDeleted),
-
+                TotalItems = x.Details.Count(d => !d.IsDeleted),
                 TotalValue = x.Details
-                    .Where(
-                        d =>
-                            !d.IsDeleted &&
-                            d.AfterValue.HasValue)
-                    .Sum(
-                        d =>
-                            d.AfterValue ?? 0)
+                    .Where(d =>
+                        !d.IsDeleted &&
+                        d.AfterValue.HasValue)
+                    .Sum(d => d.AfterValue ?? 0)
             })
             .ToListAsync(cancellationToken);
-
-
-        // =========================================
-        // Overview
-        // =========================================
 
         var branchesCount = await _context.Branches
             .AsNoTracking()
             .CountAsync(
-                x =>
-                    !x.IsDeleted &&
-                    x.IsActive,
+                x => !x.IsDeleted && x.IsActive,
                 cancellationToken);
-
 
         var storesCount = await _context.Stores
             .AsNoTracking()
             .CountAsync(
-                x =>
-                    !x.IsDeleted &&
-                    x.IsActive,
+                x => !x.IsDeleted && x.IsActive,
                 cancellationToken);
-
 
         var categoriesCount = await _context.Categories
             .AsNoTracking()
             .CountAsync(
-                x =>
-                    !x.IsDeleted &&
-                    x.IsActive,
+                x => !x.IsDeleted && x.IsActive,
                 cancellationToken);
-
 
         var itemsCount = await _context.Items
             .AsNoTracking()
             .CountAsync(
-                x =>
-                    !x.IsDeleted &&
-                    x.IsActive,
+                x => !x.IsDeleted && x.IsActive,
                 cancellationToken);
 
-
-        // =========================================
-        // Attention Items
-        // Based on latest inventory session
-        // =========================================
-
-        var latestSessionId = await _context.InventorySessions
-            .AsNoTracking()
-            .Where(x => !x.IsDeleted)
-            .OrderByDescending(x => x.InventoryDate)
-            .ThenByDescending(x => x.Id)
+        var latestSessionId = recentSessions
             .Select(x => (int?)x.Id)
-            .FirstOrDefaultAsync(cancellationToken);
-
+            .FirstOrDefault();
 
         var attentionItems = 0;
 
@@ -158,125 +103,55 @@ public sealed class GetHomeDashboardQueryHandler
         {
             var details = _context.InventoryDetails
                 .AsNoTracking()
-                .Where(
-                    x =>
-                        x.InventorySessionId == latestSessionId.Value &&
-                        !x.IsDeleted &&
-                        x.Item != null &&
-                        !x.Item.IsDeleted);
+                .Where(x =>
+                    x.InventorySessionId == latestSessionId.Value &&
+                    !x.IsDeleted &&
+                    x.Item != null &&
+                    !x.Item.IsDeleted);
 
-
-            // Newly counted
-            var newlyCounted = await details
-                .CountAsync(
-                    x =>
-                        !x.QuantityBefore.HasValue &&
-                        x.QuantityAfter.HasValue,
-                    cancellationToken);
-
-
-            // Fully depleted
-            var fullyDepleted = await details
-                .CountAsync(
-                    x =>
-                        x.QuantityBefore.HasValue &&
-                        !x.QuantityAfter.HasValue,
-                    cancellationToken);
-
-
-            // Price changed
-            var priceChanged = await details
-                .CountAsync(
-                    x =>
-                        x.ConsumerPriceBefore.HasValue &&
-                        x.ConsumerPriceAfter.HasValue &&
-                        x.ConsumerPriceBefore !=
-                        x.ConsumerPriceAfter,
-                    cancellationToken);
-
-
-            // Unit not defined
-            var unitNotDefined = await details
-                .CountAsync(
-                    x =>
-                        !x.Item!.UnitId.HasValue,
-                    cancellationToken);
-
-
-            attentionItems =
-                newlyCounted +
-                fullyDepleted +
-                priceChanged +
-                unitNotDefined;
+            attentionItems = await details
+                .Select(x =>
+                    (x.QuantityBefore == null &&
+                     x.QuantityAfter.HasValue ? 1 : 0)
+                    +
+                    (x.QuantityBefore.HasValue &&
+                     x.QuantityAfter == null ? 1 : 0)
+                    +
+                    (!x.Item!.UnitId.HasValue ? 1 : 0)
+                    +
+                    (x.ConsumerPriceBefore.HasValue &&
+                     x.ConsumerPriceAfter.HasValue &&
+                     x.ConsumerPriceBefore != x.ConsumerPriceAfter
+                        ? 1
+                        : 0))
+                .SumAsync(cancellationToken);
         }
-
-
-        // =========================================
-        // Database Status
-        // =========================================
-
-        var databaseConnected = true;
-
-        try
-        {
-            databaseConnected =
-                await _context.Database
-                    .CanConnectAsync(cancellationToken);
-        }
-        catch
-        {
-            databaseConnected = false;
-        }
-
-
-        // =========================================
-        // Response
-        // =========================================
 
         return new GetHomeDashboardResponse
         {
             User = new HomeUser
             {
-                Name =
-                    _currentUserService.Username
-                    ?? string.Empty
+                Name = _currentUserService.Username ?? string.Empty
             },
-
             Statistics = new HomeStatistics
             {
                 ActiveSessions = activeSessions,
-
                 TotalSessions = totalSessions,
-
                 AttentionItems = attentionItems
             },
-
             RecentSessions = recentSessions,
-
             Overview = new HomeOverview
             {
                 Branches = branchesCount,
-
                 Stores = storesCount,
-
                 Categories = categoriesCount,
-
                 Items = itemsCount
             },
-
             SystemStatus = new HomeSystemStatus
             {
                 Api = "Connected",
-
-                Database =
-                    databaseConnected
-                        ? "Connected"
-                        : "Disconnected",
-
-                Health =
-                    databaseConnected
-                        ? "Healthy"
-                        : "Degraded"
+                Database = "Connected",
+                Health = "Healthy"
             }
         };
     }

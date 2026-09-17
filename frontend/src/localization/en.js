@@ -232,14 +232,11 @@ const en = {
       date: 'Date',
       branch: 'Branch',
       store: 'Store',
-
       exportExcel: 'Export Excel',
       exportPdf: 'Export PDF',
-
       statuses: {
         completed: 'Completed',
       },
-
       inventoryTypes: {
         semiAnnual: 'Semi-Annual Inventory',
         annual: 'Annual Inventory',
@@ -248,27 +245,51 @@ const en = {
 
     kpiCards: {
       totalItems: 'Total Items',
-      increase: 'Increase',
-      decrease: 'Decrease',
-      match: 'Match',
-      newlyCounted: 'Newly Counted',
-      fullyDepleted: 'Fully Depleted',
-      priceChanged: 'Price Changed',
-      unitNotDefined: 'unit Not Defined',
+      increase: 'Quantity Increase After Inventory',
+      decrease: 'Quantity Decrease After Inventory',
+      match: 'Matching Items',
+      newlyCounted: 'New Items After Inventory',
+      fullyDepleted: 'Items with 0 Balance After Inventory',
+      priceChanged: 'Consumer Price Changed',
+      unitNotDefined: 'First Unit Not Defined',
+      totalQuantityBefore: 'Total Quantity Before Inventory',
+      totalQuantityAfter: 'Total Quantity After Inventory',
       title: 'Item Status',
       total: 'Total',
-
       topDifferences: {
-        title: 'TOP 10 BY VALUE DIFFERENCE (IQD)'
+        title: 'TOP 10 BY VALUE DIFFERENCE (IQD)',
+        itemName: 'Item Name'
       },
+    },
+
+    emptyState: {
+      title: "No Inventory Session Selected",
+      description: "Please select an inventory session to view the dashboard data.",
+      selectSession: "Select Inventory Session",
+    },
+    errors: {
+      loadDashboard: "Failed to load dashboard data.",
+      loadComparison: "Failed to load comparison results.",
+      loadAttention: "Failed to load attention items.",
+      exportExcel: "Failed to export Excel report.",
+      exportPdf: "Failed to export PDF report.",
+    },
+
+    inventoryQuantity: {
+      title: 'Inventory Quantity Summary',
+      totalQuantityBefore: 'Total Quantity Before Inventory',
+      totalQuantityAfter: 'Total Quantity After Inventory',
+      quantityDifference: 'Quantity Difference',
+      quantityIncrease: 'Quantity Increase',
+      quantityDecrease: 'Quantity Decrease',
     },
 
     financialSummary: {
       title: "Financial Summary",
       totalValueBefore: "Total Value Before",
       totalValueAfter: "Total Value After",
-      totalDifference: "Total Difference",
-      differencePercentage: "Difference %",
+      totalDifference: "Value Difference",
+      differencePercentage: "Difference Percentage",
       currency: 'IQD',
     },
 
@@ -284,10 +305,10 @@ const en = {
       description: 'items require your attention',
       viewAll: 'View All',
       view: 'View',
-      newlyCounted: 'Newly Counted',
-      fullyDepleted: 'Fully Depleted',
-      unitNotDefined: 'Unit Not Defined',
-      priceChanged: 'Price Changed',
+      newlyCounted: 'New Items After Inventory',
+      fullyDepleted: 'Items with 0 Balance After Inventory',
+      unitNotDefined: 'First Unit Not Defined',
+      priceChanged: 'Consumer Price Changed',
       total: "Total Attention",
       session: "Inventory Session",
       selectSession: "Select Session",
@@ -304,7 +325,6 @@ const en = {
       noActiveSession: "No active inventory session",
       title: "Comparison Results",
       items: "items",
-
       filters: "Filters",
       clear: "Clear",
       status: "Status",
@@ -314,7 +334,6 @@ const en = {
       unit: "Unit",
       all: "All",
       applyFilters: "Apply Filters",
-
       itemCode: "Item Code",
       itemName: "Item Name",
       quantityBefore: "Quantity Before",
@@ -327,14 +346,11 @@ const en = {
       afterValue: "Value After",
       valueDifference: "Value Difference",
       status: "Status",
-
       loading: "Loading...",
       noResults: "No results found",
-
       of: "of",
       previous: "Previous",
       next: "Next",
-
       statuses: {
         increase: "Increase",
         decrease: "Decrease",
@@ -650,6 +666,9 @@ const en = {
     signingIn: "Signing in...",
     requiredFields: "Please enter username and password.",
     loginError: "Invalid username or password.",
+    invalidCredentials: "Invalid username or password.",
+    unauthorized: "You are not authorized to sign in.",
+    tooManyAttempts: "Too many login attempts. Please try again later.",
   },
 
   rolesPermissions: {

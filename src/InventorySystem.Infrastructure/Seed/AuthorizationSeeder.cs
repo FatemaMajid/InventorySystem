@@ -1,7 +1,6 @@
 using InventorySystem.Application.Common.Authorization;
 using InventorySystem.Domain.Entities.Authorization;
 using InventorySystem.Infrastructure.Persistence.Contexts;
-
 using Microsoft.EntityFrameworkCore;
 
 namespace InventorySystem.Infrastructure.Seed;
@@ -12,12 +11,9 @@ public static class AuthorizationSeeder
         ApplicationDbContext context)
     {
         await SeedPermissionsAsync(context);
-
         await SeedRolesAsync(context);
-
         await SeedRolePermissionsAsync(context);
     }
-
 
     // =====================================================
     // PERMISSIONS
@@ -40,20 +36,17 @@ public static class AuthorizationSeeder
                 Name = "Dashboard Export"
             },
 
-
             // Inventory Sessions
             new Permission
             {
                 Code = PermissionCodes.InventorySessionView,
                 Name = "Inventory Sessions View"
             },
-
             new Permission
             {
                 Code = PermissionCodes.InventorySessionCreate,
                 Name = "Inventory Session Create"
             },
-
 
             // Comparison
             new Permission
@@ -61,19 +54,11 @@ public static class AuthorizationSeeder
                 Code = PermissionCodes.ComparisonView,
                 Name = "Comparison Results View"
             },
-
             new Permission
             {
                 Code = PermissionCodes.ComparisonExport,
                 Name = "Comparison Results Export"
             },
-
-            new Permission
-            {
-                Code = PermissionCodes.ComparisonExport,
-                Name = "Comparison Export"
-            },
-
 
             // Attention Items
             new Permission
@@ -81,13 +66,11 @@ public static class AuthorizationSeeder
                 Code = PermissionCodes.AttentionView,
                 Name = "Attention Items View"
             },
-
             new Permission
             {
                 Code = PermissionCodes.AttentionExport,
                 Name = "Attention Items Export"
             },
-
 
             // Reports
             new Permission
@@ -95,19 +78,16 @@ public static class AuthorizationSeeder
                 Code = PermissionCodes.ReportView,
                 Name = "Reports View"
             },
-
             new Permission
             {
                 Code = PermissionCodes.ReportCreate,
                 Name = "Report Create"
             },
-
             new Permission
             {
                 Code = PermissionCodes.ReportExport,
                 Name = "Report Export"
             },
-
 
             // Branches
             new Permission
@@ -115,19 +95,16 @@ public static class AuthorizationSeeder
                 Code = PermissionCodes.BranchView,
                 Name = "Branches View"
             },
-
             new Permission
             {
                 Code = PermissionCodes.BranchCreate,
                 Name = "Branch Create"
             },
-
             new Permission
             {
                 Code = PermissionCodes.BranchEdit,
                 Name = "Branch Edit"
             },
-
 
             // Stores
             new Permission
@@ -135,19 +112,16 @@ public static class AuthorizationSeeder
                 Code = PermissionCodes.StoreView,
                 Name = "Stores View"
             },
-
             new Permission
             {
                 Code = PermissionCodes.StoreCreate,
                 Name = "Store Create"
             },
-
             new Permission
             {
                 Code = PermissionCodes.StoreEdit,
                 Name = "Store Edit"
             },
-
 
             // Users
             new Permission
@@ -155,25 +129,21 @@ public static class AuthorizationSeeder
                 Code = PermissionCodes.UserView,
                 Name = "Users View"
             },
-
             new Permission
             {
                 Code = PermissionCodes.UserCreate,
                 Name = "User Create"
             },
-
             new Permission
             {
                 Code = PermissionCodes.UserEdit,
                 Name = "User Edit"
             },
-
             new Permission
             {
                 Code = PermissionCodes.UserDeactivate,
                 Name = "User Deactivate"
             },
-
 
             // Roles & Permissions
             new Permission
@@ -181,13 +151,11 @@ public static class AuthorizationSeeder
                 Code = PermissionCodes.RoleView,
                 Name = "Roles & Permissions View"
             },
-
             new Permission
             {
                 Code = PermissionCodes.RoleEdit,
                 Name = "Roles & Permissions Edit"
             },
-
 
             // Audit Logs
             new Permission
@@ -196,7 +164,6 @@ public static class AuthorizationSeeder
                 Name = "Audit Logs View"
             },
 
-
             // Settings
             new Permission
             {
@@ -204,7 +171,6 @@ public static class AuthorizationSeeder
                 Name = "Settings View"
             }
         };
-
 
         foreach (var permission in permissions)
         {
@@ -222,7 +188,6 @@ public static class AuthorizationSeeder
         await context.SaveChangesAsync();
     }
 
-
     // =====================================================
     // ROLES
     // =====================================================
@@ -238,14 +203,12 @@ public static class AuthorizationSeeder
                 Description =
                     "Full system access."
             },
-
             new Role
             {
                 Name = "Admin",
                 Description =
-                    "Full operational and user administration access."
+                    "Full operational access."
             },
-
             new Role
             {
                 Name = "User",
@@ -253,7 +216,6 @@ public static class AuthorizationSeeder
                     "View inventory sessions and results only."
             }
         };
-
 
         foreach (var role in roles)
         {
@@ -271,13 +233,12 @@ public static class AuthorizationSeeder
         await context.SaveChangesAsync();
     }
 
-
     // =====================================================
     // ROLE PERMISSIONS
     // =====================================================
 
     private static async Task SeedRolePermissionsAsync(
-        ApplicationDbContext context)
+    ApplicationDbContext context)
     {
         var manager =
             await context.Roles
@@ -294,124 +255,130 @@ public static class AuthorizationSeeder
                 .FirstAsync(
                     x => x.Name == "User");
 
-
         var allPermissions =
             await context.Permissions
                 .ToListAsync();
 
-
-        // =================================================
-        // MANAGER
-        // Full access
-        // =================================================
-
-        foreach (var permission in allPermissions)
-        {
-            await AddRolePermissionIfMissing(
-                context,
-                manager.Id,
-                permission.Id);
-        }
-
-
-        // =================================================
-        // ADMIN
-        // Operational + User Administration
-        // =================================================
-
         var adminPermissions = new[]
         {
-            // Dashboard
-            PermissionCodes.DashboardView,
-            PermissionCodes.DashboardExport,
-
-
-            // Inventory
-            PermissionCodes.InventorySessionView,
-            PermissionCodes.InventorySessionCreate,
-
-
-            // Results
-            PermissionCodes.ComparisonView,
-            PermissionCodes.ComparisonExport,
-
-            PermissionCodes.AttentionView,
-            PermissionCodes.AttentionExport,
-
-
-            // Reports
-            PermissionCodes.ReportView,
-            PermissionCodes.ReportCreate,
-            PermissionCodes.ReportExport,
-
-
-            // Branches - View ONLY
-            PermissionCodes.BranchView,
-
-
-            // Stores - View ONLY
-            PermissionCodes.StoreView,
-
-
-            // Users
-            PermissionCodes.UserView,
-            PermissionCodes.UserCreate,
-            PermissionCodes.UserEdit,
-            PermissionCodes.UserDeactivate,
-
-
-            // Roles & Permissions
-            PermissionCodes.RoleView,
-            PermissionCodes.RoleEdit,
-        };
-
-
-        foreach (var code in adminPermissions)
-        {
-            var permission =
-                allPermissions.First(
-                    x => x.Code == code);
-
-            await AddRolePermissionIfMissing(
-                context,
-                admin.Id,
-                permission.Id);
-        }
-
-
-        // =================================================
-        // USER
-        // View inventory sessions and results ONLY
-        // =================================================
+        PermissionCodes.DashboardView,
+        PermissionCodes.DashboardExport,
+        PermissionCodes.InventorySessionView,
+        PermissionCodes.InventorySessionCreate,
+        PermissionCodes.ComparisonView,
+        PermissionCodes.ComparisonExport,
+        PermissionCodes.AttentionView,
+        PermissionCodes.AttentionExport,
+        PermissionCodes.ReportView,
+        PermissionCodes.ReportCreate,
+        PermissionCodes.ReportExport,
+        PermissionCodes.BranchView,
+        PermissionCodes.StoreView,
+        // PermissionCodes.UserView,
+        // PermissionCodes.UserCreate,
+        // PermissionCodes.UserEdit,
+        // PermissionCodes.UserDeactivate,
+        // PermissionCodes.RoleView,
+        // PermissionCodes.RoleEdit
+    };
 
         var userPermissions = new[]
         {
-            PermissionCodes.InventorySessionView,
+        PermissionCodes.InventorySessionView,
+        PermissionCodes.ComparisonView,
+        PermissionCodes.AttentionView,
+        PermissionCodes.DashboardView,
+        PermissionCodes.ReportView,
+    };
 
-            PermissionCodes.ComparisonView,
+        var adminPermissionIds =
+            allPermissions
+                .Where(x =>
+                    adminPermissions.Contains(x.Code))
+                .Select(x => x.Id)
+                .ToHashSet();
 
-            PermissionCodes.AttentionView,
+        var userPermissionIds =
+            allPermissions
+                .Where(x =>
+                    userPermissions.Contains(x.Code))
+                .Select(x => x.Id)
+                .ToHashSet();
 
-            PermissionCodes.DashboardView
-        };
+        var managerRolePermissions =
+            await context.RolePermissions
+                .Where(x => x.RoleId == manager.Id)
+                .ToListAsync();
 
+        var adminRolePermissions =
+            await context.RolePermissions
+                .Where(x => x.RoleId == admin.Id)
+                .ToListAsync();
 
-        foreach (var code in userPermissions)
+        var userRolePermissions =
+            await context.RolePermissions
+                .Where(x => x.RoleId == user.Id)
+                .ToListAsync();
+
+        context.RolePermissions.RemoveRange(
+            adminRolePermissions);
+
+        context.RolePermissions.RemoveRange(
+            userRolePermissions);
+
+        foreach (var permission in allPermissions)
         {
-            var permission =
-                allPermissions.First(
-                    x => x.Code == code);
-
-            await AddRolePermissionIfMissing(
-                context,
-                user.Id,
-                permission.Id);
+            if (!managerRolePermissions.Any(
+                x => x.PermissionId == permission.Id))
+            {
+                context.RolePermissions.Add(
+                    new RolePermission
+                    {
+                        RoleId = manager.Id,
+                        PermissionId = permission.Id
+                    });
+            }
         }
 
+        foreach (var permissionId in adminPermissionIds)
+        {
+            context.RolePermissions.Add(
+                new RolePermission
+                {
+                    RoleId = admin.Id,
+                    PermissionId = permissionId
+                });
+        }
+
+        foreach (var permissionId in userPermissionIds)
+        {
+            context.RolePermissions.Add(
+                new RolePermission
+                {
+                    RoleId = user.Id,
+                    PermissionId = permissionId
+                });
+        }
+
+        var userIds =
+            await context.UserRoles
+                .Where(x => x.RoleId == user.Id)
+                .Select(x => x.UserId)
+                .ToListAsync();
+
+        var directUserPermissions =
+            await context.UserPermissions
+                .Where(x => userIds.Contains(x.UserId))
+                .ToListAsync();
+
+        context.UserPermissions.RemoveRange(
+            directUserPermissions
+                .Where(x =>
+                    !userPermissionIds.Contains(
+                        x.PermissionId)));
 
         await context.SaveChangesAsync();
     }
-
 
     // =====================================================
     // ADD ROLE PERMISSION IF MISSING

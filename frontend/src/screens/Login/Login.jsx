@@ -36,8 +36,23 @@ function Login() {
         try {
             await signIn(username.trim(), password);
             navigate(from, { replace: true });
-        } catch (err) {
-            setError(err?.message || t.loginError);
+                } catch (err) {
+            if (err?.status === 429) {
+                setError(t.tooManyAttempts);
+                return;
+            }
+
+            if (err?.status === 401) {
+                setError(t.invalidCredentials);
+                return;
+            }
+
+            if (err?.status === 403) {
+                setError(t.unauthorized);
+                return;
+            }
+
+            setError(t.loginError);
         }
     };
 

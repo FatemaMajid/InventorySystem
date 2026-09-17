@@ -13,6 +13,7 @@ function BranchesTable({
     onRetry,
     onEdit,
     onDelete,
+    canEdit = false,
     currentPage = 1,
     totalPages = 1,
     pageSize = 20,
@@ -98,9 +99,11 @@ function BranchesTable({
                                 <th>{t.address}</th>
                                 <th>{t.phone}</th>
                                 <th>{t.status}</th>
-                                <th className={styles.actionsHead}>
-                                    {t.actions}
-                                </th>
+                                {canEdit && (
+                                    <th className={styles.actionsHead}>
+                                        {t.actions}
+                                    </th>
+                                )}
                             </tr>
                         </thead>
 
@@ -138,46 +141,47 @@ function BranchesTable({
                                             }`}
                                         >
                                             <i />
-
                                             {branch.isActive
                                                 ? t.active
                                                 : t.inactive}
                                         </span>
                                     </td>
 
-                                    <td>
-                                        <div className={styles.actions}>
-                                            <button
-                                                type="button"
-                                                className={styles.actionButton}
-                                                onClick={() =>
-                                                    onEdit?.(branch)
-                                                }
-                                                aria-label={t.edit}
-                                                title={t.edit}
-                                            >
-                                                <Icon
-                                                    name="edit"
-                                                    size={16}
-                                                />
-                                            </button>
+                                    {canEdit && (
+                                        <td>
+                                            <div className={styles.actions}>
+                                                <button
+                                                    type="button"
+                                                    className={styles.actionButton}
+                                                    onClick={() =>
+                                                        onEdit?.(branch)
+                                                    }
+                                                    aria-label={t.edit}
+                                                    title={t.edit}
+                                                >
+                                                    <Icon
+                                                        name="edit"
+                                                        size={16}
+                                                    />
+                                                </button>
 
-                                            <button
-                                                type="button"
-                                                className={`${styles.actionButton} ${styles.deleteButton}`}
-                                                onClick={() =>
-                                                    onDelete?.(branch)
-                                                }
-                                                aria-label={t.delete}
-                                                title={t.delete}
-                                            >
-                                                <Icon
-                                                    name="close"
-                                                    size={16}
-                                                />
-                                            </button>
-                                        </div>
-                                    </td>
+                                                <button
+                                                    type="button"
+                                                    className={`${styles.actionButton} ${styles.deleteButton}`}
+                                                    onClick={() =>
+                                                        onDelete?.(branch)
+                                                    }
+                                                    aria-label={t.delete}
+                                                    title={t.delete}
+                                                >
+                                                    <Icon
+                                                        name="close"
+                                                        size={16}
+                                                    />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    )}
                                 </tr>
                             ))}
                         </tbody>

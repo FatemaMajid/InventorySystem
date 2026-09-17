@@ -30,6 +30,22 @@ public sealed class CreateRoleCommandHandler
             throw new InvalidOperationException("Role name is required.");
         }
 
+        var protectedRoleNames = new[]
+        {
+            "Manager",
+            "Admin",
+            "User"
+        };
+
+        if (protectedRoleNames.Any(
+            x => x.Equals(
+                name,
+                StringComparison.OrdinalIgnoreCase)))
+        {
+            throw new InvalidOperationException(
+                $"Role '{name}' is reserved and cannot be created.");
+        }
+
         var exists = await _context.Roles
             .AnyAsync(
                 x => x.Name.ToLower() == name.ToLower(),
@@ -51,7 +67,8 @@ public sealed class CreateRoleCommandHandler
 
         if (validPermissionIds.Count != permissionIds.Count)
         {
-            throw new InvalidOperationException("One or more permissions were not found.");
+            throw new InvalidOperationException(
+                "One or more permissions were not found.");
         }
 
         var role = new Role

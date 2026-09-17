@@ -36,7 +36,19 @@ function InventorySessionInfo({
       ? store?.storeNameArabic ?? store?.StoreNameArabic ?? store?.nameArabic ?? store?.NameArabic ?? store?.storeName ?? store?.StoreName ?? store?.name ?? store?.Name ?? store?.storeCode ?? store?.StoreCode
       : store?.storeNameEnglish ?? store?.StoreNameEnglish ?? store?.nameEnglish ?? store?.NameEnglish ?? store?.storeName ?? store?.StoreName ?? store?.name ?? store?.Name ?? store?.storeCode ?? store?.StoreCode;
 
-  const activeBranches = branches.filter(isActive);
+  const activeBranches = branches
+    .filter(isActive)
+    .sort((a, b) =>
+      String(getBranchCode(a) ?? '').localeCompare(
+        String(getBranchCode(b) ?? ''),
+        undefined,
+        {
+          numeric: true,
+          sensitivity: 'base',
+        }
+      )
+    );
+
   const activeStores = stores.filter(isActive);
 
   const selectedBranch = activeBranches.find((branch) => String(getId(branch)) === String(branchId));

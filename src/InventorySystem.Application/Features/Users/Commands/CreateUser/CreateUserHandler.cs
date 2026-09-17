@@ -29,10 +29,10 @@ public sealed class CreateUserHandler
         CreateUserCommand request,
         CancellationToken cancellationToken)
     {
-        if (!_currentUser.IsManager && !_currentUser.IsAdmin)
+        if (!_currentUser.IsManager)
         {
             throw new UnauthorizedAccessException(
-                "You are not authorized to create users.");
+                "Only Manager can create users.");
         }
 
         var username = request.Username.Trim();
@@ -58,15 +58,6 @@ public sealed class CreateUserHandler
         {
             throw new InvalidOperationException(
                 $"Role '{roleName}' was not found.");
-        }
-
-        if (_currentUser.IsAdmin &&
-            role.Name.Equals(
-                "Manager",
-                StringComparison.OrdinalIgnoreCase))
-        {
-            throw new UnauthorizedAccessException(
-                "Admin cannot create a Manager.");
         }
 
         var requestedPermissions =

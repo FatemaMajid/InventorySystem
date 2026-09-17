@@ -244,26 +244,50 @@ const ar = {
 
     kpiCards: {
       totalItems: 'إجمالي العناصر',
-      increase: 'زيادة',
-      decrease: 'نقص',
-      match: 'مطابقة',
-      newlyCounted: 'ظهر بعد الجرد',
-      fullyDepleted: 'غير موجود بعد الجرد ',
-      priceChanged: 'تغير في السعر',
-      unitNotDefined: 'الوحدة غير معرفة',
+      increase: 'الزيادة بالكمية بعد الجرد',
+      decrease: 'نقص بالكمية بعد الجرد',
+      match: 'الأصناف المطابقة',
+      newlyCounted: 'أصناف جديدة بعد الجرد',
+      fullyDepleted: 'أصناف ذات الرصيد 0 بعد الجرد',
+      priceChanged: 'تغيير في سعر المستهلك',
+      unitNotDefined: 'الوحدة الأولى غير معرفة',
+      totalQuantityBefore: 'إجمالي الكميات قبل الجرد',
+      totalQuantityAfter: 'إجمالي الكميات بعد الجرد',
       title: 'حالة العناصر',
       total: 'المجموع',
 
       topDifferences: {
-        title: 'أعلى 10 مراكز حسب فرق القيمة (د.ع)'
-      }
+        title: 'أعلى 10 مراكز حسب فرق القيمة (د.ع)',
+        itemName: 'اسم الصنف',
+      },
+    },
+    emptyState: {
+      title: "لا توجد جلسة جرد محددة",
+      description: "يرجى اختيار جلسة جرد لعرض بيانات لوحة التحكم.",
+      selectSession: "اختيار جلسة الجرد",
+    },
+    errors: {
+      loadDashboard: "فشل تحميل بيانات لوحة التحكم.",
+      loadComparison: "فشل تحميل نتائج المقارنة.",
+      loadAttention: "فشل تحميل عناصر الانتباه.",
+      exportExcel: "فشل تصدير تقرير Excel.",
+      exportPdf: "فشل تصدير تقرير PDF.",
+    },
+
+    inventoryQuantity: {
+      title: 'ملخص الكميات',
+      totalQuantityBefore: 'إجمالي الكميات قبل الجرد',
+      totalQuantityAfter: 'إجمالي الكميات بعد الجرد',
+      quantityDifference: 'فرق الكمية',
+      quantityIncrease: 'الزيادة بالكمية',
+      quantityDecrease: 'النقص بالكمية',
     },
 
     financialSummary: {
       title: "ملخص مالي",
       totalValueBefore: "إجمالي القيمة قبل الجرد",
       totalValueAfter: "إجمالي القيمة بعد الجرد",
-      totalDifference: "إجمالي الفرق",
+      totalDifference: "الفرق بالقيمة",
       differencePercentage: "نسبة الفرق",
       currency: 'د.ع',
     },
@@ -280,10 +304,10 @@ const ar = {
       description: 'عناصر تحتاج إلى انتباهك',
       viewAll: 'عرض الكل',
       view: 'عرض',
-      newlyCounted: 'ظهر بعد الجرد',
-      fullyDepleted: 'غير موجود بعد الجرد',
-      unitNotDefined: 'الوحدة غير معرفة',
-      priceChanged: 'تغير في السعر',
+      newlyCounted: 'أصناف جديدة بعد الجرد',
+      fullyDepleted: 'أصناف ذات الرصيد 0 بعد الجرد',
+      unitNotDefined: 'الوحدة الأولى غير معرفة',
+      priceChanged: 'تغيير في سعر المستهلك',
       total: "إجمالي حالات الانتباه",
       session: "جلسة الجرد",
       selectSession: "اختر جلسة الجرد",
@@ -300,7 +324,6 @@ const ar = {
       noActiveSession: "لا توجد جلسة جرد نشطة",
       title: "نتائج المقارنة",
       items: "عنصر",
-
       filters: "الفلاتر",
       clear: "مسح",
       status: "الحالة",
@@ -310,7 +333,6 @@ const ar = {
       unit: "الوحدة",
       all: "الكل",
       applyFilters: "تطبيق الفلاتر",
-
       itemCode: "رقم الصنف",
       itemName: "اسم الصنف",
       quantityBefore: "الكمية قبل الجرد",
@@ -323,14 +345,11 @@ const ar = {
       afterValue: "القيمة بعد الجرد",
       valueDifference: "فرق القيمة",
       status: "الحالة",
-
       loading: "جاري تحميل البيانات...",
       noResults: "لا توجد نتائج",
-
       of: "من",
       previous: "السابق",
       next: "التالي",
-
       statuses: {
         increase: "زيادة",
         decrease: "نقص",
@@ -646,6 +665,9 @@ const ar = {
     signingIn: "جاري تسجيل الدخول...",
     requiredFields: "يرجى إدخال اسم المستخدم وكلمة المرور.",
     loginError: "اسم المستخدم أو كلمة المرور غير صحيحة.",
+    invalidCredentials: "اسم المستخدم أو كلمة المرور غير صحيحة.",
+    unauthorized: "ليس لديك صلاحية لتسجيل الدخول.",
+    tooManyAttempts: "تم إجراء محاولات تسجيل دخول كثيرة. يرجى المحاولة لاحقًا.",
   },
 
   rolesPermissions: {

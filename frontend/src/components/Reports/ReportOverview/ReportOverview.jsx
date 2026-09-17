@@ -13,7 +13,7 @@ function ReportOverview({ data, loading = false }) {
   const topDifferences = data.topValueDifferences ?? [];
 
   const formatNumber = (value) =>
-    Number(value ?? 0).toLocaleString(language === "ar" ? "ar-IQ" : "en-US");
+    Number(value ?? 0).toLocaleString("en-US");
 
   return (
     <section className={styles.grid} dir={direction}>

@@ -13,6 +13,7 @@ function StoresTable({
   onRetry,
   onEdit,
   onDelete,
+  canEdit = false,
   currentPage = 1,
   totalPages = 1,
   pageSize = 20,
@@ -57,14 +58,22 @@ function StoresTable({
           <div className={styles.headingIcon}>
             <Icon name="stores" size={19} />
           </div>
+
           <div>
-            <h2 className={styles.title}>{t.storesList}</h2>
-            <p className={styles.description}>{t.storesListDescription}</p>
+            <h2 className={styles.title}>
+              {t.storesList}
+            </h2>
+
+            <p className={styles.description}>
+              {t.storesListDescription}
+            </p>
           </div>
         </div>
 
         {showFooter && (
-          <div className={styles.count}>{totalItems.toLocaleString("en-US")}</div>
+          <div className={styles.count}>
+            {totalItems.toLocaleString("en-US")}
+          </div>
         )}
       </div>
 
@@ -79,60 +88,84 @@ function StoresTable({
                 <th>{t.name}</th>
                 <th>{t.branch}</th>
                 <th>{t.status}</th>
-                <th className={styles.actionsHead}>{t.actions}</th>
+                {canEdit && (
+                  <th className={styles.actionsHead}>
+                    {t.actions}
+                  </th>
+                )}
               </tr>
             </thead>
+
             <tbody>
               {stores.map((store) => (
                 <tr key={store.id}>
                   <td>
-                    <span className={styles.code}>{store.storeCode || "—"}</span>
+                    <span className={styles.code}>
+                      {store.storeCode || "—"}
+                    </span>
                   </td>
+
                   <td>
                     <div className={styles.nameCell}>
-                      {store.storeNameArabic || store.storeNameEnglish || "—"}
+                      {store.storeNameArabic ||
+                        store.storeNameEnglish ||
+                        "—"}
+
                       <span>
-                        {store.storeNameArabic && store.storeNameEnglish
+                        {store.storeNameArabic &&
+                        store.storeNameEnglish
                           ? store.storeNameEnglish
                           : ""}
                       </span>
                     </div>
                   </td>
+
                   <td>
-                    <span className={styles.branch}>{store.branchCode || "—"}</span>
+                    <span className={styles.branch}>
+                      {store.branchCode || "—"}
+                    </span>
                   </td>
+
                   <td>
                     <span
                       className={`${styles.status} ${
-                        store.isActive ? styles.active : styles.inactive
+                        store.isActive
+                          ? styles.active
+                          : styles.inactive
                       }`}
                     >
                       <i />
-                      {store.isActive ? t.active : t.inactive}
+                      {store.isActive
+                        ? t.active
+                        : t.inactive}
                     </span>
                   </td>
-                  <td>
-                    <div className={styles.actions}>
-                      <button
-                        type="button"
-                        className={styles.actionButton}
-                        onClick={() => onEdit?.(store)}
-                        aria-label={t.edit}
-                        title={t.edit}
-                      >
-                        <Icon name="edit" size={16} />
-                      </button>
-                      <button
-                        type="button"
-                        className={`${styles.actionButton} ${styles.deleteButton}`}
-                        onClick={() => onDelete?.(store)}
-                        aria-label={t.delete}
-                        title={t.delete}
-                      >
-                        <Icon name="close" size={16} />
-                      </button>
-                    </div>
-                  </td>
+
+                  {canEdit && (
+                    <td>
+                      <div className={styles.actions}>
+                        <button
+                          type="button"
+                          className={styles.actionButton}
+                          onClick={() => onEdit?.(store)}
+                          aria-label={t.edit}
+                          title={t.edit}
+                        >
+                          <Icon name="edit" size={16} />
+                        </button>
+
+                        <button
+                          type="button"
+                          className={`${styles.actionButton} ${styles.deleteButton}`}
+                          onClick={() => onDelete?.(store)}
+                          aria-label={t.delete}
+                          title={t.delete}
+                        >
+                          <Icon name="close" size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

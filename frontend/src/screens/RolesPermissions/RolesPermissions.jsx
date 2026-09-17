@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useLanguage } from "../../context/LanguageContext";
+import { hasPermission } from "../../services/permissionService";
 import RolesPermissionsHeader from "../../components/RolesPermissions/RolesPermissionsHeader/RolesPermissionsHeader";
 import RoleStats from "../../components/RolesPermissions/RoleStats/RoleStats";
 import RolesList from "../../components/RolesPermissions/RolesList/RolesList";
@@ -17,6 +18,8 @@ import styles from "./RolesPermissions.module.css";
 function RolesPermissions() {
     const { translations, direction } = useLanguage();
     const t = translations.rolesPermissions || {};
+
+    const canEdit = hasPermission("Role.Edit");
 
     const [roles, setRoles] = useState([]);
     const [permissions, setPermissions] = useState([]);
@@ -113,13 +116,17 @@ function RolesPermissions() {
     };
 
     const openCreate = () => {
+        if (!canEdit) {
+            return;
+        }
+
         setEditingRole(null);
         setFormError("");
         setFormOpen(true);
     };
 
     const openEdit = async () => {
-        if (!selectedRole) {
+        if (!canEdit || !selectedRole) {
             return;
         }
 
@@ -155,6 +162,10 @@ function RolesPermissions() {
     };
 
     const saveRole = async (form) => {
+        if (!canEdit) {
+            return;
+        }
+
         setSaving(true);
         setFormError("");
 
@@ -204,6 +215,7 @@ function RolesPermissions() {
         >
             <RolesPermissionsHeader
                 onAdd={openCreate}
+                canEdit={canEdit}
             />
 
             <RoleStats
@@ -227,6 +239,7 @@ function RolesPermissions() {
                     permissions={permissions}
                     loading={loading}
                     onEdit={openEdit}
+                    canEdit={canEdit}
                 />
             </div>
 

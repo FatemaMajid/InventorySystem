@@ -1,6 +1,10 @@
 import API_BASE_URL from "./apiConfig";
 
-async function parseResponse(response) {
+async function parseResponse(response, responseType = "auto") {
+  if (responseType === "blob") {
+    return response.blob();
+  }
+
   const contentType =
     response.headers.get("content-type") || "";
 
@@ -18,10 +22,10 @@ async function request(endpoint, options = {}) {
     method = "GET",
     body,
     headers = {},
+    responseType = "auto",
   } = options;
 
   const isFormData = body instanceof FormData;
-
   const token = localStorage.getItem("inventory_token");
 
   const requestHeaders = {
@@ -49,7 +53,12 @@ async function request(endpoint, options = {}) {
     }
   );
 
-  const data = await parseResponse(response);
+  const data = await parseResponse(response, responseType);
+
+  if (response.status === 401) {
+    localStorage.removeItem("inventory_token");
+    localStorage.removeItem("inventory_user");
+  }
 
   if (!response.ok) {
     let message =
@@ -67,7 +76,11 @@ async function request(endpoint, options = {}) {
         message;
     }
 
-    throw new Error(message);
+    const error = new Error(message);
+    error.status = response.status;
+    error.data = data;
+
+    throw error;
   }
 
   return data;

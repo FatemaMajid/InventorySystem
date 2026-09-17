@@ -1,4 +1,3 @@
-import React from "react";
 import { useLanguage } from "../../../context/LanguageContext";
 import Icon from "../../UI/Icon/Icon";
 import styles from "./Pagination.module.css";

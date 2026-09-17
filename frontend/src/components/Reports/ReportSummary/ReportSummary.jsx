@@ -18,7 +18,7 @@ function ReportSummary({ data, loading = false }) {
   ];
 
   const formatNumber = (value) =>
-    Number(value ?? 0).toLocaleString(language === "ar" ? "ar-IQ" : "en-US");
+    Number(value ?? 0).toLocaleString("en-US");
 
   return (
     <section className={styles.wrapper} dir={direction}>

@@ -41,6 +41,34 @@ public sealed class UpdateRoleCommandHandler
             throw new InvalidOperationException("Role name is required.");
         }
 
+        var protectedRoleNames = new[]
+        {
+            "Manager",
+            "Admin",
+            "User"
+        };
+
+        var isProtectedRole =
+            protectedRoleNames.Any(
+                x => x.Equals(
+                    role.Name,
+                    StringComparison.OrdinalIgnoreCase));
+
+        var changesProtectedName =
+            !role.Name.Equals(
+                name,
+                StringComparison.OrdinalIgnoreCase) &&
+            protectedRoleNames.Any(
+                x => x.Equals(
+                    name,
+                    StringComparison.OrdinalIgnoreCase));
+
+        if (changesProtectedName)
+        {
+            throw new InvalidOperationException(
+                $"Role name '{name}' is reserved and cannot be used.");
+        }
+
         var exists = await _context.Roles
             .AnyAsync(
                 x => x.Id != request.Id &&
@@ -67,7 +95,10 @@ public sealed class UpdateRoleCommandHandler
                 "One or more permissions were not found.");
         }
 
-        role.Name = name;
+        role.Name = isProtectedRole
+            ? role.Name
+            : name;
+
         role.Description = string.IsNullOrWhiteSpace(request.Description)
             ? null
             : request.Description.Trim();

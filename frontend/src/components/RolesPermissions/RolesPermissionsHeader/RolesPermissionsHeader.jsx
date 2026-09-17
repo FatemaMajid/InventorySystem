@@ -2,7 +2,7 @@ import { useLanguage } from "../../../context/LanguageContext";
 import Icon from "../../UI/Icon/Icon";
 import styles from "./RolesPermissionsHeader.module.css";
 
-function RolesPermissionsHeader({ onAdd }) {
+function RolesPermissionsHeader({ onAdd, canEdit = false }) {
     const { translations } = useLanguage();
     const t = translations.rolesPermissions || {};
 
@@ -19,14 +19,16 @@ function RolesPermissionsHeader({ onAdd }) {
                 </div>
             </div>
 
-            <button
-                type="button"
-                className={styles.addButton}
-                onClick={onAdd}
-            >
-                <Icon name="plus" size={18} />
-                <span>{t.addRole}</span>
-            </button>
+            {canEdit && (
+                <button
+                    type="button"
+                    className={styles.addButton}
+                    onClick={onAdd}
+                >
+                    <Icon name="plus" size={18} />
+                    <span>{t.addRole}</span>
+                </button>
+            )}
         </header>
     );
 }

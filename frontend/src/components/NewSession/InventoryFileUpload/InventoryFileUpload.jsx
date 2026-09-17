@@ -1,26 +1,40 @@
-import { useRef, useState } from 'react';
-import { useLanguage } from '../../../context/LanguageContext';
-import Icon from '../../UI/Icon/Icon';
-import styles from './InventoryFileUpload.module.css';
+import { useRef, useState } from "react";
+import { useLanguage } from "../../../context/LanguageContext";
+import Icon from "../../UI/Icon/Icon";
+import styles from "./InventoryFileUpload.module.css";
 
-function InventoryFileUpload({ title, description, file, onFileChange, preview, previewing }) {
+const MAX_FILE_SIZE = 50 * 1024 * 1024;
+
+function InventoryFileUpload({
+  title,
+  description,
+  file,
+  onFileChange,
+  preview,
+  previewing,
+}) {
   const { translations } = useLanguage();
   const t = translations.inventory;
   const inputRef = useRef(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleFile = (selectedFile) => {
     if (!selectedFile) return;
 
     const fileName = selectedFile.name.toLowerCase();
-    const validExtension = fileName.endsWith('.xlsx') || fileName.endsWith('.xls');
+    const validExtension = fileName.endsWith(".xlsx");
 
     if (!validExtension) {
       setError(t.invalidExcelFile);
       return;
     }
 
-    setError('');
+    if (selectedFile.size > MAX_FILE_SIZE) {
+      setError(t.fileTooLarge);
+      return;
+    }
+
+    setError("");
     onFileChange(selectedFile);
   };
 
@@ -34,11 +48,11 @@ function InventoryFileUpload({ title, description, file, onFileChange, preview, 
   };
 
   const handleRemove = () => {
-    setError('');
+    setError("");
     onFileChange(null);
 
     if (inputRef.current) {
-      inputRef.current.value = '';
+      inputRef.current.value = "";
     }
   };
 
@@ -49,7 +63,11 @@ function InventoryFileUpload({ title, description, file, onFileChange, preview, 
         <p>{description}</p>
       </div>
 
-      <div className={styles.dropZone} onDragOver={(event) => event.preventDefault()} onDrop={handleDrop}>
+      <div
+        className={styles.dropZone}
+        onDragOver={(event) => event.preventDefault()}
+        onDrop={handleDrop}
+      >
         {!file ? (
           <>
             <div className={styles.uploadIcon}>
@@ -57,10 +75,20 @@ function InventoryFileUpload({ title, description, file, onFileChange, preview, 
             </div>
             <strong>{t.dropFile}</strong>
             <span>{t.or}</span>
-            <button type="button" className={styles.chooseButton} onClick={() => inputRef.current?.click()}>
+            <button
+              type="button"
+              className={styles.chooseButton}
+              onClick={() => inputRef.current?.click()}
+            >
               {t.chooseFile}
             </button>
-            <input ref={inputRef} type="file" accept=".xlsx,.xls" hidden onChange={handleInputChange} />
+            <input
+              ref={inputRef}
+              type="file"
+              accept=".xlsx"
+              hidden
+              onChange={handleInputChange}
+            />
           </>
         ) : (
           <div className={styles.selectedFile}>
@@ -70,10 +98,18 @@ function InventoryFileUpload({ title, description, file, onFileChange, preview, 
 
             <div className={styles.fileInfo}>
               <strong>{file.name}</strong>
-              <span>{(file.size / 1024 / 1024).toFixed(2)} MB</span>
+              <span>
+                {(file.size / 1024 / 1024).toFixed(2)} MB
+              </span>
             </div>
 
-            <button type="button" className={styles.removeButton} onClick={handleRemove} disabled={previewing} aria-label={t.removeFile}>
+            <button
+              type="button"
+              className={styles.removeButton}
+              onClick={handleRemove}
+              disabled={previewing}
+              aria-label={t.removeFile}
+            >
               <Icon name="close" size={17} />
             </button>
           </div>
@@ -112,7 +148,11 @@ function InventoryFileUpload({ title, description, file, onFileChange, preview, 
           </div>
         )}
 
-        {error && <div className={styles.error}>{error}</div>}
+        {error && (
+          <div className={styles.error}>
+            {error}
+          </div>
+        )}
       </div>
     </section>
   );

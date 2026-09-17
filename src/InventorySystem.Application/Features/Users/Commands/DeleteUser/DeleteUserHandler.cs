@@ -24,6 +24,12 @@ public sealed class DeleteUserHandler : IRequestHandler<DeleteUserCommand, Unit>
         DeleteUserCommand request,
         CancellationToken cancellationToken)
     {
+        if (!_currentUser.IsManager)
+        {
+            throw new UnauthorizedAccessException(
+                "Only Manager can delete users.");
+        }
+
         if (_currentUser.UserId == request.Id)
         {
             throw new InvalidOperationException(

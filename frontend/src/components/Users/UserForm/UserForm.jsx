@@ -50,7 +50,7 @@ function UserForm({
         setForm({
             username: user?.username || "",
             password: "",
-            role: user?.role || roles[0]?.name || "",
+            role: user?.role || "",
             permissions:
                 user?.permissions?.length > 0
                     ? user.permissions
@@ -247,8 +247,8 @@ function UserForm({
                                 <button
                                     type="button"
                                     className={`${styles.statusToggle} ${form.isActive
-                                            ? styles.on
-                                            : ""
+                                        ? styles.on
+                                        : ""
                                         }`}
                                     onClick={() =>
                                         change(

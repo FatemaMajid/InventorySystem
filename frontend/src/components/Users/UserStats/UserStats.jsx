@@ -25,7 +25,7 @@ function UserStats({ totalUsers = 0, activeUsers = 0, inactiveUsers = 0, loading
                             <Skeleton width="65px" height="30px" borderRadius="6px" />
                         ) : (
                             <strong className={styles.value}>
-                                {Number(stat.value || 0).toLocaleString(direction === "rtl" ? "ar-IQ" : "en-US")}
+                                {Number(stat.value || 0).toLocaleString(direction === "rtl" ? "en-US" : "en-US")}
                             </strong>
                         )}
                     </div>
