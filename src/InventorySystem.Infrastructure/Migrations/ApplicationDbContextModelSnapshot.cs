@@ -775,6 +775,324 @@ namespace InventorySystem.Infrastructure.Migrations
                     b.ToTable("Units", (string)null);
                 });
 
+            modelBuilder.Entity("InventorySystem.Domain.FinancialAnalysis.Entities.FinancialAccountRow", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AccountCode")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("AccountName")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<decimal?>("Assets")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Balance")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Credit")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Debit")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("FinancialUploadId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Liabilities")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("RowOrder")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FinancialUploadId", "AccountCode");
+
+                    b.HasIndex("FinancialUploadId", "RowOrder");
+
+                    b.ToTable("FinancialAccountRows", (string)null);
+                });
+
+            modelBuilder.Entity("InventorySystem.Domain.FinancialAnalysis.Entities.FinancialPeriod", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ApprovedBy")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Month")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Year", "Month")
+                        .IsUnique();
+
+                    b.ToTable("FinancialPeriods", (string)null);
+                });
+
+            modelBuilder.Entity("InventorySystem.Domain.FinancialAnalysis.Entities.FinancialUpload", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("FileType")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FinancialPeriodId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Gender")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("OriginalFileName")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("Scope")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StoragePath")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("StoredFileName")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UploadedBy")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("ValidatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ValidationMessage")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("FileHash");
+
+                    b.HasIndex("FinancialPeriodId", "FileType", "BranchId", "Gender")
+                        .IsUnique()
+                        .HasFilter("[IsActive] = 1");
+
+                    b.HasIndex("FinancialPeriodId", "FileType", "BranchId", "Gender", "IsActive");
+
+                    b.ToTable("FinancialUploads", (string)null);
+                });
+
+            modelBuilder.Entity("InventorySystem.Domain.FinancialAnalysis.Entities.SettlementRow", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal?>("Balance")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Credit")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal?>("Debit")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("EntryNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("FinancialUploadId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsMarked")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsMatched")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("RowOrder")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("TransactionDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FinancialUploadId", "RowOrder");
+
+                    b.HasIndex("FinancialUploadId", "TransactionDate");
+
+                    b.ToTable("SettlementRows", (string)null);
+                });
+
+            modelBuilder.Entity("InventorySystem.Domain.FinancialAnalysis.Entities.SettlementSummary", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("FinancialUploadId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("PeriodBalance")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("PeriodCredit")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("PeriodDebit")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FinancialUploadId")
+                        .IsUnique();
+
+                    b.ToTable("SettlementSummaries", (string)null);
+                });
+
+            modelBuilder.Entity("InventorySystem.Domain.FinancialAnalysis.Entities.TransferRecord", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BranchId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FinancialUploadId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Gender")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RowOrder")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Value")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("FinancialUploadId", "BranchId");
+
+                    b.HasIndex("FinancialUploadId", "RowOrder");
+
+                    b.ToTable("TransferRecords", (string)null);
+                });
+
             modelBuilder.Entity("InventorySystem.Domain.Entities.Authorization.RolePermission", b =>
                 {
                     b.HasOne("InventorySystem.Domain.Entities.Authorization.Permission", "Permission")
@@ -948,6 +1266,76 @@ namespace InventorySystem.Infrastructure.Migrations
                     b.Navigation("Branch");
                 });
 
+            modelBuilder.Entity("InventorySystem.Domain.FinancialAnalysis.Entities.FinancialAccountRow", b =>
+                {
+                    b.HasOne("InventorySystem.Domain.FinancialAnalysis.Entities.FinancialUpload", "FinancialUpload")
+                        .WithMany("AccountRows")
+                        .HasForeignKey("FinancialUploadId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FinancialUpload");
+                });
+
+            modelBuilder.Entity("InventorySystem.Domain.FinancialAnalysis.Entities.FinancialUpload", b =>
+                {
+                    b.HasOne("InventorySystem.Domain.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("InventorySystem.Domain.FinancialAnalysis.Entities.FinancialPeriod", "FinancialPeriod")
+                        .WithMany("Uploads")
+                        .HasForeignKey("FinancialPeriodId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("FinancialPeriod");
+                });
+
+            modelBuilder.Entity("InventorySystem.Domain.FinancialAnalysis.Entities.SettlementRow", b =>
+                {
+                    b.HasOne("InventorySystem.Domain.FinancialAnalysis.Entities.FinancialUpload", "FinancialUpload")
+                        .WithMany("SettlementRows")
+                        .HasForeignKey("FinancialUploadId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FinancialUpload");
+                });
+
+            modelBuilder.Entity("InventorySystem.Domain.FinancialAnalysis.Entities.SettlementSummary", b =>
+                {
+                    b.HasOne("InventorySystem.Domain.FinancialAnalysis.Entities.FinancialUpload", "FinancialUpload")
+                        .WithOne("SettlementSummary")
+                        .HasForeignKey("InventorySystem.Domain.FinancialAnalysis.Entities.SettlementSummary", "FinancialUploadId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FinancialUpload");
+                });
+
+            modelBuilder.Entity("InventorySystem.Domain.FinancialAnalysis.Entities.TransferRecord", b =>
+                {
+                    b.HasOne("InventorySystem.Domain.Entities.Branch", "Branch")
+                        .WithMany()
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("InventorySystem.Domain.FinancialAnalysis.Entities.FinancialUpload", "FinancialUpload")
+                        .WithMany("TransferRecords")
+                        .HasForeignKey("FinancialUploadId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Branch");
+
+                    b.Navigation("FinancialUpload");
+                });
+
             modelBuilder.Entity("InventorySystem.Domain.Entities.Authorization.Permission", b =>
                 {
                     b.Navigation("RolePermissions");
@@ -997,6 +1385,22 @@ namespace InventorySystem.Infrastructure.Migrations
             modelBuilder.Entity("InventorySystem.Domain.Entities.Unit", b =>
                 {
                     b.Navigation("Items");
+                });
+
+            modelBuilder.Entity("InventorySystem.Domain.FinancialAnalysis.Entities.FinancialPeriod", b =>
+                {
+                    b.Navigation("Uploads");
+                });
+
+            modelBuilder.Entity("InventorySystem.Domain.FinancialAnalysis.Entities.FinancialUpload", b =>
+                {
+                    b.Navigation("AccountRows");
+
+                    b.Navigation("SettlementRows");
+
+                    b.Navigation("SettlementSummary");
+
+                    b.Navigation("TransferRecords");
                 });
 #pragma warning restore 612, 618
         }

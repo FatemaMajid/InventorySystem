@@ -1,5 +1,6 @@
-using InventorySystem.Domain.Entities;
+﻿using InventorySystem.Domain.Entities;
 using InventorySystem.Domain.Entities.Authorization;
+using InventorySystem.Domain.FinancialAnalysis.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
@@ -40,6 +41,18 @@ public interface IApplicationDbContext
     DbSet<UserPermission> UserPermissions { get; }
 
     DbSet<AuditLog> AuditLogs { get; }
+
+    DbSet<FinancialPeriod> FinancialPeriods { get; }
+
+    DbSet<FinancialUpload> FinancialUploads { get; }
+
+    DbSet<FinancialAccountRow> FinancialAccountRows { get; }
+
+    DbSet<TransferRecord> TransferRecords { get; }
+
+    DbSet<SettlementSummary> SettlementSummaries { get; }
+
+    DbSet<SettlementRow> SettlementRows { get; }
 
     DatabaseFacade Database { get; }
 

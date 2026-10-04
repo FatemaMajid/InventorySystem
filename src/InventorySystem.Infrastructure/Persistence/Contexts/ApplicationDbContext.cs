@@ -1,5 +1,6 @@
-using InventorySystem.Domain.Entities;
+﻿using InventorySystem.Domain.Entities;
 using InventorySystem.Domain.Entities.Authorization;
+using InventorySystem.Domain.FinancialAnalysis.Entities;
 using Microsoft.EntityFrameworkCore;
 using InventorySystem.Application.Common.Interfaces;
 using Microsoft.EntityFrameworkCore.Infrastructure;
@@ -47,10 +48,30 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
 
-    public DbSet<UserPermission> UserPermissions => Set<UserPermission>(); public new DatabaseFacade Database
-            => base.Database;
+    public DbSet<UserPermission> UserPermissions => Set<UserPermission>();
 
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+
+    public DbSet<FinancialPeriod> FinancialPeriods
+        => Set<FinancialPeriod>();
+
+    public DbSet<FinancialUpload> FinancialUploads
+        => Set<FinancialUpload>();
+
+    public DbSet<FinancialAccountRow> FinancialAccountRows
+        => Set<FinancialAccountRow>();
+
+    public DbSet<TransferRecord> TransferRecords
+        => Set<TransferRecord>();
+
+    public DbSet<SettlementSummary> SettlementSummaries
+        => Set<SettlementSummary>();
+
+    public DbSet<SettlementRow> SettlementRows
+        => Set<SettlementRow>();
+
+    public new DatabaseFacade Database
+        => base.Database;
 
     protected override void OnModelCreating(
         ModelBuilder modelBuilder)
