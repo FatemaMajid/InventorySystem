@@ -174,6 +174,68 @@ public static class LocalizationKeys
         public const string StoreNotFound = "StoreNotFound";
     }
 
+    // Dashboard export (independent from generic Inventory labels)
+    public static class DashboardExport
+    {
+        public const string Title = "DashboardExport.Title";
+        public const string SessionInfo = "DashboardExport.SessionInfo";
+        public const string SessionNumber = "DashboardExport.SessionNumber";
+        public const string Status = "DashboardExport.Status";
+        public const string InventoryType = "DashboardExport.InventoryType";
+        public const string InventoryDate = "DashboardExport.InventoryDate";
+        public const string Branch = "DashboardExport.Branch";
+        public const string Store = "DashboardExport.Store";
+        public const string BeforeFile = "DashboardExport.BeforeFile";
+        public const string AfterFile = "DashboardExport.AfterFile";
+        public const string Summary = "DashboardExport.Summary";
+        public const string TotalItems = "DashboardExport.TotalItems";
+        public const string Increase = "DashboardExport.Increase";
+        public const string Decrease = "DashboardExport.Decrease";
+        public const string Match = "DashboardExport.Match";
+        public const string NewlyCounted = "DashboardExport.NewlyCounted";
+        public const string FullyDepleted = "DashboardExport.FullyDepleted";
+        public const string PriceChanged = "DashboardExport.PriceChanged";
+        public const string UnitNotDefined = "DashboardExport.UnitNotDefined";
+        public const string Quantity = "DashboardExport.Quantity";
+        public const string QuantityBefore = "DashboardExport.QuantityBefore";
+        public const string QuantityAfter = "DashboardExport.QuantityAfter";
+        public const string QuantityDifference = "DashboardExport.QuantityDifference";
+        public const string QuantityIncrease = "DashboardExport.QuantityIncrease";
+        public const string QuantityDecrease = "DashboardExport.QuantityDecrease";
+        public const string Financial = "DashboardExport.Financial";
+        public const string ValueBefore = "DashboardExport.ValueBefore";
+        public const string ValueAfter = "DashboardExport.ValueAfter";
+        public const string Difference = "DashboardExport.Difference";
+        public const string DifferencePercent = "DashboardExport.DifferencePercent";
+        public const string Statuses = "DashboardExport.Statuses";
+        public const string Count = "DashboardExport.Count";
+        public const string Percentage = "DashboardExport.Percentage";
+        public const string Attention = "DashboardExport.Attention";
+        public const string Total = "DashboardExport.Total";
+        public const string TopDifferences = "DashboardExport.TopDifferences";
+        public const string ItemCode = "DashboardExport.ItemCode";
+        public const string ItemName = "DashboardExport.ItemName";
+        public const string ValueDifference = "DashboardExport.ValueDifference";
+        public const string Generated = "DashboardExport.Generated";
+        public const string Page = "DashboardExport.Page";
+        public const string Of = "DashboardExport.Of";
+        public const string Completed = "DashboardExport.Completed";
+        public const string Pending = "DashboardExport.Pending";
+        public const string InProgress = "DashboardExport.InProgress";
+        public const string Draft = "DashboardExport.Draft";
+        public const string Cancelled = "DashboardExport.Cancelled";
+        public const string Canceled = "DashboardExport.Canceled";
+        public const string Annual = "DashboardExport.Annual";
+        public const string SemiAnnual = "DashboardExport.SemiAnnual";
+        public const string StatusIncrease = "DashboardExport.StatusIncrease";
+        public const string StatusDecrease = "DashboardExport.StatusDecrease";
+        public const string StatusMatch = "DashboardExport.StatusMatch";
+        public const string StatusNewlyCounted = "DashboardExport.StatusNewlyCounted";
+        public const string StatusFullyDepleted = "DashboardExport.StatusFullyDepleted";
+        public const string NoData = "DashboardExport.NoData";
+        public const string AttentionNote = "DashboardExport.AttentionNote";
+    }
+
     // Reports
     public static class Report
     {

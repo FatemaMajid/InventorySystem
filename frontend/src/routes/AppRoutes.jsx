@@ -4,6 +4,7 @@ import PermissionRoute from "./PermissionRoute";
 import ProtectedRoute from "./ProtectedRoute";
 import Login from "../screens/Login/Login";
 import Home from "../screens/Home/Home";
+import SystemHome from "../screens/SystemHome";
 import Dashboard from "../screens/Dashboard/Dashboard";
 import InventorySessions from "../screens/InventorySessions/InventorySessions";
 import NewInventorySession from "../screens/NewInventorySession/NewInventorySession";
@@ -22,6 +23,7 @@ function AppRoutes() {
 
       <Route element={<ProtectedRoute />}>
         <Route element={<Layout />}>
+          <Route path="/modules" element={<SystemHome />} />
           <Route path="/" element={<Home />} />
 
           <Route

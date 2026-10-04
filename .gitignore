@@ -5,7 +5,14 @@ obj/
 *.suo
 
 .env
+.env.*
+!.env.example
 appsettings.Development.json
 
 node_modules/
 dist/
+
+publish/
+*.zip
+
+src/InventorySystem.API/wwwroot/

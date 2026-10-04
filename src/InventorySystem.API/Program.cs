@@ -8,13 +8,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
 using InventorySystem.API.Middleware;
 using InventorySystem.API.Authorization;
-using InventorySystem.Infrastructure.Reports;
+using InventorySystem.Infrastructure.Reports.Inventory;
 using InventorySystem.Application.Common.Behaviors;
 using InventorySystem.Application.Common.Interfaces;
 using InventorySystem.Application.Features.Branches.Commands.CreateBranch;
 using InventorySystem.Application.Features.Branches.Queries.GetAllBranches;
-using InventorySystem.Application.Features.InventorySessions.Import.Confirm;
-using InventorySystem.Application.Features.InventorySessions.Import.Preview;
+using InventorySystem.Application.Features.Inventory.InventorySessions.Import.Confirm;
+using InventorySystem.Application.Features.Inventory.InventorySessions.Import.Preview;
 using InventorySystem.Infrastructure.Authentication;
 using InventorySystem.Infrastructure.Persistence.Contexts;
 using InventorySystem.Infrastructure.Seed;
@@ -385,11 +385,17 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
+
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 // =====================================================
 // Controllers
 // =====================================================
 
 app.MapControllers();
+
+app.MapFallbackToFile("index.html");
 
 // =====================================================
 // Database Seed

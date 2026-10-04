@@ -18,6 +18,7 @@ const ar = {
   },
 
   navigation: {
+    systemHome: 'الرئيسية',
     home: 'الصفحة الرئيسية',
     dashboard: 'لوحة التحكم',
     inventorySessions: 'جلسات الجرد',

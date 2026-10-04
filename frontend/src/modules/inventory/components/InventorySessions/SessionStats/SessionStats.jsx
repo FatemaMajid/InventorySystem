@@ -1,0 +1,71 @@
+import { useLanguage } from "../../../../../context/LanguageContext";
+import Icon from "../../../../../components/UI/Icon/Icon";
+import Skeleton from "../../../../../components/UI/Loading/Skeleton/Skeleton";
+import styles from "./SessionStats.module.css";
+
+function SessionStats({
+  totalSessions = 0,
+  activeSessions = 0,
+  completedSessions = 0,
+  loading = false,
+}) {
+  const { translations, direction } = useLanguage();
+  const t = translations.inventorySessions;
+
+  const stats = [
+    {
+      key: "total",
+      label: t.totalSessions,
+      value: totalSessions,
+      icon: "inventory",
+      variant: "primary",
+    },
+    {
+      key: "active",
+      label: t.activeSessions,
+      value: activeSessions,
+      icon: "active",
+      variant: "teal",
+    },
+    {
+      key: "completed",
+      label: t.completedSessions,
+      value: completedSessions,
+      icon: "tick",
+      variant: "success",
+    },
+  ];
+
+  return (
+    <div className={styles.grid} dir={direction}>
+      {stats.map((stat) => (
+        <article
+          key={stat.key}
+          className={`${styles.card} ${styles[stat.variant]}`}
+        >
+          <div className={styles.iconWrapper}>
+            <Icon name={stat.icon} size={20} />
+          </div>
+          <div className={styles.content}>
+            <span className={styles.label}>
+              {stat.label}
+            </span>
+            {loading ? (
+              <Skeleton
+                width="65px"
+                height="30px"
+                borderRadius="6px"
+              />
+            ) : (
+              <strong className={styles.value}>
+                {Number(stat.value || 0).toLocaleString("en-US")}
+              </strong>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+export default SessionStats;

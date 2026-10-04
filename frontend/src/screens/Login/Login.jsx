@@ -22,7 +22,7 @@ function Login() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
-    const from = location.state?.from?.pathname || "/";
+    const from = location.state?.from?.pathname || "/modules";
 
     const handleSubmit = async (event) => {
         event.preventDefault();

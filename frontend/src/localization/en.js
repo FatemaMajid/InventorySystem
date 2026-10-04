@@ -18,6 +18,7 @@ const en = {
   },
 
   navigation: {
+    systemHome: 'Main Home',
     home: 'Home',
     dashboard: 'Dashboard',
     inventorySessions: 'Inventory Sessions',

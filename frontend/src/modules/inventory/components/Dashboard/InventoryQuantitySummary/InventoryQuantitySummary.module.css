@@ -1,0 +1,151 @@
+.wrapper {
+  width: 100%;
+  padding: 18px;
+  box-sizing: border-box;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.headerIcon {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-dark);
+}
+
+.header h2 {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.card {
+  min-width: 0;
+  min-height: 96px;
+  padding: 14px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--color-background);
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+}
+
+.iconBox {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  background: var(--color-primary-soft);
+  color: var(--color-primary-dark);
+}
+
+.content {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.label {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.4;
+}
+
+.value {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  line-height: 1.1;
+}
+
+.before .iconBox {
+  background: var(--color-blue-light);
+  color: var(--color-blue-dark);
+}
+
+.after .iconBox {
+  background: var(--color-success-light);
+  color: var(--color-success-dark);
+}
+
+.increase .iconBox {
+  background: var(--color-teal-light);
+  color: var(--color-teal-dark);
+}
+
+.decrease .iconBox {
+  background: var(--color-danger-light);
+  color: var(--color-danger-dark);
+}
+
+.card:nth-child(3) .iconBox {
+  background: var(--color-primary-soft);
+  color: var(--color-primary-dark);
+}
+
+@media (max-width: 1200px) {
+  .cards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 800px) {
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .card {
+    min-height: 90px;
+    padding: 12px;
+  }
+
+  .value {
+    font-size: var(--font-size-lg);
+  }
+}
+
+@media (max-width: 550px) {
+  .wrapper {
+    padding: 14px;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    min-height: 82px;
+  }
+
+  .label {
+    font-size: var(--font-size-sm);
+  }
+}

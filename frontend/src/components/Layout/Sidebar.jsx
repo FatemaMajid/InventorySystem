@@ -16,6 +16,7 @@ function Sidebar({ isOpen = false, onClose }) {
             ...group,
             items: group.items.filter(
                 (item) =>
+                    item.permission == null ||
                     item.key === "home" ||
                     hasPermission(item.permission)
             ),
