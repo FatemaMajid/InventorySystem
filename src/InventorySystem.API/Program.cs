@@ -25,6 +25,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using InventorySystem.Infrastructure.Persistence.Interceptors;
 using InventorySystem.Infrastructure.AuditLogs;
+using InventorySystem.Infrastructure.FinancialAnalysis;
+using InventorySystem.Application.Features.FinancialAnalysis.Common.Excel;
 
 // =====================================================
 // Builder
@@ -54,6 +56,20 @@ builder.Services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =
 builder.Services.AddScoped<
     IApplicationDbContext,
     ApplicationDbContext>();
+
+// =====================================================
+// Financial File Storage
+// =====================================================
+
+builder.Services.AddScoped<
+    IFinancialFileStorageService,
+    FinancialFileStorageService>();
+
+// =====================================================
+// Financial Excel Parser
+// =====================================================
+builder.Services.AddScoped<
+    FinancialExcelParser>();
 
 // =====================================================
 // Inventory Import

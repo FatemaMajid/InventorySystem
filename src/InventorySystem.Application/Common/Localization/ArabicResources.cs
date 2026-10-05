@@ -1,4 +1,4 @@
-namespace InventorySystem.Application.Common.Localization;
+﻿namespace InventorySystem.Application.Common.Localization;
 
 public static class ArabicResources
 {
@@ -36,7 +36,6 @@ public static class ArabicResources
         [LocalizationKeys.Branch.CannotDelete] = "لا يمكن حذف الفرع لوجود بيانات مرتبطة به.",
         [LocalizationKeys.Branch.NotMatch] = "الفرع في ملف قبل الجرد لا يطابق الفرع في ملف بعد الجرد",
 
-
         // Branch validation
         [LocalizationKeys.Branch.CodeRequired] = "رمز الفرع مطلوب.",
         [LocalizationKeys.Branch.CodeMaxLength] = "رمز الفرع يجب ألا يتجاوز 20 حرفًا.",
@@ -67,6 +66,7 @@ public static class ArabicResources
         [LocalizationKeys.Store.EnglishNameMaxLength] = "اسم المستودع بالإنجليزية يجب ألا يتجاوز 100 حرف.",
         [LocalizationKeys.Store.BranchCodeRequired] = "رمز الفرع مطلوب.",
         [LocalizationKeys.Store.BranchCodeMaxLength] = "رمز الفرع يجب ألا يتجاوز 20 حرفًا.",
+
         // Category
         [LocalizationKeys.Category.Required] = "التصنيف مطلوب.",
         [LocalizationKeys.Category.NotFound] = "التصنيف غير موجود.",
@@ -140,7 +140,7 @@ public static class ArabicResources
         [LocalizationKeys.Excel.ImportFailed] = "فشل استيراد ملف Excel.",
         [LocalizationKeys.Excel.UnsupportedFormat] = "صيغة ملف Excel غير مدعومة.",
 
-        // Dashboard export labels (aligned with frontend dashboard)
+        // Dashboard export labels
         [LocalizationKeys.DashboardExport.Title] = "لوحة تحكم الجرد",
         [LocalizationKeys.DashboardExport.SessionInfo] = "معلومات جلسة الجرد",
         [LocalizationKeys.DashboardExport.SessionNumber] = "الجلسة",
@@ -203,7 +203,6 @@ public static class ArabicResources
         [LocalizationKeys.Report.NoData] = "لا توجد بيانات لعرض التقرير.",
         [LocalizationKeys.Report.GenerationFailed] = "فشل إنشاء التقرير.",
         [LocalizationKeys.Report.Generated] = "تم إنشاء التقرير بنجاح.",
-        
 
         // Roles
         [LocalizationKeys.Role.Required] = "الدور مطلوب.",
@@ -219,6 +218,17 @@ public static class ArabicResources
         [LocalizationKeys.Permission.Created] = "تمت إضافة الصلاحية بنجاح.",
         [LocalizationKeys.Permission.Updated] = "تم تعديل الصلاحية بنجاح.",
         [LocalizationKeys.Permission.Deleted] = "تم حذف الصلاحية بنجاح.",
+
+        // Financial Period
+        [LocalizationKeys.FinancialPeriod.InvalidYear] = "السنة المالية غير صالحة.",
+        [LocalizationKeys.FinancialPeriod.InvalidMonth] = "الشهر المالي يجب أن يكون من 1 إلى 12.",
+        [LocalizationKeys.FinancialPeriod.InvalidId] = "معرّف الفترة المالية غير صالح.",
+        [LocalizationKeys.FinancialPeriod.AlreadyExists] = "الفترة المالية لهذه السنة والشهر موجودة مسبقًا.",
+        [LocalizationKeys.FinancialPeriod.AlreadyApproved] = "الفترة المالية معتمدة مسبقًا.",
+        [LocalizationKeys.FinancialPeriod.FilesIncomplete] = "لا يمكن اعتماد الفترة المالية قبل اكتمال جميع الملفات المطلوبة والتحقق منها.",
+        [LocalizationKeys.FinancialPeriod.Created] = "تم إنشاء الفترة المالية بنجاح.",
+        [LocalizationKeys.FinancialPeriod.Approved] = "تم اعتماد الفترة المالية بنجاح.",
+        [LocalizationKeys.FinancialPeriod.NotFound] = "الفترة المالية غير موجودة.",
 
         // Existing keys - compatibility
         [LocalizationKeys.ItemCodeRequired] = "رقم الصنف مفقود.",

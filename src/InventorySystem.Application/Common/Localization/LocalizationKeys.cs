@@ -1,4 +1,4 @@
-namespace InventorySystem.Application.Common.Localization;
+﻿namespace InventorySystem.Application.Common.Localization;
 
 public static class LocalizationKeys
 {
@@ -265,6 +265,19 @@ public static class LocalizationKeys
         public const string Deleted = "Permission.Deleted";
     }
 
+    // Financial Period
+    public static class FinancialPeriod
+    {
+        public const string InvalidYear = "FinancialPeriod.InvalidYear";
+        public const string InvalidMonth = "FinancialPeriod.InvalidMonth";
+        public const string InvalidId = "FinancialPeriod.InvalidId";
+        public const string AlreadyExists = "FinancialPeriod.AlreadyExists";
+        public const string AlreadyApproved = "FinancialPeriod.AlreadyApproved";
+        public const string FilesIncomplete = "FinancialPeriod.FilesIncomplete";
+        public const string Created = "FinancialPeriod.Created";
+        public const string Approved = "FinancialPeriod.Approved";
+        public const string NotFound = "FinancialPeriod.NotFound";
+    }
     // Existing keys - kept for compatibility
     public const string ItemCodeRequired = "ItemCodeRequired";
     public const string DuplicateItemCode = "DuplicateItemCode";

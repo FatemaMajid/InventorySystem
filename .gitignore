@@ -16,3 +16,4 @@ publish/
 *.zip
 
 src/InventorySystem.API/wwwroot/
+src/InventorySystem.API/FinancialUploads/

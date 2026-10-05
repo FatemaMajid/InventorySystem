@@ -1,4 +1,4 @@
-namespace InventorySystem.Application.Common.Localization;
+﻿namespace InventorySystem.Application.Common.Localization;
 
 public static class EnglishResources
 {
@@ -220,6 +220,16 @@ public static class EnglishResources
         [LocalizationKeys.Permission.Updated] = "Permission updated successfully.",
         [LocalizationKeys.Permission.Deleted] = "Permission deleted successfully.",
 
+        // Financial Period
+        [LocalizationKeys.FinancialPeriod.InvalidYear] = "The financial year is invalid.",
+        [LocalizationKeys.FinancialPeriod.InvalidMonth] = "The financial month must be between 1 and 12.",
+        [LocalizationKeys.FinancialPeriod.InvalidId] = "The financial period ID is invalid.",
+        [LocalizationKeys.FinancialPeriod.AlreadyExists] = "A financial period already exists for this year and month.",
+        [LocalizationKeys.FinancialPeriod.AlreadyApproved] = "The financial period has already been approved.",
+        [LocalizationKeys.FinancialPeriod.FilesIncomplete] = "The financial period cannot be approved until all required files are complete and valid.",
+        [LocalizationKeys.FinancialPeriod.Created] = "Financial period created successfully.",
+        [LocalizationKeys.FinancialPeriod.Approved] = "Financial period approved successfully.",
+        [LocalizationKeys.FinancialPeriod.NotFound] = "Financial period not found.",
         // Existing keys - compatibility
         [LocalizationKeys.ItemCodeRequired] = "Item code is required.",
         [LocalizationKeys.DuplicateItemCode] = "Item code is duplicated in the file.",

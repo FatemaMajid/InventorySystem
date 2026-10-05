@@ -1066,6 +1066,16 @@ namespace InventorySystem.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AccountCode")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("AccountName")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<int>("BranchId")
                         .HasColumnType("int");
 
@@ -1085,6 +1095,8 @@ namespace InventorySystem.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BranchId");
+
+                    b.HasIndex("FinancialUploadId", "AccountCode");
 
                     b.HasIndex("FinancialUploadId", "BranchId");
 

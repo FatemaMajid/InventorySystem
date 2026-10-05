@@ -169,8 +169,25 @@ public static class AuthorizationSeeder
             {
                 Code = PermissionCodes.SettingsView,
                 Name = "Settings View"
-            }
-        };
+            },
+
+            // Financial Analysis - Financial Periods
+            new Permission
+            {
+                Code = PermissionCodes.FinancialPeriodView,
+                Name = "Financial Period View"
+            },
+            new Permission
+            {
+                Code = PermissionCodes.FinancialPeriodCreate,
+                Name = "Financial Period Create"
+            },
+            new Permission
+            {
+                Code = PermissionCodes.FinancialPeriodApprove,
+                Name = "Financial Period Approve"
+            },
+                    };
 
         foreach (var permission in permissions)
         {
@@ -274,6 +291,9 @@ public static class AuthorizationSeeder
         PermissionCodes.ReportExport,
         PermissionCodes.BranchView,
         PermissionCodes.StoreView,
+        PermissionCodes.FinancialPeriodView,
+        PermissionCodes.FinancialPeriodCreate,
+        PermissionCodes.FinancialPeriodApprove,
         // PermissionCodes.UserView,
         // PermissionCodes.UserCreate,
         // PermissionCodes.UserEdit,
