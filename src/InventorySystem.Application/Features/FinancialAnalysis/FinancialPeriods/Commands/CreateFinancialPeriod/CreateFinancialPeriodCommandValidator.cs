@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using InventorySystem.Application.Common.Localization;
 
 namespace InventorySystem.Application.Features.FinancialAnalysis.FinancialPeriods.Commands.CreateFinancialPeriod;
 
@@ -8,12 +7,20 @@ public class CreateFinancialPeriodCommandValidator
 {
     public CreateFinancialPeriodCommandValidator()
     {
-        RuleFor(x => x.FinancialPeriod.Year)
-            .InclusiveBetween(2000, 2100)
-            .WithMessage(LocalizationKeys.FinancialPeriod.InvalidYear);
+        RuleFor(x => x.FinancialPeriod.StartDate)
+            .NotEmpty()
+            .WithMessage(
+                "Start date is required.");
 
-        RuleFor(x => x.FinancialPeriod.Month)
-            .InclusiveBetween(1, 12)
-            .WithMessage(LocalizationKeys.FinancialPeriod.InvalidMonth);
+        RuleFor(x => x.FinancialPeriod.EndDate)
+            .NotEmpty()
+            .WithMessage(
+                "End date is required.");
+
+        RuleFor(x => x.FinancialPeriod.EndDate)
+            .GreaterThanOrEqualTo(
+                x => x.FinancialPeriod.StartDate)
+            .WithMessage(
+                "End date must be greater than or equal to start date.");
     }
 }

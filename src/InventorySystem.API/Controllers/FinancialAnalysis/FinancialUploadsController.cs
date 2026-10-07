@@ -1,4 +1,5 @@
-﻿using InventorySystem.Application.Features.FinancialAnalysis.FinancialUploads.Commands.UploadFinancialFile;
+﻿using InventorySystem.Application.Common.Exceptions;
+using InventorySystem.Application.Features.FinancialAnalysis.FinancialUploads.Commands.UploadFinancialFile;
 using InventorySystem.Application.Features.FinancialAnalysis.FinancialUploads.Queries.GetFinancialUploads;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -9,8 +10,7 @@ namespace InventorySystem.API.Controllers.FinancialAnalysis;
 [ApiController]
 [Route("api/financial-analysis/uploads")]
 [Authorize]
-public class FinancialUploadsController
-    : ControllerBase
+public class FinancialUploadsController : ControllerBase
 {
     private readonly IMediator _mediator;
 
@@ -48,7 +48,11 @@ public class FinancialUploadsController
             request.File.Length == 0)
         {
             return BadRequest(
-                "File is required.");
+                new
+                {
+                    message =
+                        "File is required."
+                });
         }
 
         await using var memoryStream =
@@ -83,13 +87,25 @@ public class FinancialUploadsController
                     memoryStream.ToArray()
             };
 
-        var result =
-            await _mediator.Send(
-                command,
-                cancellationToken);
+        try
+        {
+            var result =
+                await _mediator.Send(
+                    command,
+                    cancellationToken);
 
-        return Created(
-            $"api/financial-analysis/uploads/{result.Id}",
-            result);
+            return Created(
+                $"api/financial-analysis/uploads/{result.Id}",
+                result);
+        }
+        catch (DuplicateFinancialUploadException ex)
+        {
+            return Conflict(
+                new
+                {
+                    message =
+                        ex.Message
+                });
+        }
     }
 }

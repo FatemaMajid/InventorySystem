@@ -849,11 +849,14 @@ namespace InventorySystem.Infrastructure.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<int>("Month")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -864,13 +867,11 @@ namespace InventorySystem.Infrastructure.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Year")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("Year", "Month")
-                        .IsUnique();
+                    b.HasIndex("EndDate");
+
+                    b.HasIndex("StartDate");
 
                     b.ToTable("FinancialPeriods", (string)null);
                 });
@@ -1297,7 +1298,7 @@ namespace InventorySystem.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("InventorySystem.Domain.FinancialAnalysis.Entities.FinancialPeriod", "FinancialPeriod")
-                        .WithMany("Uploads")
+                        .WithMany("FinancialUploads")
                         .HasForeignKey("FinancialPeriodId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -1401,7 +1402,7 @@ namespace InventorySystem.Infrastructure.Migrations
 
             modelBuilder.Entity("InventorySystem.Domain.FinancialAnalysis.Entities.FinancialPeriod", b =>
                 {
-                    b.Navigation("Uploads");
+                    b.Navigation("FinancialUploads");
                 });
 
             modelBuilder.Entity("InventorySystem.Domain.FinancialAnalysis.Entities.FinancialUpload", b =>

@@ -27,67 +27,87 @@ public class ApproveFinancialPeriodCommandHandler
         ApproveFinancialPeriodCommand request,
         CancellationToken cancellationToken)
     {
-        var period = await _context.FinancialPeriods
-            .FirstOrDefaultAsync(
-                x =>
-                    x.Id == request.Id &&
-                    !x.IsDeleted,
-                cancellationToken);
+        var period =
+            await _context.FinancialPeriods
+                .FirstOrDefaultAsync(
+                    x =>
+                        x.Id == request.Id &&
+                        !x.IsDeleted,
+                    cancellationToken);
 
         if (period is null)
             return false;
 
-        if (period.Status == FinancialPeriodStatus.Approved)
+        if (period.Status ==
+            FinancialPeriodStatus.Approved)
         {
             throw new InvalidOperationException(
-                LocalizationKeys.FinancialPeriod.AlreadyApproved);
+                LocalizationKeys
+                    .FinancialPeriod
+                    .AlreadyApproved);
         }
 
-        var activeBranchCount = await _context.Branches.CountAsync(
-            x =>
-                !x.IsDeleted &&
-                x.IsActive &&
-                x.BranchCode != "0" &&
-                x.BranchCode != "001" &&
-                x.BranchCode != "002",
-            cancellationToken);
+        var activeBranchCount =
+            await _context.Branches
+                .CountAsync(
+                    x =>
+                        !x.IsDeleted &&
+                        x.IsActive &&
+                        x.BranchCode != "0" &&
+                        x.BranchCode != "001" &&
+                        x.BranchCode != "002",
+                    cancellationToken);
 
         var expectedFiles =
-            2 +
-            (activeBranchCount * 2) +
-            activeBranchCount +
-            activeBranchCount;
+            2 + (activeBranchCount * 4);
 
-        var validUploads = await _context.FinancialUploads
-            .CountAsync(
-                x =>
-                    x.FinancialPeriodId == period.Id &&
-                    x.IsActive &&
-                    !x.IsDeleted &&
-                    x.Status == FinancialUploadStatus.Valid,
-                cancellationToken);
+        var validUploads =
+            await _context.FinancialUploads
+                .CountAsync(
+                    x =>
+                        x.FinancialPeriodId ==
+                            period.Id &&
+                        x.IsActive &&
+                        !x.IsDeleted &&
+                        x.Status ==
+                            FinancialUploadStatus.Valid,
+                    cancellationToken);
 
         if (validUploads != expectedFiles)
         {
             throw new InvalidOperationException(
-                LocalizationKeys.FinancialPeriod.FilesIncomplete);
+                LocalizationKeys
+                    .FinancialPeriod
+                    .FilesIncomplete);
         }
 
-        period.Status = FinancialPeriodStatus.Approved;
-        period.ApprovedAt = DateTime.UtcNow;
-        period.ApprovedBy = _currentUser.Username;
-        period.UpdatedAt = DateTime.UtcNow;
-        period.UpdatedBy = _currentUser.Username;
+        period.Status =
+            FinancialPeriodStatus.Approved;
 
-        await _context.SaveChangesAsync(cancellationToken);
+        period.ApprovedAt =
+            DateTime.UtcNow;
+
+        period.ApprovedBy =
+            _currentUser.Username;
+
+        period.UpdatedAt =
+            DateTime.UtcNow;
+
+        period.UpdatedBy =
+            _currentUser.Username;
+
+        await _context.SaveChangesAsync(
+            cancellationToken);
 
         await _auditLogService.LogAsync(
             action: "Approve",
             entity: "FinancialPeriod",
-            entityId: period.Id.ToString(),
+            entityId:
+                period.Id.ToString(),
             details:
-                $"Year: {period.Year}, Month: {period.Month}, Files: {validUploads}/{expectedFiles}",
-            cancellationToken: cancellationToken);
+                $"StartDate: {period.StartDate:yyyy-MM-dd}, EndDate: {period.EndDate:yyyy-MM-dd}, Files: {validUploads}/{expectedFiles}",
+            cancellationToken:
+                cancellationToken);
 
         return true;
     }

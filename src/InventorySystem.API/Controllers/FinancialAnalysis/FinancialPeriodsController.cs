@@ -2,7 +2,10 @@
 using InventorySystem.Application.Features.FinancialAnalysis.FinancialPeriods.Commands.ApproveFinancialPeriod;
 using InventorySystem.Application.Features.FinancialAnalysis.FinancialPeriods.Commands.CreateFinancialPeriod;
 using InventorySystem.Application.Features.FinancialAnalysis.FinancialPeriods.Queries.GetAllFinancialPeriods;
+using InventorySystem.Application.Features.FinancialAnalysis.FinancialPeriods.Queries.GetFinancialPeriodBranches;
 using InventorySystem.Application.Features.FinancialAnalysis.FinancialPeriods.Queries.GetFinancialPeriodById;
+using InventorySystem.Application.Features.FinancialAnalysis.FinancialPeriods.Queries.GetFinancialPeriodSummary;
+using InventorySystem.Application.Features.FinancialAnalysis.FinancialPeriods.Queries.GetMissingFinancialFiles;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,30 +19,92 @@ public class FinancialPeriodsController : ControllerBase
 {
     private readonly IMediator _mediator;
 
-    public FinancialPeriodsController(IMediator mediator)
+    public FinancialPeriodsController(
+        IMediator mediator)
     {
         _mediator = mediator;
     }
 
     [HttpGet]
-    [Authorize(Policy = "Permission:FinancialPeriod.View")]
+    [Authorize(
+        Policy =
+            "Permission:FinancialPeriod.View")]
     public async Task<IActionResult> GetAll()
     {
-        var result = await _mediator.Send(
-            new GetAllFinancialPeriodsQuery());
+        var result =
+            await _mediator.Send(
+                new GetAllFinancialPeriodsQuery());
 
         return Ok(result);
     }
 
     [HttpGet("{id:int}")]
-    [Authorize(Policy = "Permission:FinancialPeriod.View")]
-    public async Task<IActionResult> GetById(int id)
+    [Authorize(
+        Policy =
+            "Permission:FinancialPeriod.View")]
+    public async Task<IActionResult> GetById(
+        int id)
     {
-        var result = await _mediator.Send(
-            new GetFinancialPeriodByIdQuery
-            {
-                Id = id
-            });
+        var result =
+            await _mediator.Send(
+                new GetFinancialPeriodByIdQuery
+                {
+                    Id = id
+                });
+
+        if (result is null)
+            return NotFound();
+
+        return Ok(result);
+    }
+
+    [HttpGet("{id:int}/summary")]
+    [Authorize(
+        Policy =
+            "Permission:FinancialPeriod.View")]
+    public async Task<IActionResult> GetSummary(
+        int id)
+    {
+        var result =
+            await _mediator.Send(
+                new GetFinancialPeriodSummaryQuery(
+                    id));
+
+        if (result is null)
+            return NotFound();
+
+        return Ok(result);
+    }
+
+    [HttpGet("{id:int}/missing-files")]
+    [Authorize(
+        Policy =
+            "Permission:FinancialPeriod.View")]
+    public async Task<IActionResult> GetMissingFiles(
+        int id)
+    {
+        var result =
+            await _mediator.Send(
+                new GetMissingFinancialFilesQuery(
+                    id));
+
+        if (result is null)
+            return NotFound();
+
+        return Ok(result);
+    }
+
+    [HttpGet("{id:int}/branches")]
+    [Authorize(
+        Policy =
+            "Permission:FinancialPeriod.View")]
+    public async Task<IActionResult> GetBranches(
+        int id)
+    {
+        var result =
+            await _mediator.Send(
+                new GetFinancialPeriodBranchesQuery(
+                    id));
 
         if (result is null)
             return NotFound();
@@ -48,15 +113,19 @@ public class FinancialPeriodsController : ControllerBase
     }
 
     [HttpPost]
-    [Authorize(Policy = "Permission:FinancialPeriod.Create")]
+    [Authorize(
+        Policy =
+            "Permission:FinancialPeriod.Create")]
     public async Task<IActionResult> Create(
-        [FromBody] CreateFinancialPeriodDto dto)
+        [FromBody]
+        CreateFinancialPeriodDto dto)
     {
-        var id = await _mediator.Send(
-            new CreateFinancialPeriodCommand
-            {
-                FinancialPeriod = dto
-            });
+        var id =
+            await _mediator.Send(
+                new CreateFinancialPeriodCommand
+                {
+                    FinancialPeriod = dto
+                });
 
         return Created(
             $"api/financial-analysis/periods/{id}",
@@ -64,14 +133,18 @@ public class FinancialPeriodsController : ControllerBase
     }
 
     [HttpPost("{id:int}/approve")]
-    [Authorize(Policy = "Permission:FinancialPeriod.Approve")]
-    public async Task<IActionResult> Approve(int id)
+    [Authorize(
+        Policy =
+            "Permission:FinancialPeriod.Approve")]
+    public async Task<IActionResult> Approve(
+        int id)
     {
-        var result = await _mediator.Send(
-            new ApproveFinancialPeriodCommand
-            {
-                Id = id
-            });
+        var result =
+            await _mediator.Send(
+                new ApproveFinancialPeriodCommand
+                {
+                    Id = id
+                });
 
         if (!result)
             return NotFound();

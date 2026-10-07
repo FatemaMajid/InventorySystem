@@ -5,8 +5,8 @@ namespace InventorySystem.Application.DTOs.FinancialAnalysis.FinancialPeriod;
 public class FinancialPeriodDto
 {
     public int Id { get; set; }
-    public int Year { get; set; }
-    public int Month { get; set; }
+    public DateTime StartDate { get; set; }
+    public DateTime EndDate { get; set; }
     public FinancialPeriodStatus Status { get; set; }
     public DateTime CreatedAt { get; set; }
     public string? CreatedBy { get; set; }

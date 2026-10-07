@@ -24,13 +24,19 @@ public class GetAllFinancialPeriodsQueryHandler
         GetAllFinancialPeriodsQuery request,
         CancellationToken cancellationToken)
     {
-        var periods = await _context.FinancialPeriods
-            .AsNoTracking()
-            .Where(x => !x.IsDeleted)
-            .OrderByDescending(x => x.Year)
-            .ThenByDescending(x => x.Month)
-            .ToListAsync(cancellationToken);
+        var periods =
+            await _context.FinancialPeriods
+                .AsNoTracking()
+                .Where(x => !x.IsDeleted)
+                .OrderByDescending(
+                    x => x.StartDate)
+                .ThenByDescending(
+                    x => x.EndDate)
+                .ToListAsync(
+                    cancellationToken);
 
-        return _mapper.Map<List<FinancialPeriodDto>>(periods);
+        return _mapper.Map<
+            List<FinancialPeriodDto>>(
+                periods);
     }
 }

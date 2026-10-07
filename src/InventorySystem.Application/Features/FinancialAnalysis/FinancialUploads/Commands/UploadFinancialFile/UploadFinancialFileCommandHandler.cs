@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using InventorySystem.Application.Common.Exceptions;
 using InventorySystem.Application.Common.Interfaces;
 using InventorySystem.Application.DTOs.FinancialAnalysis.FinancialUpload;
 using InventorySystem.Application.Features.FinancialAnalysis.Common.Excel;
@@ -118,8 +119,7 @@ public class UploadFinancialFileCommandHandler
             activeUpload.FileHash ==
                 fileHash)
         {
-            throw new InvalidOperationException(
-                "The same file has already been uploaded.");
+            throw new DuplicateFinancialUploadException();
         }
 
         var lastVersion =
@@ -153,8 +153,8 @@ public class UploadFinancialFileCommandHandler
             await _fileStorage.SaveAsync(
                 request.Content,
                 storedFileName,
-                period.Year,
-                period.Month,
+                period.StartDate.Year,
+                period.StartDate.Month,
                 cancellationToken);
 
         var upload =
@@ -488,3 +488,5 @@ public class UploadFinancialFileCommandHandler
             : value[..maxLength];
     }
 }
+
+

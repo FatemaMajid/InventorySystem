@@ -4,18 +4,20 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InventorySystem.Infrastructure.Persistence.Configurations.FinancialAnalysis;
 
-public class FinancialPeriodConfiguration : IEntityTypeConfiguration<FinancialPeriod>
+public class FinancialPeriodConfiguration
+    : IEntityTypeConfiguration<FinancialPeriod>
 {
-    public void Configure(EntityTypeBuilder<FinancialPeriod> builder)
+    public void Configure(
+        EntityTypeBuilder<FinancialPeriod> builder)
     {
         builder.ToTable("FinancialPeriods");
 
         builder.HasKey(x => x.Id);
 
-        builder.Property(x => x.Year)
+        builder.Property(x => x.StartDate)
             .IsRequired();
 
-        builder.Property(x => x.Month)
+        builder.Property(x => x.EndDate)
             .IsRequired();
 
         builder.Property(x => x.Status)
@@ -24,14 +26,11 @@ public class FinancialPeriodConfiguration : IEntityTypeConfiguration<FinancialPe
         builder.Property(x => x.ApprovedBy)
             .HasMaxLength(200);
 
-        builder.HasIndex(x => new
-        {
-            x.Year,
-            x.Month
-        })
-        .IsUnique();
+        builder.HasIndex(x => x.StartDate);
 
-        builder.HasMany(x => x.Uploads)
+        builder.HasIndex(x => x.EndDate);
+
+        builder.HasMany(x => x.FinancialUploads)
             .WithOne(x => x.FinancialPeriod)
             .HasForeignKey(x => x.FinancialPeriodId)
             .OnDelete(DeleteBehavior.Restrict);
