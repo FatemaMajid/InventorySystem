@@ -1,4 +1,4 @@
-﻿namespace InventorySystem.Application.Common.Authorization;
+namespace InventorySystem.Application.Common.Authorization;
 
 public static class PermissionCodes
 {
@@ -41,4 +41,50 @@ public static class PermissionCodes
     public const string FinancialPeriodView = "FinancialPeriod.View";
     public const string FinancialPeriodCreate = "FinancialPeriod.Create";
     public const string FinancialPeriodApprove = "FinancialPeriod.Approve";
+
+    // ==========================================
+    // Financial Analysis
+    // ==========================================
+
+    public const string FinancialAnalysisView =
+        "FinancialAnalysis.View";
+
+    public const string FinancialSalesView =
+        "FinancialSales.View";
+
+    public const string FinancialInventoryView =
+        "FinancialInventory.View";
+
+    public const string FinancialExpensesView =
+        "FinancialExpenses.View";
+
+    public const string FinancialPurchasesView =
+        "FinancialPurchases.View";
+
+    public const string FinancialProfitLossView =
+        "FinancialProfitLoss.View";
+
+    public const string FinancialCustomersView =
+        "FinancialCustomers.View";
+
+    public const string FinancialDebtView =
+        "FinancialDebt.View";
+
+    public const string FinancialCashView =
+        "FinancialCash.View";
+
+    public const string FinancialSuppliersView =
+        "FinancialSuppliers.View";
+
+    public const string FinancialCapitalView =
+        "FinancialCapital.View";
+
+    public const string FinancialTransfersView =
+        "FinancialTransfers.View";
+
+    public const string FinancialSettlementsView =
+        "FinancialSettlements.View";
+
+    public const string FinancialDashboardView =
+        "FinancialDashboard.View";
 }

@@ -1,4 +1,4 @@
-﻿using InventorySystem.Application.Common.Interfaces;
+using InventorySystem.Application.Common.Interfaces;
 using InventorySystem.Application.Common.Localization;
 using InventorySystem.Domain.FinancialAnalysis.Enums;
 using MediatR;
@@ -45,6 +45,15 @@ public class ApproveFinancialPeriodCommandHandler
                 LocalizationKeys
                     .FinancialPeriod
                     .AlreadyApproved);
+        }
+
+        if (period.Status !=
+            FinancialPeriodStatus.Ready)
+        {
+            throw new InvalidOperationException(
+                LocalizationKeys
+                    .FinancialPeriod
+                    .FilesIncomplete);
         }
 
         var activeBranchCount =

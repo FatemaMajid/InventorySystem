@@ -1,4 +1,5 @@
 using FluentValidation;
+using InventorySystem.Application.Common.Exceptions;
 using InventorySystem.Application.Common.Localization;
 using Microsoft.AspNetCore.Localization;
 using System.Net;
@@ -10,12 +11,14 @@ public class ExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;
 
-    public ExceptionHandlingMiddleware(RequestDelegate next)
+    public ExceptionHandlingMiddleware(
+        RequestDelegate next)
     {
         _next = next;
     }
 
-    public async Task InvokeAsync(HttpContext context)
+    public async Task InvokeAsync(
+        HttpContext context)
     {
         try
         {
@@ -24,6 +27,12 @@ public class ExceptionHandlingMiddleware
         catch (ValidationException ex)
         {
             await HandleValidationException(
+                context,
+                ex);
+        }
+        catch (DuplicateFinancialUploadException ex)
+        {
+            await HandleConflictException(
                 context,
                 ex);
         }
@@ -39,6 +48,12 @@ public class ExceptionHandlingMiddleware
                 context,
                 ex);
         }
+        catch (InvalidOperationException ex)
+        {
+            await HandleInvalidOperationException(
+                context,
+                ex);
+        }
         catch (Exception ex)
         {
             await HandleException(
@@ -51,17 +66,24 @@ public class ExceptionHandlingMiddleware
         HttpContext context,
         ValidationException ex)
     {
-        var language = GetLanguage(context);
+        var language =
+            GetLanguage(context);
 
-        var errors = ex.Errors
-            .GroupBy(e => e.PropertyName)
-            .ToDictionary(
-                g => g.Key,
-                g => g.Select(e =>
-                    LocalizationService.Get(
-                        e.ErrorMessage,
-                        language))
-                    .ToArray());
+        var errors =
+            ex.Errors
+                .GroupBy(
+                    e =>
+                        e.PropertyName)
+                .ToDictionary(
+                    g =>
+                        g.Key,
+                    g =>
+                        g.Select(
+                            e =>
+                                LocalizationService.Get(
+                                    e.ErrorMessage,
+                                    language))
+                            .ToArray());
 
         await WriteResponse(
             context,
@@ -72,44 +94,72 @@ public class ExceptionHandlingMiddleware
             errors);
     }
 
+    private static async Task HandleConflictException(
+        HttpContext context,
+        DuplicateFinancialUploadException ex)
+    {
+        await WriteResponse(
+            context,
+            HttpStatusCode.Conflict,
+            ex.Message);
+    }
+
     private static async Task HandleUnauthorizedException(
         HttpContext context,
         UnauthorizedAccessException ex)
     {
-        var language = GetLanguage(context);
-
         await WriteResponse(
             context,
             HttpStatusCode.Forbidden,
-            ex.Message,
-            null);
+            ex.Message);
     }
 
     private static async Task HandleNotFoundException(
         HttpContext context,
         KeyNotFoundException ex)
     {
-        var language = GetLanguage(context);
-
         await WriteResponse(
             context,
             HttpStatusCode.NotFound,
-            ex.Message,
-            null);
+            ex.Message);
     }
 
-    private static async Task HandleException(HttpContext context, Exception ex){
-        var language = GetLanguage(context);
+    private static async Task HandleInvalidOperationException(
+        HttpContext context,
+        InvalidOperationException ex)
+    {
+        var language =
+            GetLanguage(context);
 
-        var message = LocalizationService.Get(
-            LocalizationKeys.Common.OperationFailed,
-            language);
+        var message =
+            LocalizationService.Get(
+                ex.Message,
+                language);
+
+        await WriteResponse(
+            context,
+            HttpStatusCode.BadRequest,
+            message);
+    }
+
+    private static async Task HandleException(
+        HttpContext context,
+        Exception ex)
+    {
+        var language =
+            GetLanguage(context);
+
+        var message =
+            LocalizationService.Get(
+                LocalizationKeys.Common.OperationFailed,
+                language);
 
         await WriteResponse(
             context,
             HttpStatusCode.InternalServerError,
             message);
     }
+
     private static string GetLanguage(
         HttpContext context)
     {
@@ -134,14 +184,17 @@ public class ExceptionHandlingMiddleware
         context.Response.ContentType =
             "application/json";
 
-        var response = new
-        {
-            statusCode = (int)statusCode,
-            message,
-            errors
-        };
+        var response =
+            new
+            {
+                statusCode =
+                    (int)statusCode,
+                message,
+                errors
+            };
 
         await context.Response.WriteAsync(
-            JsonSerializer.Serialize(response));
+            JsonSerializer.Serialize(
+                response));
     }
 }

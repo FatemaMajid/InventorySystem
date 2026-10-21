@@ -1,6 +1,9 @@
-﻿using InventorySystem.Application.Common.Exceptions;
 using InventorySystem.Application.Features.FinancialAnalysis.FinancialUploads.Commands.UploadFinancialFile;
+using InventorySystem.Application.Features.FinancialAnalysis.FinancialUploads.Queries.GetFinancialAccountRows;
+using InventorySystem.Application.Features.FinancialAnalysis.FinancialUploads.Queries.GetFinancialUploadById;
 using InventorySystem.Application.Features.FinancialAnalysis.FinancialUploads.Queries.GetFinancialUploads;
+using InventorySystem.Application.Features.FinancialAnalysis.FinancialUploads.Queries.GetSettlementData;
+using InventorySystem.Application.Features.FinancialAnalysis.FinancialUploads.Queries.GetTransferRecords;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +34,78 @@ public class FinancialUploadsController : ControllerBase
             await _mediator.Send(
                 new GetFinancialUploadsQuery(
                     financialPeriodId));
+
+        return Ok(result);
+    }
+
+    [HttpGet("{uploadId:int}")]
+    [Authorize(
+        Policy =
+            "Permission:FinancialPeriod.View")]
+    public async Task<IActionResult> GetById(
+        int uploadId)
+    {
+        var result =
+            await _mediator.Send(
+                new GetFinancialUploadByIdQuery(
+                    uploadId));
+
+        if (result is null)
+            return NotFound();
+
+        return Ok(result);
+    }
+
+    [HttpGet("{uploadId:int}/account-rows")]
+    [Authorize(
+        Policy =
+            "Permission:FinancialPeriod.View")]
+    public async Task<IActionResult> GetAccountRows(
+        int uploadId)
+    {
+        var result =
+            await _mediator.Send(
+                new GetFinancialAccountRowsQuery(
+                    uploadId));
+
+        if (result is null)
+            return NotFound();
+
+        return Ok(result);
+    }
+
+    [HttpGet("{uploadId:int}/transfer-records")]
+    [Authorize(
+        Policy =
+            "Permission:FinancialPeriod.View")]
+    public async Task<IActionResult> GetTransferRecords(
+        int uploadId)
+    {
+        var result =
+            await _mediator.Send(
+                new GetTransferRecordsQuery(
+                    uploadId));
+
+        if (result is null)
+            return NotFound();
+
+        return Ok(result);
+    }
+
+    [HttpGet("{uploadId:int}/settlement")]
+    [Authorize(
+        Policy =
+            "Permission:FinancialPeriod.View")]
+    public async Task<IActionResult> GetSettlement(
+        int uploadId)
+    {
+        var result =
+            await _mediator.Send(
+                new GetSettlementDataQuery(
+                    uploadId));
+
+        if (result is null)
+            return NotFound();
 
         return Ok(result);
     }
@@ -87,25 +162,13 @@ public class FinancialUploadsController : ControllerBase
                     memoryStream.ToArray()
             };
 
-        try
-        {
-            var result =
-                await _mediator.Send(
-                    command,
-                    cancellationToken);
+        var result =
+            await _mediator.Send(
+                command,
+                cancellationToken);
 
-            return Created(
-                $"api/financial-analysis/uploads/{result.Id}",
-                result);
-        }
-        catch (DuplicateFinancialUploadException ex)
-        {
-            return Conflict(
-                new
-                {
-                    message =
-                        ex.Message
-                });
-        }
+        return Created(
+            $"api/financial-analysis/uploads/{result.Id}",
+            result);
     }
 }

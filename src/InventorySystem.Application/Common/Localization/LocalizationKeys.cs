@@ -1,4 +1,4 @@
-﻿namespace InventorySystem.Application.Common.Localization;
+namespace InventorySystem.Application.Common.Localization;
 
 public static class LocalizationKeys
 {
@@ -299,4 +299,259 @@ public static class LocalizationKeys
     public const string MultipleBranches = "MultipleBranches";
     public const string StoreRequired = "StoreRequired";
     public const string MultipleStores = "MultipleStores";
+
+    // Financial Export
+    public static class FinancialExport
+    {
+        public const string InvalidMode = "FinancialExport.InvalidMode";
+        public const string BranchRequired = "FinancialExport.BranchRequired";
+        public const string PeriodNotFound = "FinancialExport.PeriodNotFound";
+        public const string BranchNotFound = "FinancialExport.BranchNotFound";
+
+        public const string Summary = "FinancialExport.Summary";
+        public const string BranchComparison = "FinancialExport.BranchComparison";
+        public const string IncomeStatements = "FinancialExport.IncomeStatements";
+        public const string IncomeStatement = "FinancialExport.IncomeStatement";
+        public const string FinancialPositions = "FinancialExport.FinancialPositions";
+        public const string FinancialPosition = "FinancialExport.FinancialPosition";
+        public const string TransfersMale = "FinancialExport.TransfersMale";
+        public const string TransfersFemale = "FinancialExport.TransfersFemale";
+        public const string SettlementsMale = "FinancialExport.SettlementsMale";
+        public const string SettlementsFemale = "FinancialExport.SettlementsFemale";
+        public const string BranchStatus = "FinancialExport.BranchStatus";
+        public const string MissingFilesSheet = "FinancialExport.MissingFilesSheet";
+
+        public const string AllBranchesReport = "FinancialExport.AllBranchesReport";
+        public const string BranchReport = "FinancialExport.BranchReport";
+        public const string BranchAnalyticalComparison = "FinancialExport.BranchAnalyticalComparison";
+        public const string AllBranchFilesStatus = "FinancialExport.AllBranchFilesStatus";
+        public const string RequiredMissingFiles = "FinancialExport.RequiredMissingFiles";
+
+        public const string PeriodId = "FinancialExport.PeriodId";
+        public const string StartDate = "FinancialExport.StartDate";
+        public const string EndDate = "FinancialExport.EndDate";
+        public const string Status = "FinancialExport.Status";
+        public const string GeneratedAtBaghdad = "FinancialExport.GeneratedAtBaghdad";
+
+        public const string FilesAndBranchesStatus = "FinancialExport.FilesAndBranchesStatus";
+        public const string FilesStatus = "FinancialExport.FilesStatus";
+        public const string ActiveBranches = "FinancialExport.ActiveBranches";
+        public const string CompleteBranches = "FinancialExport.CompleteBranches";
+        public const string IncompleteBranches = "FinancialExport.IncompleteBranches";
+        public const string ExpectedFiles = "FinancialExport.ExpectedFiles";
+        public const string ValidFiles = "FinancialExport.ValidFiles";
+        public const string CompletedFiles = "FinancialExport.CompletedFiles";
+        public const string MissingFiles = "FinancialExport.MissingFiles";
+        public const string Completion = "FinancialExport.Completion";
+
+        public const string TransferAnalysis = "FinancialExport.TransferAnalysis";
+        public const string TransferMale = "FinancialExport.TransferMale";
+        public const string TransferFemale = "FinancialExport.TransferFemale";
+        public const string TotalTransfers = "FinancialExport.TotalTransfers";
+        public const string AverageTransfersPerBranch = "FinancialExport.AverageTransfersPerBranch";
+        public const string HighestTransferBranch = "FinancialExport.HighestTransferBranch";
+        public const string LowestTransferBranch = "FinancialExport.LowestTransferBranch";
+        public const string AverageTransferRecord = "FinancialExport.AverageTransferRecord";
+        public const string HighestTransferRecord = "FinancialExport.HighestTransferRecord";
+        public const string LowestTransferRecord = "FinancialExport.LowestTransferRecord";
+
+        public const string SettlementAnalysis = "FinancialExport.SettlementAnalysis";
+        public const string TotalDebit = "FinancialExport.TotalDebit";
+        public const string TotalCredit = "FinancialExport.TotalCredit";
+        public const string TotalBalance = "FinancialExport.TotalBalance";
+        public const string Balance = "FinancialExport.Balance";
+        public const string AverageBalancePerBranch = "FinancialExport.AverageBalancePerBranch";
+        public const string HighestBranchBalance = "FinancialExport.HighestBranchBalance";
+        public const string LowestBranchBalance = "FinancialExport.LowestBranchBalance";
+
+        public const string BranchCode = "FinancialExport.BranchCode";
+        public const string Branch = "FinancialExport.Branch";
+        public const string AccountCode = "FinancialExport.AccountCode";
+        public const string AccountName = "FinancialExport.AccountName";
+        public const string Debit = "FinancialExport.Debit";
+        public const string Credit = "FinancialExport.Credit";
+        public const string Assets = "FinancialExport.Assets";
+        public const string Liabilities = "FinancialExport.Liabilities";
+        public const string RowOrder = "FinancialExport.RowOrder";
+        public const string Gender = "FinancialExport.Gender";
+        public const string Value = "FinancialExport.Value";
+        public const string TransactionDate = "FinancialExport.TransactionDate";
+        public const string Description = "FinancialExport.Description";
+        public const string EntryNumber = "FinancialExport.EntryNumber";
+        public const string Marked = "FinancialExport.Marked";
+        public const string Matched = "FinancialExport.Matched";
+        public const string FileType = "FinancialExport.FileType";
+
+        public const string IncomeStatementFile = "FinancialExport.IncomeStatementFile";
+        public const string FinancialPositionFile = "FinancialExport.FinancialPositionFile";
+        public const string TransferFile = "FinancialExport.TransferFile";
+        public const string SettlementFile = "FinancialExport.SettlementFile";
+
+        public const string Male = "FinancialExport.Male";
+        public const string Female = "FinancialExport.Female";
+        public const string Yes = "FinancialExport.Yes";
+        public const string No = "FinancialExport.No";
+        public const string Complete = "FinancialExport.Complete";
+        public const string Incomplete = "FinancialExport.Incomplete";
+        public const string AllBranches = "FinancialExport.AllBranches";
+
+        public const string Draft = "FinancialExport.Draft";
+        public const string Uploading = "FinancialExport.Uploading";
+        public const string Ready = "FinancialExport.Ready";
+        public const string Approved = "FinancialExport.Approved";
+
+        public const string Total = "FinancialExport.Total";
+        public const string Highest = "FinancialExport.Highest";
+        public const string Lowest = "FinancialExport.Lowest";
+        public const string Average = "FinancialExport.Average";
+        public const string Records = "FinancialExport.Records";
+
+        public const string NoteNoAccountGrandTotal = "FinancialExport.NoteNoAccountGrandTotal";
+    }
+
+    public static class FinancialAnalysis
+    {
+        public const string ResultType = "FinancialAnalysis.ResultType";
+        public const string ResultValue = "FinancialAnalysis.ResultValue";
+        public const string SignedValue = "FinancialAnalysis.SignedValue";
+        public const string Assets = "FinancialAnalysis.Assets";
+        public const string Liabilities = "FinancialAnalysis.Liabilities";
+        public const string AccountCode = "FinancialAnalysis.AccountCode";
+        public const string AccountName = "FinancialAnalysis.AccountName";
+        public const string FileAvailable = "FinancialAnalysis.FileAvailable";
+
+        public const string Records = "FinancialAnalysis.Records";
+        public const string Yes = "FinancialAnalysis.Yes";
+        public const string No = "FinancialAnalysis.No";
+
+        public const string Status = "FinancialAnalysis.Status";
+        public const string NoData = "FinancialAnalysis.NoData";
+        public const string CompleteBranches = "FinancialAnalysis.CompleteBranches";
+        public const string IncompleteBranches = "FinancialAnalysis.IncompleteBranches";
+
+        public const string Transactions = "FinancialAnalysis.Transactions";
+        public const string FemaleFiles = "FinancialAnalysis.FemaleFiles";
+        public const string MaleFiles = "FinancialAnalysis.MaleFiles";
+        public const string OverallResult = "FinancialAnalysis.OverallResult";
+        public const string TotalLoss = "FinancialAnalysis.TotalLoss";
+        public const string TotalProfit = "FinancialAnalysis.TotalProfit";
+        public const string BreakEvenBranches = "FinancialAnalysis.BreakEvenBranches";
+        public const string LossBranches = "FinancialAnalysis.LossBranches";
+        public const string ProfitableBranches = "FinancialAnalysis.ProfitableBranches";
+        public const string BranchesWithoutData = "FinancialAnalysis.BranchesWithoutData";
+        public const string BranchesWithData = "FinancialAnalysis.BranchesWithData";
+        public const string WithoutData = "FinancialAnalysis.WithoutData";
+        public const string WithData = "FinancialAnalysis.WithData";
+        public const string BranchDetails = "FinancialAnalysis.BranchDetails";
+        public const string SectionSummary = "FinancialAnalysis.SectionSummary";
+        public const string IncludedSections = "FinancialAnalysis.IncludedSections";
+        public const string Scope = "FinancialAnalysis.Scope";
+        public const string Title = "FinancialAnalysis.Title";
+        public const string Dashboard = "FinancialAnalysis.Dashboard";
+        public const string FinancialPeriod = "FinancialAnalysis.FinancialPeriod";
+        public const string PeriodFrom = "FinancialAnalysis.PeriodFrom";
+        public const string PeriodTo = "FinancialAnalysis.PeriodTo";
+        public const string GeneratedAt = "FinancialAnalysis.GeneratedAt";
+
+        public const string AllBranches = "FinancialAnalysis.AllBranches";
+        public const string SelectedBranch = "FinancialAnalysis.SelectedBranch";
+        public const string Branch = "FinancialAnalysis.Branch";
+        public const string BranchCode = "FinancialAnalysis.BranchCode";
+        public const string BranchName = "FinancialAnalysis.BranchName";
+
+        public const string Sales = "FinancialAnalysis.Sales";
+        public const string Inventory = "FinancialAnalysis.Inventory";
+        public const string Expenses = "FinancialAnalysis.Expenses";
+        public const string Purchases = "FinancialAnalysis.Purchases";
+        public const string ProfitLoss = "FinancialAnalysis.ProfitLoss";
+        public const string CustomersEmployees = "FinancialAnalysis.CustomersEmployees";
+        public const string Customers = "FinancialAnalysis.Customers";
+        public const string Employees = "FinancialAnalysis.Employees";
+        public const string BranchDebt = "FinancialAnalysis.BranchDebt";
+        public const string Cash = "FinancialAnalysis.Cash";
+        public const string Suppliers = "FinancialAnalysis.Suppliers";
+        public const string Capital = "FinancialAnalysis.Capital";
+        public const string Transfers = "FinancialAnalysis.Transfers";
+        public const string Settlements = "FinancialAnalysis.Settlements";
+
+        public const string Male = "FinancialAnalysis.Male";
+        public const string Female = "FinancialAnalysis.Female";
+
+        public const string Total = "FinancialAnalysis.Total";
+        public const string Average = "FinancialAnalysis.Average";
+        public const string Highest = "FinancialAnalysis.Highest";
+        public const string Lowest = "FinancialAnalysis.Lowest";
+        public const string Value = "FinancialAnalysis.Value";
+        public const string Details = "FinancialAnalysis.Details";
+
+        public const string Debit = "FinancialAnalysis.Debit";
+        public const string Credit = "FinancialAnalysis.Credit";
+        public const string Balance = "FinancialAnalysis.Balance";
+        public const string Opening = "FinancialAnalysis.Opening";
+        public const string Closing = "FinancialAnalysis.Closing";
+        public const string Change = "FinancialAnalysis.Change";
+
+        public const string Profit = "FinancialAnalysis.Profit";
+        public const string Loss = "FinancialAnalysis.Loss";
+        public const string BreakEven = "FinancialAnalysis.BreakEven";
+
+        public const string Complete = "FinancialAnalysis.Complete";
+        public const string Incomplete = "FinancialAnalysis.Incomplete";
+        public const string Missing = "FinancialAnalysis.Missing";
+        public const string Valid = "FinancialAnalysis.Valid";
+        public const string Invalid = "FinancialAnalysis.Invalid";
+
+        public const string Draft = "FinancialAnalysis.Draft";
+        public const string Uploading = "FinancialAnalysis.Uploading";
+        public const string Ready = "FinancialAnalysis.Ready";
+        public const string Approved = "FinancialAnalysis.Approved";
+
+        public const string ActiveBranches = "FinancialAnalysis.ActiveBranches";
+        public const string ExpectedFiles = "FinancialAnalysis.ExpectedFiles";
+        public const string ValidFiles = "FinancialAnalysis.ValidFiles";
+        public const string MissingFiles = "FinancialAnalysis.MissingFiles";
+        public const string CompletionPercentage = "FinancialAnalysis.CompletionPercentage";
+
+        public const string SalesReturns = "FinancialAnalysis.SalesReturns";
+        public const string DiscountAllowed = "FinancialAnalysis.DiscountAllowed";
+        public const string BranchDiscountAllowed = "FinancialAnalysis.BranchDiscountAllowed";
+        public const string NetSales = "FinancialAnalysis.NetSales";
+
+        public const string OpeningInventory = "FinancialAnalysis.OpeningInventory";
+        public const string ClosingInventory = "FinancialAnalysis.ClosingInventory";
+        public const string InventoryChange = "FinancialAnalysis.InventoryChange";
+
+        public const string TotalExpenses = "FinancialAnalysis.TotalExpenses";
+        public const string TotalPurchases = "FinancialAnalysis.TotalPurchases";
+
+        public const string CustomerBalance = "FinancialAnalysis.CustomerBalance";
+        public const string EmployeeBalance = "FinancialAnalysis.EmployeeBalance";
+
+        public const string MaleDebt = "FinancialAnalysis.MaleDebt";
+        public const string FemaleDebt = "FinancialAnalysis.FemaleDebt";
+        public const string TotalDebt = "FinancialAnalysis.TotalDebt";
+
+        public const string TotalCash = "FinancialAnalysis.TotalCash";
+        public const string CashboxesCount = "FinancialAnalysis.CashboxesCount";
+
+        public const string SuppliersTotal = "FinancialAnalysis.SuppliersTotal";
+        public const string CapitalValue = "FinancialAnalysis.CapitalValue";
+
+        public const string MaleTransfer = "FinancialAnalysis.MaleTransfer";
+        public const string FemaleTransfer = "FinancialAnalysis.FemaleTransfer";
+        public const string TotalTransfer = "FinancialAnalysis.TotalTransfer";
+
+        public const string PeriodDebit = "FinancialAnalysis.PeriodDebit";
+        public const string PeriodCredit = "FinancialAnalysis.PeriodCredit";
+        public const string PeriodBalance = "FinancialAnalysis.PeriodBalance";
+
+        public const string ExportExcel = "FinancialAnalysis.ExportExcel";
+        public const string ExportPdf = "FinancialAnalysis.ExportPdf";
+        public const string Print = "FinancialAnalysis.Print";
+
+        public const string InvalidBranchId = "FinancialAnalysis.InvalidBranchId";
+        public const string BranchNotFound = "FinancialAnalysis.BranchNotFound";
+        public const string UnsupportedSection = "FinancialAnalysis.UnsupportedSection";
+        public const string UnsupportedSections = "FinancialAnalysis.UnsupportedSections";
+    }
 }

@@ -1,3 +1,6 @@
+using InventorySystem.Application.Features.FinancialAnalysis.Dashboard.Interfaces;
+using InventorySystem.Infrastructure.Reports.FinancialAnalysis;
+using InventorySystem.Application.Features.FinancialAnalysis.Interfaces;
 using System.Globalization;
 using System.Text;
 using System.Threading.RateLimiting;
@@ -145,6 +148,10 @@ builder.Services.AddScoped<
 builder.Services.AddScoped<
     IComparisonExportService,
     ComparisonExportService>();
+
+builder.Services.AddScoped<
+    IFinancialPeriodExportService,
+    FinancialPeriodExportService>();
 
 // =====================================================
 // JWT Authentication
@@ -302,6 +309,13 @@ builder.Services.AddCors(options =>
 // =====================================================
 // Build
 // =====================================================
+
+builder.Services.AddScoped<
+    IFinancialDashboardExcelExportService,
+    FinancialDashboardExcelExportService>();
+builder.Services.AddScoped<
+    IFinancialDashboardPdfExportService,
+    FinancialDashboardPdfExportService>();
 
 var app = builder.Build();
 

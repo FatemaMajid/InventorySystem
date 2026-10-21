@@ -187,7 +187,119 @@ public static class AuthorizationSeeder
                 Code = PermissionCodes.FinancialPeriodApprove,
                 Name = "Financial Period Approve"
             },
-                    };
+
+            // Financial Analysis
+            new Permission
+            {
+                Code =
+                    PermissionCodes.FinancialAnalysisView,
+                Name =
+                    "Financial Analysis View"
+            },
+            new Permission
+            {
+                Code =
+                    PermissionCodes.FinancialSalesView,
+                Name =
+                    "Financial Sales View"
+            },
+
+            new Permission
+            {
+                Code =
+                    PermissionCodes.FinancialInventoryView,
+                Name =
+                    "Financial Inventory View"
+            },
+
+            new Permission
+            {
+                Code =
+                    PermissionCodes.FinancialExpensesView,
+                Name =
+                    "Financial Expenses View"
+            },
+
+            new Permission
+            {
+                Code =
+                    PermissionCodes.FinancialPurchasesView,
+                Name =
+                    "Financial Purchases View"
+            },
+
+            new Permission
+            {
+                Code =
+                    PermissionCodes.FinancialProfitLossView,
+                Name =
+                    "Financial Profit Loss View"
+            },
+
+            new Permission
+            {
+                Code =
+                    PermissionCodes.FinancialCustomersView,
+                Name =
+                    "Financial Customers View"
+            },
+
+            new Permission
+            {
+                Code =
+                    PermissionCodes.FinancialDebtView,
+                Name =
+                    "Financial Debt View"
+            },
+
+            new Permission
+            {
+                Code =
+                    PermissionCodes.FinancialCashView,
+                Name =
+                    "Financial Cash View"
+            },
+
+            new Permission
+            {
+                Code =
+                    PermissionCodes.FinancialSuppliersView,
+                Name =
+                    "Financial Suppliers View"
+            },
+
+            new Permission
+            {
+                Code =
+                    PermissionCodes.FinancialCapitalView,
+                Name =
+                    "Financial Capital View"
+            },
+
+            new Permission
+            {
+                Code =
+                    PermissionCodes.FinancialTransfersView,
+                Name =
+                    "Financial Transfers View"
+            },
+
+            new Permission
+            {
+                Code =
+                    PermissionCodes.FinancialSettlementsView,
+                Name =
+                    "Financial Settlements View"
+            },
+
+            new Permission
+            {
+                Code =
+                    PermissionCodes.FinancialDashboardView,
+                Name =
+                    "Financial Dashboard View"
+            },
+};
 
         foreach (var permission in permissions)
         {
@@ -300,7 +412,35 @@ public static class AuthorizationSeeder
         // PermissionCodes.UserDeactivate,
         // PermissionCodes.RoleView,
         // PermissionCodes.RoleEdit
-    };
+
+            // Financial Analysis
+            PermissionCodes.FinancialAnalysisView,
+            PermissionCodes.FinancialSalesView,
+
+            PermissionCodes.FinancialInventoryView,
+
+            PermissionCodes.FinancialExpensesView,
+
+            PermissionCodes.FinancialPurchasesView,
+
+            PermissionCodes.FinancialProfitLossView,
+
+            PermissionCodes.FinancialCustomersView,
+
+            PermissionCodes.FinancialDebtView,
+
+            PermissionCodes.FinancialCashView,
+
+            PermissionCodes.FinancialSuppliersView,
+
+            PermissionCodes.FinancialCapitalView,
+
+            PermissionCodes.FinancialTransfersView,
+
+            PermissionCodes.FinancialSettlementsView,
+
+            PermissionCodes.FinancialDashboardView,
+};
 
         var userPermissions = new[]
         {
