@@ -1,0 +1,1637 @@
+﻿using System.Globalization;
+using System.Text.Json;
+using ClosedXML.Excel;
+using InventorySystem.Application.Common.Localization;
+using InventorySystem.Application.DTOs.FinancialAnalysis.DashboardAggregate;
+using InventorySystem.Application.Features.FinancialAnalysis.Common.Localization;
+using InventorySystem.Application.Features.FinancialAnalysis.Dashboard.Interfaces;
+
+namespace InventorySystem.Infrastructure.Reports.FinancialAnalysis;
+
+public sealed class FinancialDashboardExcelExportService
+    : IFinancialDashboardExcelExportService
+{
+    private static readonly Dictionary<string,string> SectionKeys =
+        new(StringComparer.OrdinalIgnoreCase)
+        {
+            ["sales"] = LocalizationKeys.FinancialAnalysis.Sales,
+            ["inventory"] = LocalizationKeys.FinancialAnalysis.Inventory,
+            ["expenses"] = LocalizationKeys.FinancialAnalysis.Expenses,
+            ["purchases"] = LocalizationKeys.FinancialAnalysis.Purchases,
+            ["profit"] = LocalizationKeys.FinancialAnalysis.ProfitLoss,
+            ["customers"] = LocalizationKeys.FinancialAnalysis.CustomersEmployees,
+            ["debt"] = LocalizationKeys.FinancialAnalysis.BranchDebt,
+            ["cash"] = LocalizationKeys.FinancialAnalysis.Cash,
+            ["suppliers"] = LocalizationKeys.FinancialAnalysis.Suppliers,
+            ["capital"] = LocalizationKeys.FinancialAnalysis.Capital,
+            ["transfers"] = LocalizationKeys.FinancialAnalysis.Transfers,
+            ["settlements"] = LocalizationKeys.FinancialAnalysis.Settlements
+        };
+
+    private static readonly Dictionary<string,string> FieldKeys =
+        new(StringComparer.OrdinalIgnoreCase)
+        {
+            ["branchCode"] = LocalizationKeys.FinancialAnalysis.BranchCode,
+            ["branchName"] = LocalizationKeys.FinancialAnalysis.BranchName,
+            ["resultType"] = LocalizationKeys.FinancialAnalysis.ResultType,
+            ["resultValue"] = LocalizationKeys.FinancialAnalysis.ResultValue,
+            ["signedValue"] = LocalizationKeys.FinancialAnalysis.SignedValue,
+            ["assets"] = LocalizationKeys.FinancialAnalysis.Assets,
+            ["liabilities"] = LocalizationKeys.FinancialAnalysis.Liabilities,
+            ["accountCode"] = LocalizationKeys.FinancialAnalysis.AccountCode,
+            ["accountName"] = LocalizationKeys.FinancialAnalysis.AccountName,
+            ["hasFile"] = LocalizationKeys.FinancialAnalysis.FileAvailable,
+            ["status"] = LocalizationKeys.FinancialAnalysis.Status,
+
+            ["sales"] = LocalizationKeys.FinancialAnalysis.Sales,
+            ["salesReturns"] = LocalizationKeys.FinancialAnalysis.SalesReturns,
+            ["discountAllowed"] = LocalizationKeys.FinancialAnalysis.DiscountAllowed,
+            ["branchDiscountAllowed"] = LocalizationKeys.FinancialAnalysis.BranchDiscountAllowed,
+            ["netSales"] = LocalizationKeys.FinancialAnalysis.NetSales,
+            ["allBranchesSales"] = LocalizationKeys.FinancialAnalysis.Sales,
+            ["allBranchesSalesReturns"] = LocalizationKeys.FinancialAnalysis.SalesReturns,
+            ["allBranchesDiscountAllowed"] = LocalizationKeys.FinancialAnalysis.DiscountAllowed,
+            ["allBranchesBranchDiscountAllowed"] = LocalizationKeys.FinancialAnalysis.BranchDiscountAllowed,
+            ["allBranchesTotal"] = LocalizationKeys.FinancialAnalysis.Total,
+            ["averageNetSales"] = LocalizationKeys.FinancialAnalysis.Average,
+
+            ["openingInventory"] = LocalizationKeys.FinancialAnalysis.OpeningInventory,
+            ["closingInventory"] = LocalizationKeys.FinancialAnalysis.ClosingInventory,
+            ["inventoryChange"] = LocalizationKeys.FinancialAnalysis.InventoryChange,
+            ["allBranchesOpeningTotal"] = LocalizationKeys.FinancialAnalysis.OpeningInventory,
+            ["allBranchesClosingTotal"] = LocalizationKeys.FinancialAnalysis.ClosingInventory,
+            ["averageOpeningInventory"] = LocalizationKeys.FinancialAnalysis.Average,
+            ["averageClosingInventory"] = LocalizationKeys.FinancialAnalysis.Average,
+
+            ["expensesTotal"] = LocalizationKeys.FinancialAnalysis.TotalExpenses,
+            ["allBranchesExpenses"] = LocalizationKeys.FinancialAnalysis.TotalExpenses,
+
+            ["purchases"] = LocalizationKeys.FinancialAnalysis.Purchases,
+            ["purchasesTotal"] = LocalizationKeys.FinancialAnalysis.TotalPurchases,
+            ["allBranchesPurchases"] = LocalizationKeys.FinancialAnalysis.TotalPurchases,
+
+            ["profit"] = LocalizationKeys.FinancialAnalysis.Profit,
+            ["loss"] = LocalizationKeys.FinancialAnalysis.Loss,
+            ["totalProfit"] = LocalizationKeys.FinancialAnalysis.TotalProfit,
+            ["totalLoss"] = LocalizationKeys.FinancialAnalysis.TotalLoss,
+            ["overallResult"] = LocalizationKeys.FinancialAnalysis.OverallResult,
+            ["profitableBranches"] = LocalizationKeys.FinancialAnalysis.ProfitableBranches,
+            ["lossBranches"] = LocalizationKeys.FinancialAnalysis.LossBranches,
+            ["breakEvenBranches"] = LocalizationKeys.FinancialAnalysis.BreakEvenBranches,
+
+            ["customersTotal"] = LocalizationKeys.FinancialAnalysis.CustomerBalance,
+            ["employeesTotal"] = LocalizationKeys.FinancialAnalysis.EmployeeBalance,
+            ["allBranchesCustomersTotal"] = LocalizationKeys.FinancialAnalysis.CustomerBalance,
+            ["allBranchesEmployeesTotal"] = LocalizationKeys.FinancialAnalysis.EmployeeBalance,
+
+            ["maleDebt"] = LocalizationKeys.FinancialAnalysis.MaleDebt,
+            ["femaleDebt"] = LocalizationKeys.FinancialAnalysis.FemaleDebt,
+            ["totalDebt"] = LocalizationKeys.FinancialAnalysis.TotalDebt,
+            ["allBranchesMaleDebt"] = LocalizationKeys.FinancialAnalysis.MaleDebt,
+            ["allBranchesFemaleDebt"] = LocalizationKeys.FinancialAnalysis.FemaleDebt,
+            ["allBranchesTotalDebt"] = LocalizationKeys.FinancialAnalysis.TotalDebt,
+            ["averageDebt"] = LocalizationKeys.FinancialAnalysis.Average,
+
+            ["totalCash"] = LocalizationKeys.FinancialAnalysis.TotalCash,
+            ["allBranchesCash"] = LocalizationKeys.FinancialAnalysis.TotalCash,
+            ["averageCash"] = LocalizationKeys.FinancialAnalysis.Average,
+            ["cashboxesCount"] = LocalizationKeys.FinancialAnalysis.CashboxesCount,
+
+            ["suppliersTotal"] = LocalizationKeys.FinancialAnalysis.SuppliersTotal,
+            ["allBranchesSuppliers"] = LocalizationKeys.FinancialAnalysis.SuppliersTotal,
+            ["averageSuppliers"] = LocalizationKeys.FinancialAnalysis.Average,
+
+            ["capital"] = LocalizationKeys.FinancialAnalysis.CapitalValue,
+            ["allBranchesCapital"] = LocalizationKeys.FinancialAnalysis.CapitalValue,
+            ["averageCapital"] = LocalizationKeys.FinancialAnalysis.Average,
+
+            ["maleTransfer"] = LocalizationKeys.FinancialAnalysis.MaleTransfer,
+            ["femaleTransfer"] = LocalizationKeys.FinancialAnalysis.FemaleTransfer,
+            ["totalTransfer"] = LocalizationKeys.FinancialAnalysis.TotalTransfer,
+            ["allBranchesMaleTransfers"] = LocalizationKeys.FinancialAnalysis.MaleTransfer,
+            ["allBranchesFemaleTransfers"] = LocalizationKeys.FinancialAnalysis.FemaleTransfer,
+            ["allBranchesTotalTransfers"] = LocalizationKeys.FinancialAnalysis.TotalTransfer,
+            ["averageCompleteBranchTransfers"] = LocalizationKeys.FinancialAnalysis.Average,
+
+            ["debit"] = LocalizationKeys.FinancialAnalysis.Debit,
+            ["credit"] = LocalizationKeys.FinancialAnalysis.Credit,
+            ["balance"] = LocalizationKeys.FinancialAnalysis.Balance,
+            ["periodDebit"] = LocalizationKeys.FinancialAnalysis.PeriodDebit,
+            ["periodCredit"] = LocalizationKeys.FinancialAnalysis.PeriodCredit,
+            ["periodBalance"] = LocalizationKeys.FinancialAnalysis.PeriodBalance,
+            ["allBranchesDebit"] = LocalizationKeys.FinancialAnalysis.Debit,
+            ["allBranchesCredit"] = LocalizationKeys.FinancialAnalysis.Credit,
+            ["allBranchesBalance"] = LocalizationKeys.FinancialAnalysis.Balance,
+            ["allBranchesMaleDebit"] = LocalizationKeys.FinancialAnalysis.MaleDebt,
+            ["allBranchesMaleCredit"] = LocalizationKeys.FinancialAnalysis.MaleTransfer,
+            ["allBranchesMaleBalance"] = LocalizationKeys.FinancialAnalysis.MaleDebt,
+            ["allBranchesFemaleDebit"] = LocalizationKeys.FinancialAnalysis.FemaleDebt,
+            ["allBranchesFemaleCredit"] = LocalizationKeys.FinancialAnalysis.FemaleTransfer,
+            ["allBranchesFemaleBalance"] = LocalizationKeys.FinancialAnalysis.FemaleDebt,
+            ["averageCompleteBranchBalance"] = LocalizationKeys.FinancialAnalysis.Average,
+
+            ["branchesWithData"] = LocalizationKeys.FinancialAnalysis.BranchesWithData,
+            ["branchesWithoutData"] = LocalizationKeys.FinancialAnalysis.BranchesWithoutData,
+            ["branchesWithAnyData"] = LocalizationKeys.FinancialAnalysis.BranchesWithData,
+            ["branchesWithCompleteData"] = LocalizationKeys.FinancialAnalysis.CompleteBranches,
+            ["branchesWithoutCompleteData"] = LocalizationKeys.FinancialAnalysis.IncompleteBranches,
+            ["completeBranches"] = LocalizationKeys.FinancialAnalysis.CompleteBranches,
+            ["incompleteBranches"] = LocalizationKeys.FinancialAnalysis.IncompleteBranches,
+            ["maleFilesCount"] = LocalizationKeys.FinancialAnalysis.MaleFiles,
+            ["femaleFilesCount"] = LocalizationKeys.FinancialAnalysis.FemaleFiles,
+            ["maleRecordsCount"] = LocalizationKeys.FinancialAnalysis.Records,
+            ["femaleRecordsCount"] = LocalizationKeys.FinancialAnalysis.Records,
+            ["transactionsCount"] = LocalizationKeys.FinancialAnalysis.Transactions
+        };
+
+    private static readonly HashSet<string> IgnoredFields =
+        new(StringComparer.OrdinalIgnoreCase)
+        {
+            "financialPeriodId",
+            "startDate",
+            "endDate",
+            "status",
+            "activeBranches",
+            "branchId",
+            "hasFile",
+            "uploadId",
+            "gender",
+            "branches"
+        };
+
+    public Task<byte[]> ExportAsync(
+        FinancialAnalysisDashboardDto dashboard,
+        string language,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        language =
+            FinancialAnalysisLocalization.NormalizeLanguage(language);
+
+        using var workbook = new XLWorkbook();
+
+        CreateOverviewSheet(workbook,dashboard,language);
+
+        foreach(var sectionName in dashboard.SelectedSections)
+        {
+            if(!dashboard.Sections.TryGetValue(sectionName,out var section) ||
+               section is null)
+            {
+                continue;
+            }
+
+            CreateSectionSheet(
+                workbook,
+                dashboard,
+                sectionName,
+                section.Value,
+                language);
+        }
+
+        using var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+
+        return Task.FromResult(stream.ToArray());
+    }
+
+    private static void CreateOverviewSheet(
+        XLWorkbook workbook,
+        FinancialAnalysisDashboardDto dashboard,
+        string language)
+    {
+        var ws =
+            workbook.Worksheets.Add(
+                language == "ar"
+                    ? "الملخص التنفيذي"
+                    : "Executive Summary");
+
+        PrepareSheet(ws,language);
+
+        ws.Range("A1:H2").Merge();
+        ws.Cell("A1").Value =
+            T(LocalizationKeys.FinancialAnalysis.Dashboard,language);
+
+        StyleMainTitle(ws.Range("A1:H2"));
+
+        ws.Range("A4:B4").Merge();
+        ws.Range("C4:D4").Merge();
+        ws.Range("E4:F4").Merge();
+        ws.Range("G4:H4").Merge();
+
+        ws.Cell("A4").Value =
+            T(LocalizationKeys.FinancialAnalysis.PeriodFrom,language);
+
+        ws.Cell("C4").Value =
+            T(LocalizationKeys.FinancialAnalysis.PeriodTo,language);
+
+        ws.Cell("E4").Value =
+            T(LocalizationKeys.FinancialAnalysis.Status,language);
+
+        ws.Cell("G4").Value =
+            T(LocalizationKeys.FinancialAnalysis.Scope,language);
+
+        StyleMetaHeader(ws.Range("A4:H4"));
+
+        ws.Range("A5:B5").Merge();
+        ws.Range("C5:D5").Merge();
+        ws.Range("E5:F5").Merge();
+        ws.Range("G5:H5").Merge();
+
+        ws.Cell("A5").Value =
+            dashboard.StartDate.ToString("dd/MM/yyyy");
+
+        ws.Cell("C5").Value =
+            dashboard.EndDate.ToString("dd/MM/yyyy");
+
+        ws.Cell("E5").Value =
+            FinancialAnalysisLocalization.PeriodStatus(
+                dashboard.Status,
+                language);
+
+        ws.Cell("G5").Value =
+            dashboard.IsAllBranches
+                ? T(LocalizationKeys.FinancialAnalysis.AllBranches,language)
+                : $"{dashboard.SelectedBranch?.BranchCode} - {dashboard.SelectedBranch?.BranchName}";
+
+        StyleMetaValue(ws.Range("A5:H5"));
+
+        WriteKpiCard(
+            ws,
+            7,
+            1,
+            T(LocalizationKeys.FinancialAnalysis.ActiveBranches,language),
+            dashboard.ActiveBranches.ToString("N0"));
+
+        WriteKpiCard(
+            ws,
+            7,
+            3,
+            T(LocalizationKeys.FinancialAnalysis.ExpectedFiles,language),
+            dashboard.ExpectedFiles.ToString("N0"));
+
+        WriteKpiCard(
+            ws,
+            7,
+            5,
+            T(LocalizationKeys.FinancialAnalysis.ValidFiles,language),
+            dashboard.ValidFiles.ToString("N0"));
+
+        WriteKpiCard(
+            ws,
+            7,
+            7,
+            T(LocalizationKeys.FinancialAnalysis.CompletionPercentage,language),
+            $"{dashboard.CompletionPercentage:N2}%");
+
+        WriteKpiCard(
+            ws,
+            10,
+            1,
+            T(LocalizationKeys.FinancialAnalysis.MissingFiles,language),
+            dashboard.MissingFiles.ToString("N0"));
+
+        var sectionCount =
+            dashboard.SelectedSections.Count;
+
+        WriteKpiCard(
+            ws,
+            10,
+            3,
+            T(LocalizationKeys.FinancialAnalysis.IncludedSections,language),
+            sectionCount.ToString("N0"));
+
+        WriteKpiCard(
+            ws,
+            10,
+            5,
+            T(LocalizationKeys.FinancialAnalysis.FinancialPeriod,language),
+            dashboard.FinancialPeriodId.ToString());
+
+        WriteKpiCard(
+            ws,
+            10,
+            7,
+            T(LocalizationKeys.FinancialAnalysis.GeneratedAt,language),
+            BaghdadNow().ToString("dd/MM/yyyy HH:mm"));
+
+        ws.Range("A14:H14").Merge();
+        ws.Cell("A14").Value =
+            T(LocalizationKeys.FinancialAnalysis.IncludedSections,language);
+
+        StyleSectionHeader(ws.Range("A14:H14"));
+
+        var row = 15;
+
+        foreach(var section in dashboard.SelectedSections)
+        {
+            ws.Range(row,1,row,8).Merge();
+
+            ws.Cell(row,1).Value =
+                SectionTitle(section,language);
+
+            ws.Cell(row,1)
+                .Style.Alignment.Horizontal =
+                    language == "ar"
+                        ? XLAlignmentHorizontalValues.Right
+                        : XLAlignmentHorizontalValues.Left;
+
+            ws.Cell(row,1).Style.Font.Bold = true;
+
+            row++;
+        }
+
+        ws.Columns("A:H").Width = 18;
+        ws.Column("A").Width = 22;
+        ws.Column("C").Width = 22;
+        ws.Column("E").Width = 22;
+        ws.Column("G").Width = 22;
+    }
+
+    private static void CreateSectionSheet(
+        XLWorkbook workbook,
+        FinancialAnalysisDashboardDto dashboard,
+        string sectionName,
+        JsonElement section,
+        string language)
+    {
+        var ws =
+            workbook.Worksheets.Add(
+                SafeSheetName(
+                    SectionTitle(sectionName,language)));
+
+        PrepareSheet(ws,language);
+
+        ws.Range("A1:H2").Merge();
+
+        ws.Cell("A1").Value =
+            SectionTitle(sectionName,language);
+
+        StyleMainTitle(ws.Range("A1:H2"));
+
+        ws.Range("A4:D4").Merge();
+        ws.Range("E4:H4").Merge();
+
+        ws.Cell("A4").Value =
+            T(LocalizationKeys.FinancialAnalysis.FinancialPeriod,language);
+
+        ws.Cell("E4").Value =
+            T(LocalizationKeys.FinancialAnalysis.Scope,language);
+
+        StyleMetaHeader(ws.Range("A4:H4"));
+
+        ws.Range("A5:D5").Merge();
+        ws.Range("E5:H5").Merge();
+
+        ws.Cell("A5").Value =
+            $"{dashboard.StartDate:dd/MM/yyyy} - {dashboard.EndDate:dd/MM/yyyy}";
+
+        ws.Cell("E5").Value =
+            dashboard.IsAllBranches
+                ? T(LocalizationKeys.FinancialAnalysis.AllBranches,language)
+                : $"{dashboard.SelectedBranch?.BranchCode} - {dashboard.SelectedBranch?.BranchName}";
+
+        StyleMetaValue(ws.Range("A5:H5"));
+
+        ws.Range("A7:H7").Merge();
+
+        ws.Cell("A7").Value =
+            T(LocalizationKeys.FinancialAnalysis.SectionSummary,language);
+
+        StyleSectionHeader(ws.Range("A7:H7"));
+
+        var metrics =
+            ExtractSummaryMetrics(section,sectionName);
+
+        var metricRow = 8;
+        var metricColumn = 1;
+
+        foreach(var metric in metrics.Take(12))
+        {
+            WriteKpiCard(
+                ws,
+                metricRow,
+                metricColumn,
+                Label(metric.Name,language),
+                FormatElement(metric.Value,language));
+
+            metricColumn += 2;
+
+            if(metricColumn > 7)
+            {
+                metricColumn = 1;
+                metricRow += 3;
+            }
+        }
+
+        var nextRow =
+            metricColumn == 1
+                ? metricRow
+                : metricRow + 3;
+
+        var objectMetrics =
+            section.ValueKind == JsonValueKind.Object
+                ? section.EnumerateObject()
+                    .Where(x =>
+                        x.Value.ValueKind == JsonValueKind.Object &&
+                        !IgnoredFields.Contains(x.Name))
+                    .ToList()
+                : new List<JsonProperty>();
+
+        foreach(var metric in objectMetrics)
+        {
+            nextRow =
+                WriteObjectSummary(
+                    ws,
+                    nextRow,
+                    sectionName,
+                    metric.Name,
+                    metric.Value,
+                    language);
+        }
+
+        if(section.ValueKind == JsonValueKind.Object &&
+           section.TryGetProperty("branches",out var branches) &&
+           branches.ValueKind == JsonValueKind.Array)
+        {
+            nextRow += 1;
+
+            ws.Range(nextRow,1,nextRow,8).Merge();
+
+            ws.Cell(nextRow,1).Value =
+                T(LocalizationKeys.FinancialAnalysis.BranchDetails,language);
+
+            StyleSectionHeader(ws.Range(nextRow,1,nextRow,8));
+
+            nextRow += 1;
+
+            WriteBranchesTable(
+                ws,
+                ref nextRow,
+                branches,
+                language);
+        }
+        else if(!dashboard.IsAllBranches)
+        {
+            nextRow += 1;
+
+            ws.Range(nextRow,1,nextRow,8).Merge();
+
+            ws.Cell(nextRow,1).Value =
+                T(LocalizationKeys.FinancialAnalysis.Details,language);
+
+            StyleSectionHeader(ws.Range(nextRow,1,nextRow,8));
+
+            nextRow++;
+
+            WriteSingleBranchDetails(
+                ws,
+                ref nextRow,
+                section,
+                language);
+        }
+
+        foreach(var column in ws.ColumnsUsed())
+        {
+            if(column.Width < 14)
+                column.Width = 14;
+
+            if(column.Width > 28)
+                column.Width = 28;
+        }
+    }
+
+    private static List<(string Name,JsonElement Value)>
+        ExtractSummaryMetrics(
+            JsonElement section,
+            string sectionName)
+    {
+        var result =
+            new List<(string Name,JsonElement Value)>();
+
+        if(section.ValueKind != JsonValueKind.Object)
+            return result;
+
+        foreach(var p in section.EnumerateObject())
+        {
+            if(IgnoredFields.Contains(p.Name))
+                continue;
+
+            if(p.Value.ValueKind == JsonValueKind.Object ||
+               p.Value.ValueKind == JsonValueKind.Array ||
+               p.Value.ValueKind == JsonValueKind.Null)
+            {
+                continue;
+            }
+
+            if(!FieldKeys.ContainsKey(p.Name) &&
+               !IsSpecialPresentationField(p.Name))
+            {
+                continue;
+            }
+
+            result.Add((p.Name,p.Value));
+        }
+
+        return result
+            .OrderBy(x => MetricOrder(sectionName,x.Name))
+            .ThenBy(x => x.Name)
+            .ToList();
+    }
+
+    private static int WriteObjectSummary(
+        IXLWorksheet ws,
+        int row,
+        string sectionName,
+        string name,
+        JsonElement obj,
+        string language)
+    {
+        if(obj.ValueKind != JsonValueKind.Object)
+            return row;
+
+        ws.Range(row,1,row,8).Merge();
+
+        ws.Cell(row,1).Value =
+            ObjectMetricTitle(
+                sectionName,
+                name,
+                language);
+
+        StyleSubHeader(ws.Range(row,1,row,8));
+
+        ws.Row(row).Height = 26;
+
+        row++;
+
+        var values =
+            obj.EnumerateObject()
+                .Where(x =>
+                    x.Value.ValueKind != JsonValueKind.Array &&
+                    x.Value.ValueKind != JsonValueKind.Object &&
+                    !x.Name.Equals(
+                        "branchId",
+                        StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+        foreach(var item in values)
+        {
+            ws.Range(row,1,row,4).Merge();
+            ws.Range(row,5,row,8).Merge();
+
+            ws.Cell(row,1).Value =
+                ContextualChildLabel(
+                    sectionName,
+                    name,
+                    item.Name,
+                    language);
+
+            ws.Cell(row,1).Style.Font.Bold = true;
+            ws.Cell(row,1).Style.Font.FontSize = 11;
+
+            ws.Range(row,1,row,8)
+                .Style.Alignment.Horizontal =
+                    XLAlignmentHorizontalValues.Center;
+
+            ws.Range(row,1,row,8)
+                .Style.Alignment.Vertical =
+                    XLAlignmentVerticalValues.Center;
+
+            SetValue(
+                ws.Cell(row,5),
+                item.Value,
+                language);
+
+            ws.Cell(row,5).Style.Font.FontSize = 12;
+
+            ws.Range(row,1,row,8)
+                .Style.Border.BottomBorder =
+                    XLBorderStyleValues.Hair;
+
+            ws.Row(row).Height = 23;
+
+            row++;
+        }
+
+        return row + 1;
+    }
+
+    private static void WriteBranchesTable(
+        IXLWorksheet ws,
+        ref int row,
+        JsonElement branches,
+        string language)
+    {
+        var items =
+            branches.EnumerateArray()
+                .Where(x => x.ValueKind == JsonValueKind.Object)
+                .ToList();
+
+        if(items.Count == 0)
+        {
+            ws.Cell(row,1).Value =
+                T(LocalizationKeys.FinancialAnalysis.NoData,language);
+
+            row++;
+            return;
+        }
+
+        var columns =
+            items
+                .SelectMany(x => x.EnumerateObject())
+                .Where(x =>
+                    x.Value.ValueKind != JsonValueKind.Array &&
+                    x.Value.ValueKind != JsonValueKind.Object &&
+                    (
+                        x.Name.Equals("branchCode",StringComparison.OrdinalIgnoreCase) ||
+                        x.Name.Equals("branchName",StringComparison.OrdinalIgnoreCase) ||
+                        FieldKeys.ContainsKey(x.Name)
+                    ))
+                .Select(x => x.Name)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Where(x =>
+                    !x.Equals("branchId",StringComparison.OrdinalIgnoreCase) &&
+                    !x.Equals("status",StringComparison.OrdinalIgnoreCase))
+                .OrderBy(x =>
+                    x.Equals("branchCode",StringComparison.OrdinalIgnoreCase) ? 0 :
+                    x.Equals("branchName",StringComparison.OrdinalIgnoreCase) ? 1 : 2)
+                .ToList();
+
+        if(columns.Count == 0)
+        {
+            ws.Cell(row,1).Value =
+                T(LocalizationKeys.FinancialAnalysis.NoData,language);
+
+            row++;
+            return;
+        }
+
+        var headerRow = row;
+
+        for(var c = 0;c < columns.Count;c++)
+        {
+            ws.Cell(row,c + 1).Value =
+                Label(columns[c],language);
+        }
+
+        StyleTableHeader(
+            ws.Range(
+                row,
+                1,
+                row,
+                columns.Count));
+
+        row++;
+
+        foreach(var item in items)
+        {
+            for(var c = 0;c < columns.Count;c++)
+            {
+                if(item.TryGetProperty(columns[c],out var value))
+                {
+                    SetValue(
+                        ws.Cell(row,c + 1),
+                        value,
+                        language);
+                }
+            }
+
+            if(row % 2 == 0)
+            {
+                ws.Range(row,1,row,columns.Count)
+                    .Style.Fill.BackgroundColor =
+                        XLColor.AliceBlue;
+            }
+
+            row++;
+        }
+
+        var tableRange =
+            ws.Range(
+                headerRow,
+                1,
+                row - 1,
+                columns.Count);
+
+        tableRange.Style.Border.OutsideBorder =
+            XLBorderStyleValues.Thin;
+
+        tableRange.Style.Border.InsideBorder =
+            XLBorderStyleValues.Hair;
+    }
+
+    private static void WriteSingleBranchDetails(
+        IXLWorksheet ws,
+        ref int row,
+        JsonElement section,
+        string language)
+    {
+        if(section.ValueKind != JsonValueKind.Object)
+            return;
+
+        foreach(var p in section.EnumerateObject())
+        {
+            if(IgnoredFields.Contains(p.Name))
+                continue;
+
+            if(p.Value.ValueKind == JsonValueKind.Object ||
+               p.Value.ValueKind == JsonValueKind.Array ||
+               p.Value.ValueKind == JsonValueKind.Null)
+            {
+                continue;
+            }
+
+            if(!FieldKeys.ContainsKey(p.Name))
+                continue;
+
+            ws.Cell(row,1).Value =
+                Label(p.Name,language);
+
+            ws.Cell(row,1).Style.Font.Bold = true;
+
+            ws.Range(row,2,row,4).Merge();
+
+            SetValue(
+                ws.Cell(row,2),
+                p.Value,
+                language);
+
+            row++;
+        }
+    }
+
+    private static void WriteKpiCard(
+        IXLWorksheet ws,
+        int row,
+        int column,
+        string title,
+        string value)
+    {
+        var titleRange =
+            ws.Range(
+                row,
+                column,
+                row,
+                column + 1);
+
+        var valueRange =
+            ws.Range(
+                row + 1,
+                column,
+                row + 1,
+                column + 1);
+
+        titleRange.Merge();
+        valueRange.Merge();
+
+        titleRange.Value = title;
+        valueRange.Value = value;
+
+        titleRange.Style.Font.Bold = true;
+        titleRange.Style.Font.FontSize = 12;
+        titleRange.Style.Font.FontColor = XLColor.DarkBlue;
+        titleRange.Style.Fill.BackgroundColor = XLColor.AliceBlue;
+        titleRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+        titleRange.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+
+        valueRange.Style.Font.Bold = true;
+        valueRange.Style.Font.FontSize = 15;
+        valueRange.Style.Alignment.Horizontal = XLAlignmentHorizontalValues.Center;
+        valueRange.Style.Alignment.Vertical = XLAlignmentVerticalValues.Center;
+
+        var card =
+            ws.Range(
+                row,
+                column,
+                row + 1,
+                column + 1);
+
+        card.Style.Border.OutsideBorder =
+            XLBorderStyleValues.Thin;
+
+        card.Style.Border.OutsideBorderColor =
+            XLColor.LightGray;
+
+        ws.Row(row).Height = 28;
+        ws.Row(row + 1).Height = 34;
+    }
+
+    private static void PrepareSheet(
+        IXLWorksheet ws,
+        string language)
+    {
+        ws.RightToLeft = language == "ar";
+
+        ws.SheetView.FreezeRows(2);
+
+        ws.Style.Font.FontName = "Arial";
+        ws.Style.Font.FontSize = 12;
+
+        ws.Style.Alignment.Horizontal =
+            XLAlignmentHorizontalValues.Center;
+
+        ws.Style.Alignment.Vertical =
+            XLAlignmentVerticalValues.Center;
+
+        ws.Style.Alignment.WrapText = true;
+
+        ws.Row(1).Height = 32;
+        ws.Row(2).Height = 32;
+
+        for(var i = 1;i <= 8;i++)
+        {
+            ws.Column(i).Width = 19;
+        }
+    }
+
+    private static void StyleMainTitle(
+        IXLRange range)
+    {
+        range.Style.Fill.BackgroundColor =
+            XLColor.DarkBlue;
+
+        range.Style.Font.FontColor =
+            XLColor.White;
+
+        range.Style.Font.Bold = true;
+        range.Style.Font.FontSize = 20;
+
+        range.Style.Alignment.Horizontal =
+            XLAlignmentHorizontalValues.Center;
+
+        range.Style.Alignment.Vertical =
+            XLAlignmentVerticalValues.Center;
+    }
+
+    private static void StyleMetaHeader(
+        IXLRange range)
+    {
+        range.Style.Fill.BackgroundColor =
+            XLColor.LightBlue;
+
+        range.Style.Font.Bold = true;
+
+        range.Style.Alignment.Horizontal =
+            XLAlignmentHorizontalValues.Center;
+
+        range.Style.Border.OutsideBorder =
+            XLBorderStyleValues.Thin;
+
+        range.Style.Border.InsideBorder =
+            XLBorderStyleValues.Thin;
+    }
+
+    private static void StyleMetaValue(
+        IXLRange range)
+    {
+        range.Style.Font.Bold = true;
+
+        range.Style.Alignment.Horizontal =
+            XLAlignmentHorizontalValues.Center;
+
+        range.Style.Border.OutsideBorder =
+            XLBorderStyleValues.Thin;
+
+        range.Style.Border.InsideBorder =
+            XLBorderStyleValues.Thin;
+    }
+
+    private static void StyleSectionHeader(
+        IXLRange range)
+    {
+        range.Style.Fill.BackgroundColor =
+            XLColor.DarkBlue;
+
+        range.Style.Font.FontColor =
+            XLColor.White;
+
+        range.Style.Font.Bold = true;
+        range.Style.Font.FontSize = 14;
+
+        range.Style.Alignment.Horizontal =
+            XLAlignmentHorizontalValues.Center;
+    }
+
+    private static void StyleSubHeader(
+        IXLRange range)
+    {
+        range.Style.Fill.BackgroundColor =
+            XLColor.LightBlue;
+
+        range.Style.Font.Bold = true;
+
+        range.Style.Alignment.Horizontal =
+            XLAlignmentHorizontalValues.Center;
+    }
+
+    private static void StyleTableHeader(
+        IXLRange range)
+    {
+        range.Style.Fill.BackgroundColor =
+            XLColor.DarkBlue;
+
+        range.Style.Font.FontColor =
+            XLColor.White;
+
+        range.Style.Font.Bold = true;
+
+        range.Style.Alignment.Horizontal =
+            XLAlignmentHorizontalValues.Center;
+
+        range.Style.Alignment.Vertical =
+            XLAlignmentVerticalValues.Center;
+
+        range.Style.Border.OutsideBorder =
+            XLBorderStyleValues.Thin;
+
+        range.Style.Border.InsideBorder =
+            XLBorderStyleValues.Thin;
+    }
+
+    private static void SetValue(
+        IXLCell cell,
+        JsonElement value,
+        string language)
+    {
+        switch(value.ValueKind)
+        {
+            case JsonValueKind.Number:
+                if(value.TryGetDecimal(out var d))
+                {
+                    cell.Value = d;
+                    cell.Style.NumberFormat.Format =
+                        "#,##0.00;[Red]-#,##0.00";
+                }
+                break;
+
+            case JsonValueKind.True:
+                cell.Value =
+                    T(LocalizationKeys.FinancialAnalysis.Yes,language);
+                break;
+
+            case JsonValueKind.False:
+                cell.Value =
+                    T(LocalizationKeys.FinancialAnalysis.No,language);
+                break;
+
+            case JsonValueKind.String:
+                var text = value.GetString() ?? string.Empty;
+
+                if(text.Equals(
+                    "Profit",
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    cell.Value =
+                        T(
+                            LocalizationKeys.FinancialAnalysis.Profit,
+                            language);
+
+                    break;
+                }
+
+                if(text.Equals(
+                    "Loss",
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    cell.Value =
+                        T(
+                            LocalizationKeys.FinancialAnalysis.Loss,
+                            language);
+
+                    break;
+                }
+
+                if(text.Equals(
+                    "BreakEven",
+                    StringComparison.OrdinalIgnoreCase) ||
+                   text.Equals(
+                    "Break-even",
+                    StringComparison.OrdinalIgnoreCase))
+                {
+                    cell.Value =
+                        T(
+                            LocalizationKeys.FinancialAnalysis.BreakEven,
+                            language);
+
+                    break;
+                }
+
+                if(DateTime.TryParse(
+                    text,
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.None,
+                    out var date))
+                {
+                    cell.Value =
+                        date.ToString("dd/MM/yyyy");
+                }
+                else
+                {
+                    cell.Value = text;
+                }
+                break;
+
+            default:
+                cell.Value = string.Empty;
+                break;
+        }
+    }
+
+    private static string FormatElement(
+        JsonElement value,
+        string language)
+    {
+        return value.ValueKind switch
+        {
+            JsonValueKind.Number =>
+                value.TryGetDecimal(out var d)
+                    ? d.ToString("#,##0.00")
+                    : value.ToString(),
+
+            JsonValueKind.True =>
+                T(LocalizationKeys.FinancialAnalysis.Yes,language),
+
+            JsonValueKind.False =>
+                T(LocalizationKeys.FinancialAnalysis.No,language),
+
+            JsonValueKind.String =>
+                value.GetString() ?? string.Empty,
+
+            _ =>
+                value.ToString()
+        };
+    }
+
+    private static string Label(
+        string name,
+        string language)
+    {
+        // ----------------------------------------------------
+        // Inventory
+        // ----------------------------------------------------
+
+        if(name.Equals(
+            "averageOpeningInventory",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return $"{T(LocalizationKeys.FinancialAnalysis.Average,language)} - {T(LocalizationKeys.FinancialAnalysis.OpeningInventory,language)}";
+        }
+
+        if(name.Equals(
+            "averageClosingInventory",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return $"{T(LocalizationKeys.FinancialAnalysis.Average,language)} - {T(LocalizationKeys.FinancialAnalysis.ClosingInventory,language)}";
+        }
+
+        // ----------------------------------------------------
+        // Settlements
+        // ----------------------------------------------------
+
+        if(name.Equals(
+            "allBranchesMaleDebit",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return $"{T(LocalizationKeys.FinancialAnalysis.Debit,language)} - {T(LocalizationKeys.FinancialAnalysis.Male,language)}";
+        }
+
+        if(name.Equals(
+            "allBranchesMaleCredit",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return $"{T(LocalizationKeys.FinancialAnalysis.Credit,language)} - {T(LocalizationKeys.FinancialAnalysis.Male,language)}";
+        }
+
+        if(name.Equals(
+            "allBranchesMaleBalance",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return $"{T(LocalizationKeys.FinancialAnalysis.Balance,language)} - {T(LocalizationKeys.FinancialAnalysis.Male,language)}";
+        }
+
+        if(name.Equals(
+            "allBranchesFemaleDebit",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return $"{T(LocalizationKeys.FinancialAnalysis.Debit,language)} - {T(LocalizationKeys.FinancialAnalysis.Female,language)}";
+        }
+
+        if(name.Equals(
+            "allBranchesFemaleCredit",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return $"{T(LocalizationKeys.FinancialAnalysis.Credit,language)} - {T(LocalizationKeys.FinancialAnalysis.Female,language)}";
+        }
+
+        if(name.Equals(
+            "allBranchesFemaleBalance",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return $"{T(LocalizationKeys.FinancialAnalysis.Balance,language)} - {T(LocalizationKeys.FinancialAnalysis.Female,language)}";
+        }
+
+        if(name.Equals(
+            "allBranchesDebit",
+            StringComparison.OrdinalIgnoreCase) ||
+           name.Equals(
+            "totalDebit",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return $"{T(LocalizationKeys.FinancialAnalysis.Total,language)} {T(LocalizationKeys.FinancialAnalysis.Debit,language)}";
+        }
+
+        if(name.Equals(
+            "allBranchesCredit",
+            StringComparison.OrdinalIgnoreCase) ||
+           name.Equals(
+            "totalCredit",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return $"{T(LocalizationKeys.FinancialAnalysis.Total,language)} {T(LocalizationKeys.FinancialAnalysis.Credit,language)}";
+        }
+
+        if(name.Equals(
+            "allBranchesBalance",
+            StringComparison.OrdinalIgnoreCase) ||
+           name.Equals(
+            "totalBalance",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return $"{T(LocalizationKeys.FinancialAnalysis.Total,language)} {T(LocalizationKeys.FinancialAnalysis.Balance,language)}";
+        }
+
+        if(name.Equals(
+            "averageCompleteBranchBalance",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return $"{T(LocalizationKeys.FinancialAnalysis.Average,language)} - {T(LocalizationKeys.FinancialAnalysis.Balance,language)}";
+        }
+
+        // ----------------------------------------------------
+        // General known fields
+        // ----------------------------------------------------
+
+        if(FieldKeys.TryGetValue(name,out var key))
+        {
+            return T(key,language);
+        }
+
+        if(name.Contains(
+            "highest",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return T(
+                LocalizationKeys.FinancialAnalysis.Highest,
+                language);
+        }
+
+        if(name.Contains(
+            "lowest",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return T(
+                LocalizationKeys.FinancialAnalysis.Lowest,
+                language);
+        }
+
+        if(name.Contains(
+            "average",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return T(
+                LocalizationKeys.FinancialAnalysis.Average,
+                language);
+        }
+
+        if(name.Contains(
+            "total",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return T(
+                LocalizationKeys.FinancialAnalysis.Total,
+                language);
+        }
+
+        return name;
+    }
+
+    private static bool IsSpecialPresentationField(
+        string name)
+    {
+        return
+            name.Equals("averageOpeningInventory",StringComparison.OrdinalIgnoreCase) ||
+            name.Equals("averageClosingInventory",StringComparison.OrdinalIgnoreCase) ||
+            name.Equals("allBranchesMaleDebit",StringComparison.OrdinalIgnoreCase) ||
+            name.Equals("allBranchesMaleCredit",StringComparison.OrdinalIgnoreCase) ||
+            name.Equals("allBranchesMaleBalance",StringComparison.OrdinalIgnoreCase) ||
+            name.Equals("allBranchesFemaleDebit",StringComparison.OrdinalIgnoreCase) ||
+            name.Equals("allBranchesFemaleCredit",StringComparison.OrdinalIgnoreCase) ||
+            name.Equals("allBranchesFemaleBalance",StringComparison.OrdinalIgnoreCase) ||
+            name.Equals("allBranchesDebit",StringComparison.OrdinalIgnoreCase) ||
+            name.Equals("allBranchesCredit",StringComparison.OrdinalIgnoreCase) ||
+            name.Equals("allBranchesBalance",StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static int MetricOrder(
+        string section,
+        string name)
+    {
+        var s = section.ToLowerInvariant();
+
+        if(s == "inventory")
+        {
+            return name.ToLowerInvariant() switch
+            {
+                "brancheswithdata" => 10,
+                "brancheswithoutdata" => 20,
+                "allbranchesopeningtotal" => 30,
+                "allbranchesclosingtotal" => 40,
+                "inventorychange" => 50,
+                "averageopeninginventory" => 60,
+                "averageclosinginventory" => 70,
+                _ => 500
+            };
+        }
+
+        if(s == "settlements")
+        {
+            return name.ToLowerInvariant() switch
+            {
+                "malefilescount" => 10,
+                "femalefilescount" => 20,
+                "brancheswithanydata" => 30,
+                "brancheswithcompletedata" => 40,
+                "brancheswithoutcompletedata" => 50,
+
+                "allbranchesmaledebit" => 100,
+                "allbranchesmalecredit" => 110,
+                "allbranchesmalebalance" => 120,
+
+                "allbranchesfemaledebit" => 200,
+                "allbranchesfemalecredit" => 210,
+                "allbranchesfemalebalance" => 220,
+
+                "allbranchesdebit" => 300,
+                "allbranchescredit" => 310,
+                "allbranchesbalance" => 320,
+
+                "averagecompletebranchbalance" => 330,
+
+                _ => 500
+            };
+        }
+
+        return 500;
+    }
+
+    private static string ObjectMetricTitle(
+        string section,
+        string name,
+        string language)
+    {
+        var isHighest =
+            name.Contains(
+                "highest",
+                StringComparison.OrdinalIgnoreCase);
+
+        var isLowest =
+            name.Contains(
+                "lowest",
+                StringComparison.OrdinalIgnoreCase);
+
+        var direction =
+            isHighest
+                ? T(LocalizationKeys.FinancialAnalysis.Highest,language)
+                : isLowest
+                    ? T(LocalizationKeys.FinancialAnalysis.Lowest,language)
+                    : Label(name,language);
+
+        if(section.Equals(
+            "inventory",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            if(name.Contains(
+                "opening",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                return $"{direction} - {T(LocalizationKeys.FinancialAnalysis.OpeningInventory,language)}";
+            }
+
+            if(name.Contains(
+                "closing",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                return $"{direction} - {T(LocalizationKeys.FinancialAnalysis.ClosingInventory,language)}";
+            }
+        }
+
+        if(section.Equals(
+            "customers",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            if(name.Contains(
+                "customer",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                return $"{direction} - {T(LocalizationKeys.FinancialAnalysis.CustomerBalance,language)}";
+            }
+
+            if(name.Contains(
+                "employee",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                return $"{direction} - {T(LocalizationKeys.FinancialAnalysis.EmployeeBalance,language)}";
+            }
+        }
+
+        if(section.Equals(
+            "settlements",
+            StringComparison.OrdinalIgnoreCase) &&
+           (isHighest || isLowest))
+        {
+            return $"{direction} - {T(LocalizationKeys.FinancialAnalysis.Balance,language)}";
+        }
+
+        if(section.Equals(
+            "transfers",
+            StringComparison.OrdinalIgnoreCase) &&
+           (isHighest || isLowest))
+        {
+            return $"{direction} - {T(LocalizationKeys.FinancialAnalysis.TotalTransfer,language)}";
+        }
+
+        if(section.Equals(
+            "debt",
+            StringComparison.OrdinalIgnoreCase) &&
+           (isHighest || isLowest))
+        {
+            return $"{direction} - {T(LocalizationKeys.FinancialAnalysis.TotalDebt,language)}";
+        }
+
+        if(section.Equals(
+            "cash",
+            StringComparison.OrdinalIgnoreCase) &&
+           (isHighest || isLowest))
+        {
+            return $"{direction} - {T(LocalizationKeys.FinancialAnalysis.TotalCash,language)}";
+        }
+
+        if(section.Equals(
+            "suppliers",
+            StringComparison.OrdinalIgnoreCase) &&
+           (isHighest || isLowest))
+        {
+            return $"{direction} - {T(LocalizationKeys.FinancialAnalysis.SuppliersTotal,language)}";
+        }
+
+        if(section.Equals(
+            "capital",
+            StringComparison.OrdinalIgnoreCase) &&
+           (isHighest || isLowest))
+        {
+            return $"{direction} - {T(LocalizationKeys.FinancialAnalysis.CapitalValue,language)}";
+        }
+
+        if(section.Equals(
+            "sales",
+            StringComparison.OrdinalIgnoreCase) &&
+           (isHighest || isLowest))
+        {
+            return $"{direction} - {T(LocalizationKeys.FinancialAnalysis.NetSales,language)}";
+        }
+
+        if(section.Equals(
+            "expenses",
+            StringComparison.OrdinalIgnoreCase) &&
+           (isHighest || isLowest))
+        {
+            return $"{direction} - {T(LocalizationKeys.FinancialAnalysis.TotalExpenses,language)}";
+        }
+
+        if(section.Equals(
+            "purchases",
+            StringComparison.OrdinalIgnoreCase) &&
+           (isHighest || isLowest))
+        {
+            return $"{direction} - {T(LocalizationKeys.FinancialAnalysis.TotalPurchases,language)}";
+        }
+
+        return direction;
+    }
+
+    private static string ContextualChildLabel(
+        string section,
+        string metricName,
+        string childName,
+        string language)
+    {
+        if(!childName.Equals(
+            "value",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return Label(
+                childName,
+                language);
+        }
+
+        if(section.Equals(
+            "inventory",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            if(metricName.Contains(
+                "opening",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                return T(
+                    LocalizationKeys.FinancialAnalysis.OpeningInventory,
+                    language);
+            }
+
+            if(metricName.Contains(
+                "closing",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                return T(
+                    LocalizationKeys.FinancialAnalysis.ClosingInventory,
+                    language);
+            }
+        }
+
+        if(section.Equals(
+            "customers",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            if(metricName.Contains(
+                "employee",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                return T(
+                    LocalizationKeys.FinancialAnalysis.EmployeeBalance,
+                    language);
+            }
+
+            return T(
+                LocalizationKeys.FinancialAnalysis.CustomerBalance,
+                language);
+        }
+
+        if(section.Equals(
+            "sales",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return T(
+                LocalizationKeys.FinancialAnalysis.NetSales,
+                language);
+        }
+
+        if(section.Equals(
+            "expenses",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return T(
+                LocalizationKeys.FinancialAnalysis.TotalExpenses,
+                language);
+        }
+
+        if(section.Equals(
+            "purchases",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return T(
+                LocalizationKeys.FinancialAnalysis.TotalPurchases,
+                language);
+        }
+
+        if(section.Equals(
+            "debt",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return T(
+                LocalizationKeys.FinancialAnalysis.TotalDebt,
+                language);
+        }
+
+        if(section.Equals(
+            "cash",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return T(
+                LocalizationKeys.FinancialAnalysis.TotalCash,
+                language);
+        }
+
+        if(section.Equals(
+            "suppliers",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return T(
+                LocalizationKeys.FinancialAnalysis.SuppliersTotal,
+                language);
+        }
+
+        if(section.Equals(
+            "capital",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return T(
+                LocalizationKeys.FinancialAnalysis.CapitalValue,
+                language);
+        }
+
+        if(section.Equals(
+            "transfers",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return T(
+                LocalizationKeys.FinancialAnalysis.TotalTransfer,
+                language);
+        }
+
+        if(section.Equals(
+            "settlements",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return T(
+                LocalizationKeys.FinancialAnalysis.Balance,
+                language);
+        }
+
+        if(section.Equals(
+            "profit",
+            StringComparison.OrdinalIgnoreCase))
+        {
+            return T(
+                LocalizationKeys.FinancialAnalysis.ResultValue,
+                language);
+        }
+
+        return T(
+            LocalizationKeys.FinancialAnalysis.Value,
+            language);
+    }
+    private static string SectionTitle(
+        string section,
+        string language)
+    {
+        if(SectionKeys.TryGetValue(section,out var key))
+        {
+            return T(key,language);
+        }
+
+        return section;
+    }
+
+    private static string T(
+        string key,
+        string language)
+    {
+        return FinancialAnalysisLocalization.T(
+            key,
+            language);
+    }
+
+    private static string SafeSheetName(string value)
+    {
+        foreach(var c in new[]{':','\\','/','?','*','[',']'})
+        {
+            value = value.Replace(c,'-');
+        }
+
+        return value.Length > 31
+            ? value[..31]
+            : value;
+    }
+
+    private static DateTime BaghdadNow()
+    {
+        try
+        {
+            var zone =
+                TimeZoneInfo.FindSystemTimeZoneById(
+                    "Asia/Baghdad");
+
+            return TimeZoneInfo.ConvertTimeFromUtc(
+                DateTime.UtcNow,
+                zone);
+        }
+        catch
+        {
+            try
+            {
+                var zone =
+                    TimeZoneInfo.FindSystemTimeZoneById(
+                        "Arabic Standard Time");
+
+                return TimeZoneInfo.ConvertTimeFromUtc(
+                    DateTime.UtcNow,
+                    zone);
+            }
+            catch
+            {
+                return DateTime.UtcNow.AddHours(3);
+            }
+        }
+    }
+}
+
+

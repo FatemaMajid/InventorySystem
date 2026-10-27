@@ -142,7 +142,7 @@ function UsersTable({
                                             ? new Date(
                                                   user.createdAt
                                               ).toLocaleDateString(
-                                                  "en-GB"
+                                                  "en-US"
                                               )
                                             : "—"}
                                     </td>
@@ -152,7 +152,7 @@ function UsersTable({
                                             ? new Date(
                                                   user.updatedAt
                                               ).toLocaleDateString(
-                                                  "en-GB"
+                                                  "en-US"
                                               )
                                             : "—"}
                                     </td>

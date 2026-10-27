@@ -23,7 +23,7 @@ function RecentSessions({ sessions = [], onViewAll, onViewSession }) {
       return value;
     }
 
-    return new Intl.DateTimeFormat("en-GB", {
+    return new Intl.DateTimeFormat("en-US", {
       timeZone: "Asia/Baghdad",
       day: "2-digit",
       month: "2-digit",

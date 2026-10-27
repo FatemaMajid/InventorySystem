@@ -299,7 +299,13 @@ public static class AuthorizationSeeder
                 Name =
                     "Financial Dashboard View"
             },
-};
+
+            new Permission
+            {
+                Code = PermissionCodes.HomeView,
+                Name = "Home View"
+            },
+        };
 
         foreach (var permission in permissions)
         {
@@ -390,6 +396,7 @@ public static class AuthorizationSeeder
 
         var adminPermissions = new[]
         {
+        PermissionCodes.HomeView,
         PermissionCodes.DashboardView,
         PermissionCodes.DashboardExport,
         PermissionCodes.InventorySessionView,

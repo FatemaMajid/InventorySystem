@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+﻿import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../../../../context/LanguageContext";
 import { useInventorySession } from "../../context/InventorySessionContext";
 import DashboardHeader from "../../components/Dashboard/DashboardHeader/DashboardHeader";
 import KpiCard from "../../components/Dashboard/KpiCard/KpiCard";
-import FinancialSummary from "../../components/Dashboard/FinancialSummary/FinancialSummary";
+import FinancialSummary from "../../../financial/components/Dashboard/FinancialSummary/FinancialSummary";
 import StatusChart from "../../components/Dashboard/StatusChart/StatusChart";
 import ValueChart from "../../components/Dashboard/ValueChart/ValueChart";
 import TopDifferences from "../../components/Dashboard/TopDifferences/TopDifferences";
@@ -88,7 +88,7 @@ function Dashboard() {
             downloadFile(
                 file,
                 language === "ar"
-                    ? `تقرير_الجرد_${sessionId}.xlsx`
+                    ? `ØªÙ‚Ø±ÙŠØ±_Ø§Ù„Ø¬Ø±Ø¯_${sessionId}.xlsx`
                     : `Inventory_Report_${sessionId}.xlsx`
             );
         } catch (err) {
@@ -117,7 +117,7 @@ function Dashboard() {
             downloadFile(
                 file,
                 language === "ar"
-                    ? `تقرير_الجرد_${sessionId}.pdf`
+                    ? `ØªÙ‚Ø±ÙŠØ±_Ø§Ù„Ø¬Ø±Ø¯_${sessionId}.pdf`
                     : `Inventory_Report_${sessionId}.pdf`
             );
         } catch (err) {

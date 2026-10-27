@@ -1,9 +1,11 @@
-namespace InventorySystem.Application.Common.Authorization;
+﻿namespace InventorySystem.Application.Common.Authorization;
 
 public static class PermissionCodes
 {
     public const string DashboardView = "Dashboard.View";
     public const string DashboardExport = "Dashboard.Export";
+
+    public const string HomeView = "Home.View";
 
     public const string InventorySessionView = "InventorySession.View";
     public const string InventorySessionCreate = "InventorySession.Create";
