@@ -1,4 +1,4 @@
-using InventorySystem.Application.Features.FinancialAnalysis.Dashboard.Interfaces;
+﻿using InventorySystem.Application.Features.FinancialAnalysis.Dashboard.Interfaces;
 using InventorySystem.Application.Features.FinancialAnalysis.Dashboard.Queries.GetFinancialAnalysisDashboard;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -84,6 +84,9 @@ public sealed class FinancialAnalysisDashboardController
     [HttpGet("export/excel")]
     [Authorize(
         Policy =
+            "Permission:FinancialDashboard.View")]
+    [Authorize(
+        Policy =
             "Permission:Report.Export")]
     public async Task<IActionResult> ExportExcel(
         [FromQuery]
@@ -154,6 +157,9 @@ public sealed class FinancialAnalysisDashboardController
     // ========================================================
 
     [HttpGet("export/pdf")]
+    [Authorize(
+        Policy =
+            "Permission:FinancialDashboard.View")]
     [Authorize(
         Policy =
             "Permission:Report.Export")]

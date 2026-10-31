@@ -1,4 +1,4 @@
-using InventorySystem.Application.DTOs.FinancialAnalysis.FinancialPeriod;
+﻿using InventorySystem.Application.DTOs.FinancialAnalysis.FinancialPeriod;
 using InventorySystem.Application.Features.FinancialAnalysis.FinancialPeriods.Commands.ApproveFinancialPeriod;
 using InventorySystem.Application.Features.FinancialAnalysis.FinancialPeriods.Commands.CreateFinancialPeriod;
 using InventorySystem.Application.Features.FinancialAnalysis.FinancialPeriods.Commands.DeleteFinancialPeriod;
@@ -222,6 +222,9 @@ public class FinancialPeriodsController : ControllerBase
     }
 
     [HttpGet("{id:int}/export/excel")]
+    [Authorize(
+        Policy =
+            "Permission:FinancialPeriod.View")]
     [Authorize(
         Policy =
             "Permission:Report.Export")]
