@@ -189,6 +189,8 @@ function NewInventorySession() {
         inventoryType,
         beforeFile,
         afterFile,
+        branchId,
+        storeId,
       });
 
       const session = response?.data ?? response;
@@ -199,8 +201,8 @@ function NewInventorySession() {
           session?.id ??
           session?.sessionId ??
           session?.inventorySessionId,
-        branchId,
-        storeId,
+        branchId: session?.branchId ?? session?.BranchId ?? branchId,
+        storeId: session?.storeId ?? session?.StoreId ?? storeId,
         inventoryType,
       });
 

@@ -1,4 +1,0 @@
-[*.cs]
-
-# IDE0011: Add braces
-csharp_prefer_braces = false

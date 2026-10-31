@@ -42,16 +42,6 @@ public static class InventoryLocationValidator
         IReadOnlyList<string> branches,
         int headerRow)
     {
-        if (branches.Count == 0)
-        {
-            AddError(
-                result,
-                headerRow,
-                LocalizationKeys.BranchRequired);
-
-            return;
-        }
-
         if (branches.Count > 1)
         {
             AddError(
@@ -66,16 +56,6 @@ public static class InventoryLocationValidator
         IReadOnlyList<string> stores,
         int headerRow)
     {
-        if (stores.Count == 0)
-        {
-            AddError(
-                result,
-                headerRow,
-                LocalizationKeys.StoreRequired);
-
-            return;
-        }
-
         if (stores.Count > 1)
         {
             AddError(

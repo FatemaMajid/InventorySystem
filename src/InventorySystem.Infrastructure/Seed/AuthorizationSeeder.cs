@@ -1,3 +1,4 @@
+
 using InventorySystem.Application.Common.Authorization;
 using InventorySystem.Domain.Entities.Authorization;
 using InventorySystem.Infrastructure.Persistence.Contexts;
@@ -171,7 +172,7 @@ public static class AuthorizationSeeder
                 Name = "Settings View"
             },
 
-            // Financial Analysis - Financial Periods
+            // Financial Periods
             new Permission
             {
                 Code = PermissionCodes.FinancialPeriodView,
@@ -191,128 +192,87 @@ public static class AuthorizationSeeder
             // Financial Analysis
             new Permission
             {
-                Code =
-                    PermissionCodes.FinancialAnalysisView,
-                Name =
-                    "Financial Analysis View"
+                Code = PermissionCodes.FinancialAnalysisView,
+                Name = "Financial Analysis View"
             },
             new Permission
             {
-                Code =
-                    PermissionCodes.FinancialSalesView,
-                Name =
-                    "Financial Sales View"
+                Code = PermissionCodes.FinancialSalesView,
+                Name = "Financial Sales View"
             },
-
             new Permission
             {
-                Code =
-                    PermissionCodes.FinancialInventoryView,
-                Name =
-                    "Financial Inventory View"
+                Code = PermissionCodes.FinancialInventoryView,
+                Name = "Financial Inventory View"
             },
-
             new Permission
             {
-                Code =
-                    PermissionCodes.FinancialExpensesView,
-                Name =
-                    "Financial Expenses View"
+                Code = PermissionCodes.FinancialExpensesView,
+                Name = "Financial Expenses View"
             },
-
             new Permission
             {
-                Code =
-                    PermissionCodes.FinancialPurchasesView,
-                Name =
-                    "Financial Purchases View"
+                Code = PermissionCodes.FinancialPurchasesView,
+                Name = "Financial Purchases View"
             },
-
             new Permission
             {
-                Code =
-                    PermissionCodes.FinancialProfitLossView,
-                Name =
-                    "Financial Profit Loss View"
+                Code = PermissionCodes.FinancialProfitLossView,
+                Name = "Financial Profit Loss View"
             },
-
             new Permission
             {
-                Code =
-                    PermissionCodes.FinancialCustomersView,
-                Name =
-                    "Financial Customers View"
+                Code = PermissionCodes.FinancialCustomersView,
+                Name = "Financial Customers View"
             },
-
             new Permission
             {
-                Code =
-                    PermissionCodes.FinancialDebtView,
-                Name =
-                    "Financial Debt View"
+                Code = PermissionCodes.FinancialDebtView,
+                Name = "Financial Debt View"
             },
-
             new Permission
             {
-                Code =
-                    PermissionCodes.FinancialCashView,
-                Name =
-                    "Financial Cash View"
+                Code = PermissionCodes.FinancialCashView,
+                Name = "Financial Cash View"
             },
-
             new Permission
             {
-                Code =
-                    PermissionCodes.FinancialSuppliersView,
-                Name =
-                    "Financial Suppliers View"
+                Code = PermissionCodes.FinancialSuppliersView,
+                Name = "Financial Suppliers View"
             },
-
             new Permission
             {
-                Code =
-                    PermissionCodes.FinancialCapitalView,
-                Name =
-                    "Financial Capital View"
+                Code = PermissionCodes.FinancialCapitalView,
+                Name = "Financial Capital View"
             },
-
             new Permission
             {
-                Code =
-                    PermissionCodes.FinancialTransfersView,
-                Name =
-                    "Financial Transfers View"
+                Code = PermissionCodes.FinancialTransfersView,
+                Name = "Financial Transfers View"
             },
-
             new Permission
             {
-                Code =
-                    PermissionCodes.FinancialSettlementsView,
-                Name =
-                    "Financial Settlements View"
+                Code = PermissionCodes.FinancialSettlementsView,
+                Name = "Financial Settlements View"
             },
-
             new Permission
             {
-                Code =
-                    PermissionCodes.FinancialDashboardView,
-                Name =
-                    "Financial Dashboard View"
+                Code = PermissionCodes.FinancialDashboardView,
+                Name = "Financial Dashboard View"
             },
 
+            // Home
             new Permission
             {
                 Code = PermissionCodes.HomeView,
                 Name = "Home View"
-            },
+            }
         };
 
         foreach (var permission in permissions)
         {
-            var exists =
-                await context.Permissions
-                    .AnyAsync(
-                        x => x.Code == permission.Code);
+            var exists = await context.Permissions
+                .AnyAsync(x => x.Code == permission.Code);
 
             if (!exists)
             {
@@ -335,14 +295,12 @@ public static class AuthorizationSeeder
             new Role
             {
                 Name = "Manager",
-                Description =
-                    "Full system access."
+                Description = "Full system access."
             },
             new Role
             {
                 Name = "Admin",
-                Description =
-                    "Full operational access."
+                Description = "Full operational access."
             },
             new Role
             {
@@ -352,15 +310,11 @@ public static class AuthorizationSeeder
             }
         };
 
-        foreach (var role in roles)
-        {
-            var exists =
-                await context.Roles
-                    .AnyAsync(
-                        x => x.Name == role.Name);
+        foreach (var role in roles) {
+            var exists = await context.Roles
+                    .AnyAsync(x => x.Name == role.Name);
 
-            if (!exists)
-            {
+            if (!exists) {
                 context.Roles.Add(role);
             }
         }
@@ -373,130 +327,75 @@ public static class AuthorizationSeeder
     // =====================================================
 
     private static async Task SeedRolePermissionsAsync(
-    ApplicationDbContext context)
+        ApplicationDbContext context)
     {
-        var manager =
-            await context.Roles
-                .FirstAsync(
-                    x => x.Name == "Manager");
+        var manager = await context.Roles
+            .FirstAsync(x => x.Name == "Manager");
 
-        var admin =
-            await context.Roles
-                .FirstAsync(
-                    x => x.Name == "Admin");
+        var admin = await context.Roles
+            .FirstAsync(x => x.Name == "Admin");
 
-        var user =
-            await context.Roles
-                .FirstAsync(
-                    x => x.Name == "User");
+        var user = await context.Roles
+            .FirstAsync(x => x.Name == "User");
 
-        var allPermissions =
-            await context.Permissions
-                .ToListAsync();
+        var allPermissions = await context.Permissions
+            .ToListAsync();
 
         var adminPermissions = new[]
         {
-        PermissionCodes.HomeView,
-        PermissionCodes.DashboardView,
-        PermissionCodes.DashboardExport,
-        PermissionCodes.InventorySessionView,
-        PermissionCodes.InventorySessionCreate,
-        PermissionCodes.ComparisonView,
-        PermissionCodes.ComparisonExport,
-        PermissionCodes.AttentionView,
-        PermissionCodes.AttentionExport,
-        PermissionCodes.ReportView,
-        PermissionCodes.ReportCreate,
-        PermissionCodes.ReportExport,
-        PermissionCodes.BranchView,
-        PermissionCodes.StoreView,
-        PermissionCodes.FinancialPeriodView,
-        PermissionCodes.FinancialPeriodCreate,
-        PermissionCodes.FinancialPeriodApprove,
-        // PermissionCodes.UserView,
-        // PermissionCodes.UserCreate,
-        // PermissionCodes.UserEdit,
-        // PermissionCodes.UserDeactivate,
-        // PermissionCodes.RoleView,
-        // PermissionCodes.RoleEdit
+            PermissionCodes.HomeView,
+            PermissionCodes.DashboardView,
+            PermissionCodes.DashboardExport,
+            PermissionCodes.InventorySessionView,
+            PermissionCodes.InventorySessionCreate,
+            PermissionCodes.ComparisonView,
+            PermissionCodes.ComparisonExport,
+            PermissionCodes.AttentionView,
+            PermissionCodes.AttentionExport,
+            PermissionCodes.ReportView,
+            PermissionCodes.ReportCreate,
+            PermissionCodes.ReportExport,
+            PermissionCodes.BranchView,
+            PermissionCodes.StoreView,
+            PermissionCodes.FinancialPeriodView,
+            PermissionCodes.FinancialPeriodCreate,
+            PermissionCodes.FinancialPeriodApprove,
 
             // Financial Analysis
             PermissionCodes.FinancialAnalysisView,
             PermissionCodes.FinancialSalesView,
-
             PermissionCodes.FinancialInventoryView,
-
             PermissionCodes.FinancialExpensesView,
-
             PermissionCodes.FinancialPurchasesView,
-
             PermissionCodes.FinancialProfitLossView,
-
             PermissionCodes.FinancialCustomersView,
-
             PermissionCodes.FinancialDebtView,
-
             PermissionCodes.FinancialCashView,
-
             PermissionCodes.FinancialSuppliersView,
-
             PermissionCodes.FinancialCapitalView,
-
             PermissionCodes.FinancialTransfersView,
-
             PermissionCodes.FinancialSettlementsView,
-
-            PermissionCodes.FinancialDashboardView,
-};
+            PermissionCodes.FinancialDashboardView
+        };
 
         var userPermissions = new[]
         {
-        PermissionCodes.InventorySessionView,
-        PermissionCodes.ComparisonView,
-        PermissionCodes.AttentionView,
-        PermissionCodes.DashboardView,
-        PermissionCodes.ReportView,
-    };
+            PermissionCodes.InventorySessionView,
+            PermissionCodes.ComparisonView,
+            PermissionCodes.AttentionView,
+            PermissionCodes.DashboardView,
+            PermissionCodes.ReportView
+        };
 
-        var adminPermissionIds =
-            allPermissions
-                .Where(x =>
-                    adminPermissions.Contains(x.Code))
-                .Select(x => x.Id)
-                .ToHashSet();
-
-        var userPermissionIds =
-            allPermissions
-                .Where(x =>
-                    userPermissions.Contains(x.Code))
-                .Select(x => x.Id)
-                .ToHashSet();
-
-        var managerRolePermissions =
-            await context.RolePermissions
-                .Where(x => x.RoleId == manager.Id)
-                .ToListAsync();
-
-        var adminRolePermissions =
-            await context.RolePermissions
-                .Where(x => x.RoleId == admin.Id)
-                .ToListAsync();
-
-        var userRolePermissions =
-            await context.RolePermissions
-                .Where(x => x.RoleId == user.Id)
-                .ToListAsync();
-
-        context.RolePermissions.RemoveRange(
-            adminRolePermissions);
-
-        context.RolePermissions.RemoveRange(
-            userRolePermissions);
+        // Manager: add missing permissions without removing existing ones.
+        var managerPermissionIds = await context.RolePermissions
+            .Where(x => x.RoleId == manager.Id)
+            .Select(x => x.PermissionId)
+            .ToListAsync();
 
         foreach (var permission in allPermissions)
         {
-            if (!managerRolePermissions.Any(
-                x => x.PermissionId == permission.Id))
+            if (!managerPermissionIds.Contains(permission.Id))
             {
                 context.RolePermissions.Add(
                     new RolePermission
@@ -507,70 +406,37 @@ public static class AuthorizationSeeder
             }
         }
 
-        foreach (var permissionId in adminPermissionIds)
-        {
-            context.RolePermissions.Add(
-                new RolePermission
-                {
-                    RoleId = admin.Id,
-                    PermissionId = permissionId
-                });
+        // Admin: seed defaults only when the role has no permissions.
+        // Existing permissions configured through the UI are preserved.
+        var adminHasPermissions = await context.RolePermissions
+            .AnyAsync(x => x.RoleId == admin.Id);
+
+        if (!adminHasPermissions){
+            var adminPermissionIds = allPermissions
+                .Where(x => adminPermissions.Contains(x.Code))
+                .Select(x => x.Id);
+
+            foreach (var permissionId in adminPermissionIds) {
+                context.RolePermissions.Add(new RolePermission{RoleId = admin.Id,PermissionId = permissionId});
+            }
         }
 
-        foreach (var permissionId in userPermissionIds)
-        {
-            context.RolePermissions.Add(
-                new RolePermission
-                {
-                    RoleId = user.Id,
-                    PermissionId = permissionId
-                });
+        // User: seed defaults only when the role has no permissions.
+        // Existing permissions configured through the UI are preserved.
+        var userHasPermissions = await context.RolePermissions
+            .AnyAsync(x => x.RoleId == user.Id);
+
+        if (!userHasPermissions) {
+            var userPermissionIds = allPermissions
+                .Where(x => userPermissions.Contains(x.Code))
+                .Select(x => x.Id);
+
+            foreach (var permissionId in userPermissionIds) {
+                context.RolePermissions.Add(new RolePermission{RoleId = user.Id,PermissionId = permissionId});
+            }
         }
 
-        var userIds =
-            await context.UserRoles
-                .Where(x => x.RoleId == user.Id)
-                .Select(x => x.UserId)
-                .ToListAsync();
-
-        var directUserPermissions =
-            await context.UserPermissions
-                .Where(x => userIds.Contains(x.UserId))
-                .ToListAsync();
-
-        context.UserPermissions.RemoveRange(
-            directUserPermissions
-                .Where(x =>
-                    !userPermissionIds.Contains(
-                        x.PermissionId)));
-
+        // Do not delete direct user permissions during startup.
         await context.SaveChangesAsync();
-    }
-
-    // =====================================================
-    // ADD ROLE PERMISSION IF MISSING
-    // =====================================================
-
-    private static async Task AddRolePermissionIfMissing(
-        ApplicationDbContext context,
-        int roleId,
-        int permissionId)
-    {
-        var exists =
-            await context.RolePermissions
-                .AnyAsync(
-                    x =>
-                        x.RoleId == roleId &&
-                        x.PermissionId == permissionId);
-
-        if (!exists)
-        {
-            context.RolePermissions.Add(
-                new RolePermission
-                {
-                    RoleId = roleId,
-                    PermissionId = permissionId
-                });
-        }
     }
 }

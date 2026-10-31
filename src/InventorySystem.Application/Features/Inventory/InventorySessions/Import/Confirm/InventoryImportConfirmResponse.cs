@@ -8,6 +8,10 @@ public class InventoryImportConfirmResponse
 
     public string SessionNumber { get; set; } = string.Empty;
 
+    public int BranchId { get; set; }
+
+    public int StoreId { get; set; }
+
     public int TotalItems { get; set; }
 
     public int CreatedItems { get; set; }

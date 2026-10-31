@@ -1,3 +1,4 @@
+using InventorySystem.Application.Common.Authorization;
 using InventorySystem.Application.Features.Inventory.Home.Queries.GetHomeDashboard;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +8,7 @@ namespace InventorySystem.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[Authorize(Policy = "Permission:" + PermissionCodes.DashboardView)]
 public class HomeController : ControllerBase
 {
     private readonly IMediator _mediator;

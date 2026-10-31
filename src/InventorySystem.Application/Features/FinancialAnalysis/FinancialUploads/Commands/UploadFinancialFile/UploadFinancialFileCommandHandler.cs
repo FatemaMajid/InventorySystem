@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using InventorySystem.Application.Common.Exceptions;
 using InventorySystem.Application.Common.Interfaces;
 using InventorySystem.Application.DTOs.FinancialAnalysis.FinancialUpload;
@@ -229,139 +229,177 @@ public class UploadFinancialFileCommandHandler
                 _currentUser.Username;
         }
 
-        await _context.SaveChangesAsync(
-            cancellationToken);
+        try
+        {
+            await _context.SaveChangesAsync(
+                cancellationToken);
+        }
+        catch
+        {
+            try
+            {
+                await _fileStorage.DeleteAsync(
+                    storagePath,
+                    CancellationToken.None);
+            }
+            catch
+            {
+            }
+
+            throw;
+        }
+
+        InventorySystem.Application.Features.FinancialAnalysis.Common.Excel.FinancialExcelParseResult? parseResult;
 
         try
         {
-            var parseResult =
+            parseResult =
                 await _excelParser.ParseAsync(
                     upload,
                     request.Content,
                     cancellationToken);
-
-            if (parseResult.AccountRows.Count > 0)
-            {
-                _context.FinancialAccountRows
-                    .AddRange(
-                        parseResult.AccountRows);
-            }
-
-            if (parseResult.TransferRecords.Count > 0)
-            {
-                _context.TransferRecords
-                    .AddRange(
-                        parseResult.TransferRecords);
-            }
-
-            if (parseResult.SettlementRows.Count > 0)
-            {
-                _context.SettlementRows
-                    .AddRange(
-                        parseResult.SettlementRows);
-            }
-
-            if (parseResult.SettlementSummary is not null)
-            {
-                _context.SettlementSummaries
-                    .Add(
-                        parseResult
-                            .SettlementSummary);
-            }
-
-            if (activeUpload is not null)
-            {
-                activeUpload.IsActive =
-                    false;
-
-                activeUpload.UpdatedAt =
-                    DateTime.UtcNow;
-
-                activeUpload.UpdatedBy =
-                    _currentUser.Username;
-            }
-
-            upload.Status =
-                FinancialUploadStatus.Valid;
-
-            upload.IsActive =
-                true;
-
-            upload.ValidatedAt =
-                DateTime.UtcNow;
-
-            upload.ValidationMessage =
-                $"Valid. Parsed rows: {parseResult.ParsedRowCount}.";
-
-            upload.UpdatedAt =
-                DateTime.UtcNow;
-
-            upload.UpdatedBy =
-                _currentUser.Username;
-
-            await _context.SaveChangesAsync(
-                cancellationToken);
-
-            await UpdatePeriodStatusAsync(
-                period,
-                cancellationToken);
-
-            await _auditLogService.LogAsync(
-                action: "Upload",
-                entity: "FinancialUpload",
-                entityId:
-                    upload.Id.ToString(),
-                details:
-                    $"PeriodId: {period.Id}, " +
-                    $"FileType: {upload.FileType}, " +
-                    $"BranchId: {upload.BranchId}, " +
-                    $"Gender: {upload.Gender}, " +
-                    $"Version: {upload.Version}, " +
-                    $"Status: Valid, " +
-                    $"Rows: {parseResult.ParsedRowCount}",
-                cancellationToken:
-                    cancellationToken);
         }
         catch (Exception ex)
         {
-            upload.Status =
-                FinancialUploadStatus.Invalid;
+            await MarkUploadInvalidAsync(
+                upload,
+                period.Id,
+                ex,
+                CancellationToken.None);
 
-            upload.IsActive =
-                false;
+            parseResult = null;
+        }
 
-            upload.ValidatedAt =
-                DateTime.UtcNow;
+        if (parseResult is not null)
+        {
+            try
+            {
+                await using (var transaction =
+                    await _context.Database.BeginTransactionAsync(
+                        cancellationToken))
+                {
+                    try
+                    {
+                        if (parseResult.AccountRows.Count > 0)
+                        {
+                            _context.FinancialAccountRows
+                                .AddRange(
+                                    parseResult.AccountRows);
+                        }
 
-            upload.ValidationMessage =
-                Truncate(
-                    ex.Message,
-                    2000);
+                        if (parseResult.TransferRecords.Count > 0)
+                        {
+                            _context.TransferRecords
+                                .AddRange(
+                                    parseResult.TransferRecords);
+                        }
 
-            upload.UpdatedAt =
-                DateTime.UtcNow;
+                        if (parseResult.SettlementRows.Count > 0)
+                        {
+                            _context.SettlementRows
+                                .AddRange(
+                                    parseResult.SettlementRows);
+                        }
 
-            upload.UpdatedBy =
-                _currentUser.Username;
+                        if (parseResult.SettlementSummary is not null)
+                        {
+                            _context.SettlementSummaries
+                                .Add(
+                                    parseResult.SettlementSummary);
+                        }
 
-            await _context.SaveChangesAsync(
-                cancellationToken);
+                        if (activeUpload is not null)
+                        {
+                            activeUpload.IsActive =
+                                false;
 
-            await _auditLogService.LogAsync(
-                action: "Upload",
-                entity: "FinancialUpload",
-                entityId:
-                    upload.Id.ToString(),
-                details:
-                    $"PeriodId: {period.Id}, " +
-                    $"FileType: {upload.FileType}, " +
-                    $"BranchId: {upload.BranchId}, " +
-                    $"Gender: {upload.Gender}, " +
-                    $"Version: {upload.Version}, " +
-                    $"Status: Invalid, " +
-                    $"Error: {upload.ValidationMessage}",
-                cancellationToken:
-                    cancellationToken);
+                            activeUpload.UpdatedAt =
+                                DateTime.UtcNow;
+
+                            activeUpload.UpdatedBy =
+                                _currentUser.Username;
+                        }
+
+                        upload.Status =
+                            FinancialUploadStatus.Valid;
+
+                        upload.IsActive =
+                            true;
+
+                        upload.ValidatedAt =
+                            DateTime.UtcNow;
+
+                        upload.ValidationMessage =
+                            $"Valid. Parsed rows: {parseResult.ParsedRowCount}.";
+
+                        upload.UpdatedAt =
+                            DateTime.UtcNow;
+
+                        upload.UpdatedBy =
+                            _currentUser.Username;
+
+                        await _context.SaveChangesAsync(
+                            cancellationToken);
+
+                        await UpdatePeriodStatusAsync(
+                            period,
+                            cancellationToken);
+
+                        await _auditLogService.LogAsync(
+                            action: "Upload",
+                            entity: "FinancialUpload",
+                            entityId:
+                                upload.Id.ToString(),
+                            details:
+                                $"PeriodId: {period.Id}, " +
+                                $"FileType: {upload.FileType}, " +
+                                $"BranchId: {upload.BranchId}, " +
+                                $"Gender: {upload.Gender}, " +
+                                $"Version: {upload.Version}, " +
+                                $"Status: Valid, " +
+                                $"Rows: {parseResult.ParsedRowCount}",
+                            cancellationToken:
+                                cancellationToken);
+
+                        await transaction.CommitAsync(
+                            cancellationToken);
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            await transaction.RollbackAsync(
+                                CancellationToken.None);
+                        }
+                        catch
+                        {
+                        }
+
+                        throw;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var uploadId = upload.Id;
+
+                if (_context is DbContext dbContext)
+                {
+                    dbContext.ChangeTracker.Clear();
+                }
+
+                upload =
+                    await _context.FinancialUploads
+                        .FirstAsync(
+                            x => x.Id == uploadId,
+                            CancellationToken.None);
+
+                await MarkUploadInvalidAsync(
+                    upload,
+                    period.Id,
+                    ex,
+                    CancellationToken.None);
+            }
         }
 
         return new FinancialUploadDto
@@ -414,6 +452,52 @@ public class UploadFinancialFileCommandHandler
             ValidationMessage =
                 upload.ValidationMessage
         };
+    }
+
+    private async Task MarkUploadInvalidAsync(
+        FinancialUpload upload,
+        int financialPeriodId,
+        Exception exception,
+        CancellationToken cancellationToken)
+    {
+        upload.Status =
+            FinancialUploadStatus.Invalid;
+
+        upload.IsActive =
+            false;
+
+        upload.ValidatedAt =
+            DateTime.UtcNow;
+
+        upload.ValidationMessage =
+            Truncate(
+                exception.Message,
+                2000);
+
+        upload.UpdatedAt =
+            DateTime.UtcNow;
+
+        upload.UpdatedBy =
+            _currentUser.Username;
+
+        await _context.SaveChangesAsync(
+            cancellationToken);
+
+        await _auditLogService.LogAsync(
+            action: "Upload",
+            entity: "FinancialUpload",
+            entityId:
+                upload.Id.ToString(),
+            details:
+                $"PeriodId: {financialPeriodId}, " +
+                $"FileType: {upload.FileType}, " +
+                $"BranchId: {upload.BranchId}, " +
+                $"Gender: {upload.Gender}, " +
+                $"Version: {upload.Version}, " +
+                $"Status: Invalid, " +
+                $"Error: {upload.ValidationMessage}",
+            cancellationToken:
+                cancellationToken);
     }
 
     private async Task UpdatePeriodStatusAsync(

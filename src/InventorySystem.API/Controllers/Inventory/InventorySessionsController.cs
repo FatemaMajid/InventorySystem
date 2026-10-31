@@ -101,7 +101,9 @@ public class InventorySessionsController : ControllerBase
     public async Task<IActionResult> Confirm(
         IFormFile beforeFile,
         IFormFile afterFile,
-        [FromQuery] InventoryType inventoryType)
+        [FromQuery] InventoryType inventoryType,
+        [FromForm] int? branchId,
+        [FromForm] int? storeId)
     {
         if (beforeFile == null || beforeFile.Length == 0)
             return BadRequest("Before inventory Excel file is required.");
@@ -136,7 +138,9 @@ public class InventorySessionsController : ControllerBase
             BeforeFileName = beforeFile.FileName,
             AfterFileStream = afterStream,
             AfterFileName = afterFile.FileName,
-            InventoryType = inventoryType
+            InventoryType = inventoryType,
+            SelectedBranchId = branchId,
+            SelectedStoreId = storeId
         };
 
         return Ok(await _confirmService.ConfirmAsync(request));

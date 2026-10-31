@@ -11,4 +11,8 @@ public class InventoryImportConfirmRequest
     public string? AfterFileName { get; set; }
 
     public InventoryType InventoryType { get; set; }
+
+    public int? SelectedBranchId { get; set; }
+
+    public int? SelectedStoreId { get; set; }
 }

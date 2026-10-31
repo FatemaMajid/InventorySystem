@@ -2312,7 +2312,7 @@ ComposeVisualAnalysis(
                 File.OpenRead(
                     path);
 
-            FontManager.RegisterFont(
+            FontManager.RegisterFontFromStream(
                 stream);
 
             _fontRegistered =

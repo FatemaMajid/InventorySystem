@@ -1,49 +1,38 @@
+
 using System.Text.Json;
-using AutoMapper;
 using InventorySystem.Application.Common.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace InventorySystem.Application.Features.Stores.Commands.UpdateStore;
 
-public class UpdateStoreCommandHandler
-    : IRequestHandler<UpdateStoreCommand, bool>
-{
+public class UpdateStoreCommandHandler : IRequestHandler<UpdateStoreCommand, bool> {
     private readonly IApplicationDbContext _context;
-    private readonly IMapper _mapper;
     private readonly IAuditLogService _auditLogService;
 
-    public UpdateStoreCommandHandler(
-        IApplicationDbContext context,
-        IMapper mapper,
-        IAuditLogService auditLogService)
-    {
+    public UpdateStoreCommandHandler(IApplicationDbContext context, IAuditLogService auditLogService){
         _context = context;
-        _mapper = mapper;
         _auditLogService = auditLogService;
     }
 
-    public async Task<bool> Handle(
-        UpdateStoreCommand request,
-        CancellationToken cancellationToken)
-    {
+    public async Task<bool> Handle(UpdateStoreCommand request, CancellationToken cancellationToken){
         var store = await _context.Stores
-            .FirstOrDefaultAsync(
-                x => x.Id == request.Id,
-                cancellationToken);
+            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
         if (store == null)
             return false;
 
         var branchExists = await _context.Branches
-            .AnyAsync(
-                x => x.BranchCode == request.Store.BranchCode,
-                cancellationToken);
+            .AnyAsync(x => x.BranchCode == request.Store.BranchCode, cancellationToken);
 
         if (!branchExists)
             throw new KeyNotFoundException("Branch not found.");
 
-        _mapper.Map(request.Store, store);
+        store.StoreCode = request.Store.StoreCode;
+        store.StoreNameArabic = request.Store.StoreNameArabic;
+        store.StoreNameEnglish = request.Store.StoreNameEnglish;
+        store.BranchCode = request.Store.BranchCode;
+        store.IsActive = request.Store.IsActive;
 
         await _context.SaveChangesAsync(cancellationToken);
 

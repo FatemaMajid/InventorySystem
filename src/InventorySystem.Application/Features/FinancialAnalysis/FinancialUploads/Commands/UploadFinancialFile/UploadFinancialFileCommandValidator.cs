@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using InventorySystem.Domain.FinancialAnalysis.Enums;
 
 namespace InventorySystem.Application.Features.FinancialAnalysis.FinancialUploads.Commands.UploadFinancialFile;
@@ -24,7 +24,7 @@ public class UploadFinancialFileCommandValidator
             .NotEmpty()
             .Must(BeExcelFile)
             .WithMessage(
-                "Only Excel files (.xlsx or .xls) are allowed.");
+                "Only .xlsx Excel files are supported.");
 
         RuleFor(x => x.Content)
             .NotNull()
@@ -54,8 +54,7 @@ public class UploadFinancialFileCommandValidator
             Path.GetExtension(fileName)
                 .ToLowerInvariant();
 
-        return extension == ".xlsx" ||
-               extension == ".xls";
+        return extension == ".xlsx";
     }
 
     private static bool HaveValidMetadata(

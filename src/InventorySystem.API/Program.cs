@@ -5,7 +5,6 @@ using System.Globalization;
 using System.Text;
 using System.Threading.RateLimiting;
 using Microsoft.OpenApi;
-using AutoMapper;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.RateLimiting;
@@ -108,12 +107,8 @@ builder.Services.AddTransient(
     typeof(IPipelineBehavior<,>),
     typeof(ValidationBehavior<,>));
 
-// =====================================================
-// AutoMapper
-// =====================================================
 
-builder.Services.AddAutoMapper(
-    typeof(GetAllBranchesQuery).Assembly);
+
 
 // =====================================================
 // Authentication Services

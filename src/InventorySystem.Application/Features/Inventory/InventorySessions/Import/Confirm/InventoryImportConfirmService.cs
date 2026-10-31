@@ -49,16 +49,9 @@ public class InventoryImportConfirmService
         var afterHeaderRow =
             DetectHeader(request.AfterFileStream);
 
-        // ValidateExcelRows(
-        //     beforeRows,
-        //     beforeHeaderRow);
-
-        // ValidateExcelRows(
-        //     afterRows,
-        //     afterHeaderRow);
         var beforeValidation = ExcelValidator.Validate(
-    beforeRows,
-    beforeHeaderRow);
+            beforeRows,
+            beforeHeaderRow);
 
         if (!beforeValidation.IsValid)
         {
@@ -80,14 +73,21 @@ public class InventoryImportConfirmService
                 $"After Excel: Row {error.RowNumber}, ItemCode '{error.ItemCode}', {error.MessageKey}");
         }
 
+        ValidateLocationRows(beforeRows, beforeHeaderRow);
+        ValidateLocationRows(afterRows, afterHeaderRow);
+
         var (beforeBranch, beforeStore) =
             await GetLocationAsync(
                 beforeRows,
+                request.SelectedBranchId,
+                request.SelectedStoreId,
                 cancellationToken);
 
         var (afterBranch, afterStore) =
             await GetLocationAsync(
                 afterRows,
+                request.SelectedBranchId,
+                request.SelectedStoreId,
                 cancellationToken);
 
         if (beforeBranch.Id != afterBranch.Id)
@@ -130,6 +130,8 @@ public class InventoryImportConfirmService
             IsSuccess = true,
             InventorySessionId = sessionId,
             SessionNumber = sessionNumber,
+            BranchId = beforeBranch.Id,
+            StoreId = beforeStore.Id,
             TotalItems = totalItems,
             Message = LocalizationKeys.Inventory.ImportSuccess
         };
@@ -182,70 +184,104 @@ public class InventoryImportConfirmService
         return headerRow;
     }
 
-    private static void ValidateExcelRows(
+    private static void ValidateLocationRows(
         IReadOnlyList<InventoryExcelRow> rows,
         int headerRow)
     {
-        var validation =
-            ExcelValidator.Validate(
-                rows,
-                headerRow);
+        var validation = InventoryLocationValidator.Validate(
+            rows,
+            headerRow);
 
         if (!validation.IsValid)
             throw new InvalidOperationException(
-                LocalizationKeys.Excel.InvalidHeaders);
-
-        var locationValidation =
-            InventoryLocationValidator.Validate(
-                rows,
-                headerRow);
-
-        if (!locationValidation.IsValid)
-            throw new InvalidOperationException(
-                LocalizationKeys.Excel.InvalidFile);
+                validation.Errors.First().MessageKey);
     }
 
     private async Task<(Branch Branch, Store Store)>
         GetLocationAsync(
             IReadOnlyList<InventoryExcelRow> rows,
+            int? selectedBranchId,
+            int? selectedStoreId,
             CancellationToken cancellationToken)
     {
-        var branchName =
-            rows.First().Branch?.Trim();
+        var branchNames = rows
+            .Where(x => !string.IsNullOrWhiteSpace(x.Branch))
+            .Select(x => x.Branch!.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
 
-        var storeName =
-            rows.First().Store?.Trim();
+        var storeNames = rows
+            .Where(x => !string.IsNullOrWhiteSpace(x.Store))
+            .Select(x => x.Store!.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
 
-        if (string.IsNullOrWhiteSpace(branchName))
-            throw new InvalidOperationException(
-                LocalizationKeys.Branch.Required);
+        Branch? branch;
 
-        if (string.IsNullOrWhiteSpace(storeName))
-            throw new InvalidOperationException(
-                LocalizationKeys.Store.Required);
-
-        var branch =
-            await _context.Branches
+        if (branchNames.Count == 1)
+        {
+            branch = await _context.Branches
                 .FirstOrDefaultAsync(
-                    x =>
-                        x.BranchNameArabic == branchName,
+                    x => x.BranchNameArabic == branchNames[0],
                     cancellationToken);
 
-        if (branch == null)
-            throw new InvalidOperationException(
-                LocalizationKeys.Branch.NotFound);
+            if (branch == null)
+                throw new InvalidOperationException(
+                    LocalizationKeys.Branch.NotFound);
+        }
+        else
+        {
+            if (!selectedBranchId.HasValue || selectedBranchId.Value <= 0)
+                throw new InvalidOperationException(
+                    LocalizationKeys.Branch.Required);
 
-        var store =
-            await _context.Stores
+            branch = await _context.Branches
+                .FirstOrDefaultAsync(
+                    x => x.Id == selectedBranchId.Value,
+                    cancellationToken);
+
+            if (branch == null)
+                throw new InvalidOperationException(
+                    LocalizationKeys.Branch.NotFound);
+        }
+
+        Store? store;
+
+        if (storeNames.Count == 1)
+        {
+            store = await _context.Stores
                 .FirstOrDefaultAsync(
                     x =>
-                        x.StoreNameArabic == storeName &&
+                        x.StoreNameArabic == storeNames[0] &&
                         x.BranchCode == branch.BranchCode,
                     cancellationToken);
 
-        if (store == null)
-            throw new InvalidOperationException(
-                LocalizationKeys.Store.NotFound);
+            if (store == null)
+                throw new InvalidOperationException(
+                    LocalizationKeys.Store.NotFound);
+        }
+        else
+        {
+            if (!selectedStoreId.HasValue || selectedStoreId.Value <= 0)
+                throw new InvalidOperationException(
+                    LocalizationKeys.Store.Required);
+
+            store = await _context.Stores
+                .FirstOrDefaultAsync(
+                    x => x.Id == selectedStoreId.Value,
+                    cancellationToken);
+
+            if (store == null)
+                throw new InvalidOperationException(
+                    LocalizationKeys.Store.NotFound);
+
+            if (!string.Equals(
+                    store.BranchCode?.Trim(),
+                    branch.BranchCode?.Trim(),
+                    StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException(
+                    LocalizationKeys.Store.NotBelongToBranch);
+        }
 
         return (branch, store);
     }

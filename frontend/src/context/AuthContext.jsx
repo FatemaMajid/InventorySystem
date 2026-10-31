@@ -1,4 +1,11 @@
-import { createContext, useCallback, useContext, useState } from "react";
+
+import {
+    createContext,
+    useCallback,
+    useContext,
+    useEffect,
+    useState,
+} from "react";
 import {
     getCurrentUser,
     isAuthenticated,
@@ -31,6 +38,44 @@ export function AuthProvider({ children }) {
         setUser(null);
         setAuthenticated(false);
     }, []);
+
+    useEffect(() => {
+        if (!authenticated || !user?.expiresAt) {
+            return;
+        }
+
+        const expiresAt = new Date(user.expiresAt).getTime();
+
+        if (Number.isNaN(expiresAt)) {
+            return;
+        }
+
+        const checkExpiry = () => {
+            if (Date.now() >= expiresAt) {
+                signOut();
+            }
+        };
+
+        checkExpiry();
+
+        if (Date.now() >= expiresAt) {
+            return;
+        }
+
+        const timeoutId = setTimeout(
+            signOut,
+            expiresAt - Date.now()
+        );
+
+        window.addEventListener("focus", checkExpiry);
+        document.addEventListener("visibilitychange", checkExpiry);
+
+        return () => {
+            clearTimeout(timeoutId);
+            window.removeEventListener("focus", checkExpiry);
+            document.removeEventListener("visibilitychange", checkExpiry);
+        };
+    }, [authenticated, user, signOut]);
 
     const value = {
         user,

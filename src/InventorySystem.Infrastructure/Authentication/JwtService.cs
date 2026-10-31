@@ -40,13 +40,15 @@ public sealed class JwtService
             _configuration["Jwt:Audience"]
             ?? "InventorySystem.Frontend";
 
-        var expiresInHours =
-            int.TryParse(
-                _configuration["Jwt:ExpiresInHours"],
-                out var hours)
-                ? hours
-                : 8;
+        // var expiresInHours =
+        //     int.TryParse(
+        //         _configuration["Jwt:ExpiresInHours"],
+        //         out var hours)
+        //         ? hours
+        //         : 6;
 
+        const int expiresInHours = 6;
+        
         var claims =
             new List<Claim>
             {

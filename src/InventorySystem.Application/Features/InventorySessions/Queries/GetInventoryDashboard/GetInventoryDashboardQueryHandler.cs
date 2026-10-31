@@ -4,21 +4,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InventorySystem.Application.Features.InventorySessions.Queries.GetInventoryDashboard;
 
-public class GetInventoryDashboardQueryHandler
-    : IRequestHandler<GetInventoryDashboardQuery, GetInventoryDashboardResponse>
-{
+public class GetInventoryDashboardQueryHandler : IRequestHandler<GetInventoryDashboardQuery, GetInventoryDashboardResponse> {
     private readonly IApplicationDbContext _context;
 
-    public GetInventoryDashboardQueryHandler(
-        IApplicationDbContext context)
-    {
+    public GetInventoryDashboardQueryHandler(IApplicationDbContext context){
         _context = context;
     }
 
-    public async Task<GetInventoryDashboardResponse> Handle(
-        GetInventoryDashboardQuery request,
-        CancellationToken cancellationToken)
-    {
+    public async Task<GetInventoryDashboardResponse> Handle(GetInventoryDashboardQuery request, CancellationToken cancellationToken){
         var session = await _context.InventorySessions
             .AsNoTracking()
             .Include(x => x.Branch)
@@ -28,8 +21,7 @@ public class GetInventoryDashboardQueryHandler
                 cancellationToken);
 
         if (session == null)
-            throw new KeyNotFoundException(
-                $"Inventory session {request.SessionId} was not found.");
+            throw new KeyNotFoundException($"Inventory session {request.SessionId} was not found.");
 
         var details = _context.InventoryDetails
             .AsNoTracking()

@@ -13,9 +13,7 @@ public class FinancialExcelParser
 {
     private readonly IApplicationDbContext _context;
 
-    public FinancialExcelParser(
-        IApplicationDbContext context)
-    {
+    public FinancialExcelParser(IApplicationDbContext context) {
         _context = context;
     }
 
@@ -41,8 +39,7 @@ public class FinancialExcelParser
             var worksheet =
                 workbook.Worksheets.FirstOrDefault();
 
-            if (worksheet is null)
-            {
+            if (worksheet is null){
                 throw new InvalidDataException(
                     "The Excel file does not contain any worksheets.");
             }

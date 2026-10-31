@@ -74,11 +74,21 @@ export async function confirmInventorySession({
     inventoryType,
     beforeFile,
     afterFile,
+    branchId,
+    storeId,
 }) {
     const formData = new FormData();
 
     formData.append("beforeFile", beforeFile);
     formData.append("afterFile", afterFile);
+
+    if (branchId !== undefined && branchId !== null && branchId !== "") {
+        formData.append("branchId", branchId);
+    }
+
+    if (storeId !== undefined && storeId !== null && storeId !== "") {
+        formData.append("storeId", storeId);
+    }
 
     return apiClient.postForm(
         `/api/InventorySessions/import/confirm?inventoryType=${inventoryType}`,

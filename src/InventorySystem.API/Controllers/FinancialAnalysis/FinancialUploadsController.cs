@@ -15,6 +15,8 @@ namespace InventorySystem.API.Controllers.FinancialAnalysis;
 [Authorize]
 public class FinancialUploadsController : ControllerBase
 {
+    private const long MaxFileSize = 20L * 1024 * 1024;
+
     private readonly IMediator _mediator;
 
     public FinancialUploadsController(
@@ -127,6 +129,32 @@ public class FinancialUploadsController : ControllerBase
                 {
                     message =
                         "File is required."
+                });
+        }
+
+        var extension =
+            Path.GetExtension(request.File.FileName);
+
+        if (!string.Equals(
+                extension,
+                ".xlsx",
+                StringComparison.OrdinalIgnoreCase))
+        {
+            return BadRequest(
+                new
+                {
+                    message =
+                        "Only .xlsx Excel files are supported."
+                });
+        }
+
+        if (request.File.Length > MaxFileSize)
+        {
+            return BadRequest(
+                new
+                {
+                    message =
+                        "The maximum allowed file size is 20 MB."
                 });
         }
 

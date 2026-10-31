@@ -118,7 +118,7 @@ public sealed class LoginHandler
                 permissions);
 
         var expiresAt =
-            DateTime.UtcNow.AddHours(8);
+            DateTime.UtcNow.AddHours(6);
 
         await _auditLogService.LogAsync(
             action: "Login",
