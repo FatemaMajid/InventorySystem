@@ -49,39 +49,36 @@ builder.Services.AddScoped<IAuditLogService, AuditLogService>();
 
 builder.Services.AddDbContext<ApplicationDbContext>((serviceProvider, options) =>
     options
-        .UseSqlServer(
-            builder.Configuration.GetConnectionString(
-                "DefaultConnection"))
-        .AddInterceptors(
-            serviceProvider.GetRequiredService<AuditLogInterceptor>()));
+        .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+        .AddInterceptors(serviceProvider.GetRequiredService<AuditLogInterceptor>()));
 
-builder.Services.AddScoped<
-    IApplicationDbContext,
-    ApplicationDbContext>();
+builder.Services.AddScoped<IApplicationDbContext, ApplicationDbContext>();
 
 // =====================================================
 // Financial File Storage
 // =====================================================
 
-builder.Services.AddScoped<
-    IFinancialFileStorageService,
-    FinancialFileStorageService>();
+builder.Services.AddScoped<IFinancialFileStorageService, FinancialFileStorageService>();
 
 // =====================================================
 // Financial Excel Parser
 // =====================================================
-builder.Services.AddScoped<
-    FinancialExcelParser>();
+
+builder.Services.AddScoped<FinancialExcelParser>();
+
+// =====================================================
+// Financial Export Services
+// =====================================================
+
+builder.Services.AddScoped<IFinancialDashboardExcelExportService, FinancialDashboardExcelExportService>();
+builder.Services.AddScoped<IFinancialDashboardPdfExportService, FinancialDashboardPdfExportService>();
 
 // =====================================================
 // Inventory Import
 // =====================================================
 
-builder.Services.AddScoped<
-    InventoryImportPreviewService>();
-
-builder.Services.AddScoped<
-    InventoryImportConfirmService>();
+builder.Services.AddScoped<InventoryImportPreviewService>();
+builder.Services.AddScoped<InventoryImportConfirmService>();
 
 // =====================================================
 // Localization
@@ -93,67 +90,37 @@ builder.Services.AddLocalization();
 // MediatR
 // =====================================================
 
-builder.Services.AddMediatR(
-    typeof(GetAllBranchesQuery).Assembly);
+builder.Services.AddMediatR(typeof(GetAllBranchesQuery).Assembly);
 
 // =====================================================
 // FluentValidation
 // =====================================================
 
-builder.Services.AddValidatorsFromAssembly(
-    typeof(CreateBranchCommandValidator).Assembly);
-
-builder.Services.AddTransient(
-    typeof(IPipelineBehavior<,>),
-    typeof(ValidationBehavior<,>));
-
-
-
+builder.Services.AddValidatorsFromAssembly(typeof(CreateBranchCommandValidator).Assembly);
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 // =====================================================
 // Authentication Services
 // =====================================================
 
-builder.Services.AddScoped<
-    IPasswordService,
-    PasswordService>();
-
-builder.Services.AddScoped<
-    IJwtService,
-    JwtService>();
+builder.Services.AddScoped<IPasswordService, PasswordService>();
+builder.Services.AddScoped<IJwtService, JwtService>();
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddScoped<
-    ICurrentUserService,
-    CurrentUserService>();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+builder.Services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
-builder.Services.AddSingleton<
-    IAuthorizationPolicyProvider,
-    PermissionPolicyProvider>();
-
-builder.Services.AddScoped<
-    IAuthorizationHandler,
-    PermissionAuthorizationHandler>();
-
-builder.Services.AddScoped<
-    IDashboardExportService,
-    DashboardExportService>();
-
-builder.Services.AddScoped<
-    IComparisonExportService,
-    ComparisonExportService>();
-
-builder.Services.AddScoped<
-    IFinancialPeriodExportService,
-    FinancialPeriodExportService>();
+builder.Services.AddScoped<IDashboardExportService, DashboardExportService>();
+builder.Services.AddScoped<IComparisonExportService, ComparisonExportService>();
+builder.Services.AddScoped<IFinancialPeriodExportService, FinancialPeriodExportService>();
 
 // =====================================================
 // JWT Authentication
 // =====================================================
 
-var jwtSecret =
-    builder.Configuration["Jwt:Secret"];
+var jwtSecret = builder.Configuration["Jwt:Secret"];
 
 if (string.IsNullOrWhiteSpace(jwtSecret))
 {
@@ -163,35 +130,24 @@ if (string.IsNullOrWhiteSpace(jwtSecret))
         "or appsettings.Development.json.");
 }
 
-var jwtIssuer =
-    builder.Configuration["Jwt:Issuer"]
-    ?? "InventorySystem";
-
-var jwtAudience =
-    builder.Configuration["Jwt:Audience"]
-    ?? "InventorySystem.Frontend";
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "InventorySystem";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "InventorySystem.Frontend";
 
 builder.Services
-    .AddAuthentication(
-        JwtBearerDefaults.AuthenticationScheme)
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
-        options.TokenValidationParameters =
-            new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtIssuer,
-                ValidAudience = jwtAudience,
-                IssuerSigningKey =
-                    new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(
-                            jwtSecret)),
-                ClockSkew =
-                    TimeSpan.FromMinutes(1)
-            };
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
+            ClockSkew = TimeSpan.Zero
+        };
     });
 
 // =====================================================
@@ -206,43 +162,31 @@ builder.Services.AddAuthorization();
 
 builder.Services.AddRateLimiter(options =>
 {
-    options.GlobalLimiter =
-        PartitionedRateLimiter.Create<HttpContext, string>(
-            httpContext =>
-            {
-                if (!httpContext.Request.Path
-                    .StartsWithSegments("/api/Auth/login"))
-                {
-                    return RateLimitPartition.GetNoLimiter(
-                        "no-limit");
-                }
-
-                var ipAddress =
-                    httpContext.Connection.RemoteIpAddress?
-                        .ToString()
-                    ?? "unknown";
-
-                return RateLimitPartition.GetSlidingWindowLimiter(
-                    ipAddress,
-                    _ => new SlidingWindowRateLimiterOptions
-                    {
-                        PermitLimit = 5,
-                        Window = TimeSpan.FromMinutes(1),
-                        SegmentsPerWindow = 5,
-                        QueueLimit = 0,
-                        AutoReplenishment = true
-                    });
-            });
-
-    options.OnRejected = async (
-        context,
-        cancellationToken) =>
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
     {
-        context.HttpContext.Response.StatusCode =
-            StatusCodes.Status429TooManyRequests;
+        if (!httpContext.Request.Path.StartsWithSegments("/api/Auth/login"))
+        {
+            return RateLimitPartition.GetNoLimiter("no-limit");
+        }
 
-        context.HttpContext.Response.ContentType =
-            "application/json";
+        var ipAddress = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+
+        return RateLimitPartition.GetSlidingWindowLimiter(
+            ipAddress,
+            _ => new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = 5,
+                Window = TimeSpan.FromMinutes(1),
+                SegmentsPerWindow = 5,
+                QueueLimit = 0,
+                AutoReplenishment = true
+            });
+    });
+
+    options.OnRejected = async (context, cancellationToken) =>
+    {
+        context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+        context.HttpContext.Response.ContentType = "application/json";
 
         await context.HttpContext.Response.WriteAsync(
             "{\"message\":\"Too many login attempts. Please try again later.\"}",
@@ -255,34 +199,25 @@ builder.Services.AddRateLimiter(options =>
 // =====================================================
 
 builder.Services.AddControllers();
-
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(options =>
 {
-    options.AddSecurityDefinition(
-        "Bearer",
-        new OpenApiSecurityScheme
-        {
-            Name = "Authorization",
-            Type = SecuritySchemeType.Http,
-            Scheme = "bearer",
-            BearerFormat = "JWT",
-            In = ParameterLocation.Header,
-            Description =
-                "Enter: Bearer {your JWT token}"
-        });
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter: Bearer {your JWT token}"
+    });
 
-    options.AddSecurityRequirement(
-        document =>
-            new OpenApiSecurityRequirement
-            {
-                [
-                    new OpenApiSecuritySchemeReference(
-                        "Bearer",
-                        document)
-                ] = []
-            });
+    options.AddSecurityRequirement(document =>
+        new OpenApiSecurityRequirement
+        {
+            [new OpenApiSecuritySchemeReference("Bearer", document)] = []
+        });
 });
 
 // =====================================================
@@ -294,8 +229,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("Frontend", policy =>
     {
         policy
-            .WithOrigins(
-                "http://localhost:5173")
+            .WithOrigins("http://localhost:5173")
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -304,13 +238,6 @@ builder.Services.AddCors(options =>
 // =====================================================
 // Build
 // =====================================================
-
-builder.Services.AddScoped<
-    IFinancialDashboardExcelExportService,
-    FinancialDashboardExcelExportService>();
-builder.Services.AddScoped<
-    IFinancialDashboardPdfExportService,
-    FinancialDashboardPdfExportService>();
 
 var app = builder.Build();
 
@@ -325,17 +252,10 @@ if (!app.Environment.IsDevelopment())
 
 app.Use(async (context, next) =>
 {
-    context.Response.Headers["X-Content-Type-Options"] =
-        "nosniff";
-
-    context.Response.Headers["X-Frame-Options"] =
-        "DENY";
-
-    context.Response.Headers["Referrer-Policy"] =
-        "strict-origin-when-cross-origin";
-
-    context.Response.Headers["Permissions-Policy"] =
-        "camera=(), microphone=(), geolocation=()";
+    context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+    context.Response.Headers["X-Frame-Options"] = "DENY";
+    context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+    context.Response.Headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()";
 
     await next();
 });
@@ -356,26 +276,20 @@ var supportedCultures = new[]
     new CultureInfo("en")
 };
 
-var localizationOptions =
-    new RequestLocalizationOptions
-    {
-        DefaultRequestCulture =
-            new RequestCulture("ar"),
-        SupportedCultures =
-            supportedCultures,
-        SupportedUICultures =
-            supportedCultures
-    };
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("ar"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+};
 
-app.UseRequestLocalization(
-    localizationOptions);
+app.UseRequestLocalization(localizationOptions);
 
 // =====================================================
 // Exception Handling
 // =====================================================
 
-app.UseMiddleware<
-    ExceptionHandlingMiddleware>();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // =====================================================
 // Swagger
@@ -384,7 +298,6 @@ app.UseMiddleware<
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-
     app.UseSwaggerUI();
 }
 
@@ -407,9 +320,7 @@ app.UseRateLimiter();
 // =====================================================
 
 app.UseAuthentication();
-
 app.UseAuthorization();
-
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
@@ -419,7 +330,6 @@ app.UseStaticFiles();
 // =====================================================
 
 app.MapControllers();
-
 app.MapFallbackToFile("index.html");
 
 // =====================================================
@@ -428,32 +338,19 @@ app.MapFallbackToFile("index.html");
 
 using (var scope = app.Services.CreateScope())
 {
-    var context =
-        scope.ServiceProvider
-            .GetRequiredService<ApplicationDbContext>();
-
-    var configuration =
-        scope.ServiceProvider
-            .GetRequiredService<IConfiguration>();
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
 
     // Master Data
-    await BranchSeeder.SeedAsync(
-        context);
-
-    await StoreSeeder.SeedAsync(
-        context);
-
-    await UnitSeeder.SeedAsync(
-        context);
+    await BranchSeeder.SeedAsync(context);
+    await StoreSeeder.SeedAsync(context);
+    await UnitSeeder.SeedAsync(context);
 
     // Roles & Permissions
-    await AuthorizationSeeder.SeedAsync(
-        context);
+    await AuthorizationSeeder.SeedAsync(context);
 
     // Initial Manager
-    await UserSeeder.SeedAsync(
-        context,
-        configuration);
+    await UserSeeder.SeedAsync(context, configuration);
 }
 
 // =====================================================
