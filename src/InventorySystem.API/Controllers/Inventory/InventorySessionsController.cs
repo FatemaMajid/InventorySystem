@@ -1,4 +1,4 @@
-using InventorySystem.API.Authorization;
+﻿using InventorySystem.API.Authorization;
 using InventorySystem.Application.Common.Authorization;
 using InventorySystem.Application.Common.Interfaces;
 using InventorySystem.Application.Features.Inventory.InventorySessions.Import.Confirm;
@@ -17,7 +17,7 @@ namespace InventorySystem.API.Controllers;
 [Route("api/[controller]")]
 public class InventorySessionsController : ControllerBase
 {
-    private const long MaxExcelFileSize = 50 * 1024 * 1024;
+    private const long MaxExcelFileSize = 20 * 1024 * 1024;
 
     private readonly IMediator _mediator;
     private readonly InventoryImportPreviewService _previewService;
@@ -77,7 +77,7 @@ public class InventorySessionsController : ControllerBase
             return BadRequest("Excel file is required.");
 
         if (file.Length > MaxExcelFileSize)
-            return BadRequest("Excel file size cannot exceed 10 MB.");
+            return BadRequest("Excel file size cannot exceed 20 MB.");
 
         if (!string.Equals(
                 Path.GetExtension(file.FileName),
@@ -97,6 +97,8 @@ public class InventorySessionsController : ControllerBase
     }
 
     [HttpPost("import/confirm")]
+    [RequestSizeLimit(50 * 1024 * 1024)]
+    [RequestFormLimits(MultipartBodyLengthLimit = 50 * 1024 * 1024)]
     [HasPermission(PermissionCodes.InventorySessionCreate)]
     public async Task<IActionResult> Confirm(
         IFormFile beforeFile,
@@ -112,10 +114,10 @@ public class InventorySessionsController : ControllerBase
             return BadRequest("After inventory Excel file is required.");
 
         if (beforeFile.Length > MaxExcelFileSize)
-            return BadRequest("Before inventory Excel file size cannot exceed 10 MB.");
+            return BadRequest("Before inventory Excel file size cannot exceed 20 MB.");
 
         if (afterFile.Length > MaxExcelFileSize)
-            return BadRequest("After inventory Excel file size cannot exceed 10 MB.");
+            return BadRequest("After inventory Excel file size cannot exceed 20 MB.");
 
         if (!string.Equals(
                 Path.GetExtension(beforeFile.FileName),
@@ -172,7 +174,7 @@ public class InventorySessionsController : ControllerBase
             cancellationToken);
 
         var fileName = language == "ar"
-            ? $"تقرير_الجرد_{id}.xlsx"
+            ? $"ØªÙ‚Ø±ÙŠØ±_Ø§Ù„Ø¬Ø±Ø¯_{id}.xlsx"
             : $"Inventory_Report_{id}.xlsx";
 
         return File(
@@ -199,7 +201,7 @@ public class InventorySessionsController : ControllerBase
             cancellationToken);
 
         var fileName = language == "ar"
-            ? $"تقرير_الجرد_{id}.pdf"
+            ? $"ØªÙ‚Ø±ÙŠØ±_Ø§Ù„Ø¬Ø±Ø¯_{id}.pdf"
             : $"Inventory_Report_{id}.pdf";
 
         return File(file, "application/pdf", fileName);
@@ -232,7 +234,7 @@ public class InventorySessionsController : ControllerBase
             file,
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             language == "ar"
-                ? $"مقارنة_الجرد_{id}.xlsx"
+                ? $"Ù…Ù‚Ø§Ø±Ù†Ø©_Ø§Ù„Ø¬Ø±Ø¯_{id}.xlsx"
                 : $"Inventory_Comparison_{id}.xlsx");
     }
 
@@ -263,7 +265,8 @@ public class InventorySessionsController : ControllerBase
             file,
             "application/pdf",
             language == "ar"
-                ? $"مقارنة_الجرد_{id}.pdf"
+                ? $"Ù…Ù‚Ø§Ø±Ù†Ø©_Ø§Ù„Ø¬Ø±Ø¯_{id}.pdf"
                 : $"Inventory_Comparison_{id}.pdf");
     }
 }
+
