@@ -102,9 +102,36 @@ public sealed class UpdateUserHandler : IRequestHandler<UpdateUserCommand, Updat
                 $"Invalid permissions: {string.Join(", ", missing)}");
         }
 
+        var currentRoleIds = user.UserRoles
+            .Select(x => x.RoleId)
+            .OrderBy(x => x)
+            .ToList();
+
+        var currentPermissionIds = user.UserPermissions
+            .Select(x => x.PermissionId)
+            .OrderBy(x => x)
+            .ToList();
+
+        var requestedPermissionIds = permissions
+            .Select(x => x.Id)
+            .OrderBy(x => x)
+            .ToList();
+
+        var securitySettingsChanged =
+            !string.Equals(user.Username, username, StringComparison.Ordinal) ||
+            user.IsActive != request.IsActive ||
+            !currentRoleIds.SequenceEqual(new[] { role.Id }) ||
+            !currentPermissionIds.SequenceEqual(requestedPermissionIds) ||
+            !string.IsNullOrWhiteSpace(request.Password);
+
         user.Username = username;
         user.IsActive = request.IsActive;
         user.UpdatedAt = DateTime.UtcNow;
+
+        if (securitySettingsChanged)
+        {
+            user.TokenVersion++;
+        }
 
         if (!string.IsNullOrWhiteSpace(request.Password))
         {

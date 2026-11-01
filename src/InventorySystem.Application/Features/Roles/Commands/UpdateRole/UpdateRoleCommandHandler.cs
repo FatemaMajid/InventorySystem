@@ -95,6 +95,23 @@ public sealed class UpdateRoleCommandHandler
                 "One or more permissions were not found.");
         }
 
+        var existingPermissionIds = role.RolePermissions
+            .Select(x => x.PermissionId)
+            .OrderBy(x => x)
+            .ToList();
+
+        var requestedPermissionIds = permissionIds
+            .OrderBy(x => x)
+            .ToList();
+
+        var roleNameChanged =
+            !isProtectedRole &&
+            !string.Equals(role.Name, name, StringComparison.Ordinal);
+
+        var securitySettingsChanged =
+            roleNameChanged ||
+            !existingPermissionIds.SequenceEqual(requestedPermissionIds);
+
         role.Name = isProtectedRole
             ? role.Name
             : name;
@@ -112,6 +129,18 @@ public sealed class UpdateRoleCommandHandler
                 {
                     PermissionId = permissionId
                 });
+        }
+
+        if (securitySettingsChanged)
+        {
+            var usersWithRole = await _context.Users
+                .Where(x => x.UserRoles.Any(userRole => userRole.RoleId == role.Id))
+                .ToListAsync(cancellationToken);
+
+            foreach (var user in usersWithRole)
+            {
+                user.TokenVersion++;
+            }
         }
 
         await _context.SaveChangesAsync(cancellationToken);

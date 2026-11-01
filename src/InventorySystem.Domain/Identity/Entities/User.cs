@@ -10,6 +10,9 @@ public class User
 
     public bool IsActive { get; set; } = true;
 
+    // Increment to revoke all previously issued JWTs for this user.
+    public int TokenVersion { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }

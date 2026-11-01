@@ -26,6 +26,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.IsActive)
             .IsRequired();
 
+        builder.Property(x => x.TokenVersion)
+            .IsRequired()
+            .HasDefaultValue(0);
+
         builder.Property(x => x.CreatedAt)
             .IsRequired();
     }

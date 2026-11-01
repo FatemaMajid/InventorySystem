@@ -6,5 +6,6 @@ public interface IJwtService
         int userId,
         string username,
         IEnumerable<string> roles,
-        IEnumerable<string> permissions);
+        IEnumerable<string> permissions,
+        int tokenVersion);
 }

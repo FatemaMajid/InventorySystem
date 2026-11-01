@@ -115,7 +115,8 @@ public sealed class LoginHandler
                 user.Id,
                 user.Username,
                 roles,
-                permissions);
+                permissions,
+                user.TokenVersion);
 
         var expiresAt =
             DateTime.UtcNow.AddHours(6);

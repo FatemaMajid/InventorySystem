@@ -21,7 +21,8 @@ public sealed class JwtService
         int userId,
         string username,
         IEnumerable<string> roles,
-        IEnumerable<string> permissions)
+        IEnumerable<string> permissions,
+        int tokenVersion)
     {
         var secret =
             _configuration["Jwt:Secret"];
@@ -66,7 +67,11 @@ public sealed class JwtService
 
                 new(
                     ClaimTypes.Name,
-                    username)
+                    username),
+
+                new(
+                    "token_version",
+                    tokenVersion.ToString())
             };
 
         foreach (var role in roles)
