@@ -91,15 +91,26 @@ public class ApproveFinancialPeriodCommandHandler : IRequestHandler<ApproveFinan
         period.UpdatedAt = DateTime.UtcNow;
         period.UpdatedBy = _currentUser.Username;
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
-        await _auditLogService.LogAsync(
-            action: "Approve",
-            entity: "FinancialPeriod",
-            entityId: period.Id.ToString(),
-            details: $"StartDate: {period.StartDate:yyyy-MM-dd}, EndDate: {period.EndDate:yyyy-MM-dd}, Files: {validUploads}/{expectedFiles}",
-            cancellationToken: cancellationToken);
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
 
-        return true;
+            await _auditLogService.LogAsync(
+                action: "Approve",
+                entity: "FinancialPeriod",
+                entityId: period.Id.ToString(),
+                details: $"StartDate: {period.StartDate:yyyy-MM-dd}, EndDate: {period.EndDate:yyyy-MM-dd}, Files: {validUploads}/{expectedFiles}",
+                cancellationToken: cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
+            return true;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            throw;
+        }
     }
 }

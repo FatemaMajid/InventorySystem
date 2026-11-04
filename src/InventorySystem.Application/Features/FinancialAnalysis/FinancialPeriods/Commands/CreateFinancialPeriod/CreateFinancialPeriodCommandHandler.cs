@@ -1,4 +1,4 @@
-﻿using InventorySystem.Application.Common.Interfaces;
+using InventorySystem.Application.Common.Interfaces;
 using InventorySystem.Domain.FinancialAnalysis.Entities;
 using InventorySystem.Domain.FinancialAnalysis.Enums;
 using MediatR;
@@ -47,19 +47,26 @@ public class CreateFinancialPeriodCommandHandler
 
         _context.FinancialPeriods.Add(period);
 
-        await _context.SaveChangesAsync(
-            cancellationToken);
+        await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
-        await _auditLogService.LogAsync(
-            action: "Create",
-            entity: "FinancialPeriod",
-            entityId:
-                period.Id.ToString(),
-            details:
-                $"StartDate: {period.StartDate:yyyy-MM-dd}, EndDate: {period.EndDate:yyyy-MM-dd}",
-            cancellationToken:
-                cancellationToken);
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
 
-        return period.Id;
+            await _auditLogService.LogAsync(
+                action: "Create",
+                entity: "FinancialPeriod",
+                entityId: period.Id.ToString(),
+                details: $"StartDate: {period.StartDate:yyyy-MM-dd}, EndDate: {period.EndDate:yyyy-MM-dd}",
+                cancellationToken: cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
+            return period.Id;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            throw;
+        }
     }
 }

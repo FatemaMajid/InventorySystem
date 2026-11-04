@@ -55,19 +55,26 @@ public class DeleteFinancialPeriodCommandHandler
         period.UpdatedBy =
             _currentUser.Username;
 
-        await _context.SaveChangesAsync(
-            cancellationToken);
+        await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
-        await _auditLogService.LogAsync(
-            action: "Delete",
-            entity: "FinancialPeriod",
-            entityId:
-                period.Id.ToString(),
-            details:
-                $"StartDate: {period.StartDate:yyyy-MM-dd}, EndDate: {period.EndDate:yyyy-MM-dd}",
-            cancellationToken:
-                cancellationToken);
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
 
-        return true;
+            await _auditLogService.LogAsync(
+                action: "Delete",
+                entity: "FinancialPeriod",
+                entityId: period.Id.ToString(),
+                details: $"StartDate: {period.StartDate:yyyy-MM-dd}, EndDate: {period.EndDate:yyyy-MM-dd}",
+                cancellationToken: cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
+            return true;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            throw;
+        }
     }
 }

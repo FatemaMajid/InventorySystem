@@ -68,19 +68,28 @@ public class UpdateFinancialPeriodCommandHandler
         period.UpdatedBy =
             _currentUser.Username;
 
-        await _context.SaveChangesAsync(
-            cancellationToken);
+        await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
-        await _auditLogService.LogAsync(
-            action: "Update",
-            entity: "FinancialPeriod",
-            entityId: period.Id.ToString(),
-            details:
-                $"StartDate: {oldStartDate:yyyy-MM-dd} -> {period.StartDate:yyyy-MM-dd}, " +
-                $"EndDate: {oldEndDate:yyyy-MM-dd} -> {period.EndDate:yyyy-MM-dd}",
-            cancellationToken:
-                cancellationToken);
+        try
+        {
+            await _context.SaveChangesAsync(cancellationToken);
 
-        return true;
+            await _auditLogService.LogAsync(
+                action: "Update",
+                entity: "FinancialPeriod",
+                entityId: period.Id.ToString(),
+                details:
+                    $"StartDate: {oldStartDate:yyyy-MM-dd} -> {period.StartDate:yyyy-MM-dd}, " +
+                    $"EndDate: {oldEndDate:yyyy-MM-dd} -> {period.EndDate:yyyy-MM-dd}",
+                cancellationToken: cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
+            return true;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(CancellationToken.None);
+            throw;
+        }
     }
 }
