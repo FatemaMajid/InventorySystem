@@ -20,6 +20,12 @@ public class UploadFinancialFileCommandValidator
         RuleFor(x => x.Scope)
             .IsInEnum();
 
+        RuleFor(x => x.Gender)
+            .Must(gender =>
+                !gender.HasValue ||
+                Enum.IsDefined(gender.Value))
+            .WithMessage("Invalid financial gender.");
+
         RuleFor(x => x.OriginalFileName)
             .NotEmpty()
             .Must(BeExcelFile)
