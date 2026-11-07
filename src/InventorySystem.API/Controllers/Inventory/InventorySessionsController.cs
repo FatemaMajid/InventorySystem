@@ -70,6 +70,8 @@ public class InventorySessionsController : ControllerBase
     }
 
     [HttpPost("import/preview")]
+    [RequestSizeLimit(22 * 1024 * 1024)]
+    [RequestFormLimits(MultipartBodyLengthLimit = 20 * 1024 * 1024)]
     [HasPermission(PermissionCodes.InventorySessionCreate)]
     public async Task<IActionResult> Preview(IFormFile file)
     {

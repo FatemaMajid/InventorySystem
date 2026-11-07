@@ -6,4 +6,7 @@
     <Project Path="src/InventorySystem.Infrastructure/InventorySystem.Infrastructure.csproj" />
     <Project Path="src/InventorySystem.Shared/InventorySystem.Shared.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/InventorySystem.Application.Tests/InventorySystem.Application.Tests.csproj" />
+  </Folder>
 </Solution>

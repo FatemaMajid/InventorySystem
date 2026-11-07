@@ -265,6 +265,39 @@ public static class LocalizationKeys
         public const string Deleted = "Permission.Deleted";
     }
 
+    // Financial Excel
+    public static class FinancialExcel {
+        public const string IncomeHeadersMissing = "FinancialExcel.IncomeHeadersMissing";
+        public const string PositionHeadersMissing = "FinancialExcel.PositionHeadersMissing";
+        public const string AccountNameMissing = "FinancialExcel.AccountNameMissing";
+        public const string NoAccountRows = "FinancialExcel.NoAccountRows";
+        public const string TransferGenderRequired = "FinancialExcel.TransferGenderRequired";
+        public const string TransferHeadersMissing = "FinancialExcel.TransferHeadersMissing";
+        public const string TransferBranchNotMatched = "FinancialExcel.TransferBranchNotMatched";
+        public const string NoTransferRecords = "FinancialExcel.NoTransferRecords";
+        public const string DuplicateTransferBranches = "FinancialExcel.DuplicateTransferBranches";
+        public const string SettlementBranchRequired = "FinancialExcel.SettlementBranchRequired";
+        public const string SettlementGenderRequired = "FinancialExcel.SettlementGenderRequired";
+        public const string SettlementBranchNotFound = "FinancialExcel.SettlementBranchNotFound";
+        public const string SettlementAccountInfoMissing = "FinancialExcel.SettlementAccountInfoMissing";
+        public const string SettlementAccountNameMissing = "FinancialExcel.SettlementAccountNameMissing";
+        public const string SettlementHeadersMissing = "FinancialExcel.SettlementHeadersMissing";
+        public const string NoSettlementTransactions = "FinancialExcel.NoSettlementTransactions";
+        public const string SettlementSummaryMissing = "FinancialExcel.SettlementSummaryMissing";
+        public const string SettlementBranchMismatch = "FinancialExcel.SettlementBranchMismatch";
+        public const string SettlementMaleMismatch = "FinancialExcel.SettlementMaleMismatch";
+        public const string SettlementFemaleMismatch = "FinancialExcel.SettlementFemaleMismatch";
+        public const string InvalidNumber = "FinancialExcel.InvalidNumber";
+        public const string InvalidDate = "FinancialExcel.InvalidDate";
+    }
+    // Financial Upload
+    public static class FinancialUpload
+    {
+        public const string DuplicateFile = "FinancialUpload.DuplicateFile";
+        public const string ParsedRows = "FinancialUpload.ParsedRows";
+        public const string VersionConflict = "FinancialUpload.VersionConflict";
+    }
+
     // Financial Period
     public static class FinancialPeriod
     {

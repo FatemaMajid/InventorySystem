@@ -1,4 +1,5 @@
 ﻿using InventorySystem.Application.Common.Interfaces;
+using InventorySystem.Application.Features.FinancialAnalysis.Common.Localization;
 using InventorySystem.Application.DTOs.FinancialAnalysis.FinancialUpload;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,7 @@ public class GetFinancialUploadsQueryHandler
         GetFinancialUploadsQuery request,
         CancellationToken cancellationToken)
     {
-        return await _context.FinancialUploads
+        var uploads = await _context.FinancialUploads
             .AsNoTracking()
             .Where(
                 x =>
@@ -94,5 +95,10 @@ public class GetFinancialUploadsQueryHandler
                     })
             .ToListAsync(
                 cancellationToken);
+
+        foreach (var upload in uploads){
+            upload.ValidationMessage = FinancialUploadMessageLocalizer.Resolve(upload.ValidationMessage);
+        }
+        return uploads;
     }
 }

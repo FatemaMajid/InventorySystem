@@ -977,6 +977,11 @@ namespace InventorySystem.Infrastructure.Migrations
 
                     b.HasIndex("FinancialPeriodId", "FileType", "BranchId", "Gender", "IsActive");
 
+                    b.HasIndex("FinancialPeriodId", "FileType", "BranchId", "Gender", "Version")
+                        .IsUnique()
+                        .HasDatabaseName("UX_FinancialUploads_Slot_Version")
+                        .HasFilter("[IsDeleted] = 0");
+
                     b.ToTable("FinancialUploads", (string)null);
                 });
 

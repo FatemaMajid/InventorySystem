@@ -1,0 +1,16 @@
+namespace InventorySystem.Application.Features.FinancialAnalysis.Common.Exceptions;
+
+public sealed class FinancialExcelValidationException : Exception {
+    public string ErrorCode { get; }
+    public int? RowNumber { get; }
+
+    public FinancialExcelValidationException(string errorCode, int? rowNumber = null)
+        : base(errorCode){
+        ArgumentException.ThrowIfNullOrWhiteSpace(errorCode);
+        if (rowNumber is <= 0){
+            throw new ArgumentOutOfRangeException(nameof(rowNumber));
+        }
+        ErrorCode = errorCode;
+        RowNumber = rowNumber;
+    }
+}

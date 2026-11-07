@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿using InventorySystem.Application.Common.Localization;
+using InventorySystem.Application.Features.FinancialAnalysis.Common.Exceptions;
+using System.Globalization;
 using System.Text;
 using ClosedXML.Excel;
 using InventorySystem.Application.Common.Interfaces;
@@ -24,8 +26,7 @@ public class FinancialExcelParser
     {
         if (content.Length == 0)
         {
-            throw new InvalidDataException(
-                "The Excel file is empty.");
+            throw new FinancialExcelValidationException(LocalizationKeys.Excel.EmptyFile);
         }
 
         try
@@ -40,8 +41,7 @@ public class FinancialExcelParser
                 workbook.Worksheets.FirstOrDefault();
 
             if (worksheet is null){
-                throw new InvalidDataException(
-                    "The Excel file does not contain any worksheets.");
+                throw new FinancialExcelValidationException(LocalizationKeys.Excel.NoWorksheet);
             }
 
             return upload.FileType switch
@@ -69,18 +69,23 @@ public class FinancialExcelParser
                         cancellationToken),
 
                 _ =>
-                    throw new InvalidDataException(
-                        "Unsupported financial file type.")
+                    throw new FinancialExcelValidationException(LocalizationKeys.Excel.UnsupportedFormat)
             };
         }
-        catch (InvalidDataException)
+        catch (FinancialExcelValidationException){
+            throw;
+        }
+        catch (InvalidDataException){
+            throw;
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
             throw;
         }
         catch (Exception ex)
         {
             throw new InvalidDataException(
-                $"The Excel file could not be parsed: {ex.Message}",
+                "The Excel file could not be parsed. Please verify the file format and content.",
                 ex);
         }
     }
@@ -101,8 +106,7 @@ public class FinancialExcelParser
 
         if (headerRow == 0)
         {
-            throw new InvalidDataException(
-                "Income statement headers were not found. Expected: رقم الحساب، الاسم، مدين، دائن، رصيد.");
+            throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.IncomeHeadersMissing);
         }
 
         var accountCodeColumn =
@@ -173,8 +177,7 @@ public class FinancialExcelParser
             if (string.IsNullOrWhiteSpace(
                     accountName))
             {
-                throw new InvalidDataException(
-                    $"Income statement row {rowNumber} has an account code but no account name.");
+                throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.AccountNameMissing, rowNumber);
             }
 
             result.AccountRows.Add(
@@ -223,8 +226,7 @@ public class FinancialExcelParser
 
         if (result.AccountRows.Count == 0)
         {
-            throw new InvalidDataException(
-                "The income statement does not contain any valid account rows.");
+            throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.NoAccountRows);
         }
 
         return result;
@@ -245,8 +247,7 @@ public class FinancialExcelParser
 
         if (headerRow == 0)
         {
-            throw new InvalidDataException(
-                "Financial position headers were not found. Expected: رقم الحساب، اسم الحساب، الأصول، الخصوم.");
+            throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.PositionHeadersMissing);
         }
 
         var accountCodeColumn =
@@ -312,8 +313,7 @@ public class FinancialExcelParser
             if (string.IsNullOrWhiteSpace(
                     accountName))
             {
-                throw new InvalidDataException(
-                    $"Financial position row {rowNumber} has an account code but no account name.");
+                throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.AccountNameMissing, rowNumber);
             }
 
             result.AccountRows.Add(
@@ -358,8 +358,7 @@ public class FinancialExcelParser
 
         if (result.AccountRows.Count == 0)
         {
-            throw new InvalidDataException(
-                "The financial position file does not contain any valid account rows.");
+            throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.NoAccountRows);
         }
 
         return result;
@@ -373,8 +372,7 @@ public class FinancialExcelParser
     {
         if (!upload.Gender.HasValue)
         {
-            throw new InvalidDataException(
-                "Transfer file gender is required.");
+            throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.TransferGenderRequired);
         }
 
         var headerRow =
@@ -385,8 +383,7 @@ public class FinancialExcelParser
 
         if (headerRow == 0)
         {
-            throw new InvalidDataException(
-                "Transfer file headers were not found.");
+            throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.TransferHeadersMissing);
         }
 
         var accountCodeColumn =
@@ -487,8 +484,7 @@ public class FinancialExcelParser
                 if (normalizedName.Contains(
                         "فرع"))
                 {
-                    throw new InvalidDataException(
-                        $"Could not match transfer row {rowNumber} branch '{accountName}' with an active system branch.");
+                    throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.TransferBranchNotMatched, rowNumber);
                 }
 
                 continue;
@@ -537,8 +533,7 @@ public class FinancialExcelParser
 
         if (result.TransferRecords.Count == 0)
         {
-            throw new InvalidDataException(
-                "The transfer file does not contain any branch records.");
+            throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.NoTransferRecords);
         }
 
         var duplicateBranches =
@@ -549,8 +544,7 @@ public class FinancialExcelParser
 
         if (duplicateBranches.Count > 0)
         {
-            throw new InvalidDataException(
-                "The transfer file contains duplicate branch records.");
+            throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.DuplicateTransferBranches);
         }
 
         return result;
@@ -564,14 +558,12 @@ public class FinancialExcelParser
     {
         if (!upload.BranchId.HasValue)
         {
-            throw new InvalidDataException(
-                "Settlement branch is required.");
+            throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.SettlementBranchRequired);
         }
 
         if (!upload.Gender.HasValue)
         {
-            throw new InvalidDataException(
-                "Settlement gender is required.");
+            throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.SettlementGenderRequired);
         }
 
         var branch =
@@ -587,8 +579,7 @@ public class FinancialExcelParser
 
         if (branch is null)
         {
-            throw new InvalidDataException(
-                "The settlement branch was not found or is inactive.");
+            throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.SettlementBranchNotFound);
         }
 
         var metadataHeaderRow =
@@ -599,8 +590,7 @@ public class FinancialExcelParser
 
         if (metadataHeaderRow == 0)
         {
-            throw new InvalidDataException(
-                "Settlement account information was not found.");
+            throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.SettlementAccountInfoMissing);
         }
 
         var accountNameColumn =
@@ -623,8 +613,7 @@ public class FinancialExcelParser
         if (string.IsNullOrWhiteSpace(
                 accountName))
         {
-            throw new InvalidDataException(
-                "Settlement account name is missing.");
+            throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.SettlementAccountNameMissing);
         }
 
         ValidateSettlementBranch(
@@ -647,8 +636,7 @@ public class FinancialExcelParser
 
         if (transactionHeaderRow == 0)
         {
-            throw new InvalidDataException(
-                "Settlement transaction headers were not found.");
+            throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.SettlementHeadersMissing);
         }
 
         var dateColumn =
@@ -868,15 +856,13 @@ public class FinancialExcelParser
 
         if (result.SettlementRows.Count == 0)
         {
-            throw new InvalidDataException(
-                "The settlement file does not contain any transactions.");
+            throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.NoSettlementTransactions);
         }
 
         if (!summaryFound ||
             result.SettlementSummary is null)
         {
-            throw new InvalidDataException(
-                "The settlement file does not contain a 'مجموع الفترة' summary row.");
+            throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.SettlementSummaryMissing);
         }
 
         return result;
@@ -977,8 +963,7 @@ public class FinancialExcelParser
             !systemBranchName.Contains(
                 excelBranchName))
         {
-            throw new InvalidDataException(
-                $"Settlement account '{accountName}' does not match selected branch '{branch.BranchNameArabic}'.");
+            throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.SettlementBranchMismatch);
         }
     }
 
@@ -1003,8 +988,7 @@ public class FinancialExcelParser
             !normalized.Contains(
                 maleKeyword))
         {
-            throw new InvalidDataException(
-                "The settlement file is not a male account file.");
+            throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.SettlementMaleMismatch);
         }
 
         if (gender ==
@@ -1012,8 +996,7 @@ public class FinancialExcelParser
             !normalized.Contains(
                 femaleKeyword))
         {
-            throw new InvalidDataException(
-                "The settlement file is not a female account file.");
+            throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.SettlementFemaleMismatch);
         }
     }
 
@@ -1085,8 +1068,7 @@ public class FinancialExcelParser
 
         if (column == 0)
         {
-            throw new InvalidDataException(
-                $"Required Excel column '{string.Join(" / ", headers)}' was not found.");
+            throw new FinancialExcelValidationException(LocalizationKeys.Excel.InvalidHeaders);
         }
 
         return column;
@@ -1192,8 +1174,7 @@ public class FinancialExcelParser
             return value;
         }
 
-        throw new InvalidDataException(
-            $"Invalid numeric value in row {rowNumber}, column '{columnName}': '{text}'.");
+        throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.InvalidNumber, rowNumber);
     }
 
     private static bool TryParseFinancialDecimal(
@@ -1302,8 +1283,7 @@ public class FinancialExcelParser
             }
             catch
             {
-                throw new InvalidDataException(
-                    $"Invalid Excel date in row {rowNumber}.");
+                throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.InvalidDate, rowNumber);
             }
         }
 
@@ -1328,8 +1308,7 @@ public class FinancialExcelParser
             return parsed;
         }
 
-        throw new InvalidDataException(
-            $"Invalid transaction date in row {rowNumber}: '{text}'.");
+        throw new FinancialExcelValidationException(LocalizationKeys.FinancialExcel.InvalidDate, rowNumber);
     }
 
     private static bool GetBoolean(

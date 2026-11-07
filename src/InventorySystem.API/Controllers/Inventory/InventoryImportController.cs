@@ -23,6 +23,8 @@ public class InventoryImportController : ControllerBase
     }
 
     [HttpPost("preview")]
+    [RequestSizeLimit(22 * 1024 * 1024)]
+    [RequestFormLimits(MultipartBodyLengthLimit = 20 * 1024 * 1024)]
     [HasPermission(PermissionCodes.InventorySessionCreate)]
     [Consumes("multipart/form-data")]
     public ActionResult<InventoryImportPreviewResponse> Preview(

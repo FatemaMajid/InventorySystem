@@ -71,6 +71,17 @@ public class FinancialUploadConfiguration : IEntityTypeConfiguration<FinancialUp
             x.IsActive
         });
 
+        builder.HasIndex(x => new
+        {
+            x.FinancialPeriodId,
+            x.FileType,
+            x.BranchId,
+            x.Gender,
+            x.Version
+        })
+        .IsUnique()
+        .HasDatabaseName("UX_FinancialUploads_Slot_Version")
+        .HasFilter("[IsDeleted] = 0");
         builder.HasIndex(x => x.FileHash);
 
         builder.HasIndex(x => new

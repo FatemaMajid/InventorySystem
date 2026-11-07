@@ -1,9 +1,11 @@
-﻿namespace InventorySystem.Application.Common.Exceptions;
+using InventorySystem.Application.Common.Localization;
+
+namespace InventorySystem.Application.Common.Exceptions;
 
 public class DuplicateFinancialUploadException : Exception
 {
     public DuplicateFinancialUploadException()
-        : base("The same file has already been uploaded.")
+        : base(LocalizationKeys.FinancialUpload.DuplicateFile)
     {
     }
 

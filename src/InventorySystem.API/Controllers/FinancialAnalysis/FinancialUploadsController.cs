@@ -113,6 +113,8 @@ public class FinancialUploadsController : ControllerBase
     }
 
     [HttpPost]
+    [RequestSizeLimit(22 * 1024 * 1024)]
+    [RequestFormLimits(MultipartBodyLengthLimit = 20 * 1024 * 1024)]
     [Authorize(
         Policy =
             "Permission:FinancialPeriod.Create")]

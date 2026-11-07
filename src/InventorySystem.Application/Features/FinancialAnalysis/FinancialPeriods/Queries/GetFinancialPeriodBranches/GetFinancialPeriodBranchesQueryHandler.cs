@@ -1,4 +1,5 @@
-﻿using InventorySystem.Application.Common.Interfaces;
+﻿using InventorySystem.Application.Features.FinancialAnalysis.Common.Localization;
+using InventorySystem.Application.Common.Interfaces;
 using InventorySystem.Application.DTOs.FinancialAnalysis.FinancialMonitoring;
 using InventorySystem.Domain.FinancialAnalysis.Entities;
 using InventorySystem.Domain.FinancialAnalysis.Enums;
@@ -179,7 +180,7 @@ public class GetFinancialPeriodBranchesQueryHandler
             OriginalFileName =
                 upload.OriginalFileName,
             ValidationMessage =
-                upload.ValidationMessage
+                FinancialUploadMessageLocalizer.Resolve(upload.ValidationMessage)
         };
     }
 }

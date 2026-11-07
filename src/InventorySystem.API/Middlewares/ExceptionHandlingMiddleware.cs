@@ -107,10 +107,12 @@ public class ExceptionHandlingMiddleware
         HttpContext context,
         DuplicateFinancialUploadException ex)
     {
+        var language = GetLanguage(context);
+
         await WriteResponse(
             context,
             HttpStatusCode.Conflict,
-            ex.Message);
+            LocalizationService.Get(ex.Message, language));
     }
 
     private static async Task HandleUnauthorizedException(
@@ -127,10 +129,12 @@ public class ExceptionHandlingMiddleware
         HttpContext context,
         KeyNotFoundException ex)
     {
+        var language = GetLanguage(context);
+
         await WriteResponse(
             context,
             HttpStatusCode.NotFound,
-            ex.Message);
+            LocalizationService.Get(ex.Message, language));
     }
 
     private static async Task HandleInvalidOperationException(
