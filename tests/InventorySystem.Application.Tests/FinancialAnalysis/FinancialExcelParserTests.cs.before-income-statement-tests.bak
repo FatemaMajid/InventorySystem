@@ -1,0 +1,64 @@
+using ClosedXML.Excel;
+using InventorySystem.Application.Common.Localization;
+using InventorySystem.Application.Features.FinancialAnalysis.Common.Excel;
+using InventorySystem.Application.Features.FinancialAnalysis.Common.Exceptions;
+using InventorySystem.Domain.FinancialAnalysis.Entities;
+using InventorySystem.Domain.FinancialAnalysis.Enums;
+
+namespace InventorySystem.Application.Tests.FinancialAnalysis;
+
+public class FinancialExcelParserTests {
+    [Fact]
+    public async Task ParseAsync_EmptyFile_ThrowsExpectedValidationCode(){
+        var parser = new FinancialExcelParser(null!);
+        var upload = new FinancialUpload {
+            FileType = FinancialFileType.IncomeStatement
+        };
+
+        var exception = await Assert.ThrowsAsync<FinancialExcelValidationException>(
+            () => parser.ParseAsync(upload, Array.Empty<byte>(), CancellationToken.None));
+
+        Assert.Equal(LocalizationKeys.Excel.EmptyFile, exception.ErrorCode);
+        Assert.Null(exception.RowNumber);
+    }
+
+    [Fact]
+    public async Task ParseAsync_IncomeStatementWithoutHeaders_ThrowsExpectedValidationCode(){
+        using var workbook = new XLWorkbook();
+        var worksheet = workbook.AddWorksheet("Test");
+        worksheet.Cell(1, 1).Value = "Unrelated Column";
+        worksheet.Cell(2, 1).Value = "Sample";
+
+        using var stream = new MemoryStream();
+        workbook.SaveAs(stream);
+
+        var parser = new FinancialExcelParser(null!);
+        var upload = new FinancialUpload {
+            FileType = FinancialFileType.IncomeStatement
+        };
+
+        var exception = await Assert.ThrowsAsync<FinancialExcelValidationException>(
+            () => parser.ParseAsync(upload, stream.ToArray(), CancellationToken.None));
+
+        Assert.Equal(LocalizationKeys.FinancialExcel.IncomeHeadersMissing, exception.ErrorCode);
+        Assert.Null(exception.RowNumber);
+    }
+
+    [Fact]
+    public void ValidationException_PreservesErrorCodeAndRowNumber(){
+        var exception = new FinancialExcelValidationException(
+            LocalizationKeys.FinancialExcel.InvalidDate, 25);
+
+        Assert.Equal(LocalizationKeys.FinancialExcel.InvalidDate, exception.ErrorCode);
+        Assert.Equal(25, exception.RowNumber);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void ValidationException_RejectsInvalidRowNumber(int rowNumber){
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new FinancialExcelValidationException(
+                LocalizationKeys.FinancialExcel.InvalidDate, rowNumber));
+    }
+}

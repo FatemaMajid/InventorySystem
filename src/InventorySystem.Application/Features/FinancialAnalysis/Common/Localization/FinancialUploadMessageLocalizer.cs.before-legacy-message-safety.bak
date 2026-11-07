@@ -1,0 +1,30 @@
+using System.Globalization;
+
+using InventorySystem.Application.Common.Localization;
+
+namespace InventorySystem.Application.Features.FinancialAnalysis.Common.Localization;
+
+public static class FinancialUploadMessageLocalizer {
+    public static string? Resolve(string? message){
+        if (string.IsNullOrEmpty(message)){
+            return message;
+        }
+
+        var language = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+
+        if (message == LocalizationKeys.Excel.ImportFailed){
+            return LocalizationService.Get(message, language);
+        }
+
+        var prefix = LocalizationKeys.FinancialUpload.ParsedRows + ":";
+
+        if (message.StartsWith(prefix, StringComparison.Ordinal) &&
+            int.TryParse(message[prefix.Length..], NumberStyles.None,
+                CultureInfo.InvariantCulture, out var count)){
+            return string.Format(CultureInfo.CurrentUICulture,
+                LocalizationService.Get(LocalizationKeys.FinancialUpload.ParsedRows, language), count);
+        }
+
+        return message;
+    }
+}
