@@ -79,24 +79,5 @@ public static class UserSeeder
 
             return;
         }
-
-        var alreadyManager =
-            await context.UserRoles
-                .AnyAsync(
-                    x =>
-                        x.UserId == existingUser.Id &&
-                        x.RoleId == managerRole.Id);
-
-        if (!alreadyManager)
-        {
-            context.UserRoles.Add(
-                new UserRole
-                {
-                    UserId = existingUser.Id,
-                    RoleId = managerRole.Id
-                });
-
-            await context.SaveChangesAsync();
-        }
     }
 }

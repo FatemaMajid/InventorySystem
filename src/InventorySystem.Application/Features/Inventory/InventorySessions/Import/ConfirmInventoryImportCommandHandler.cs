@@ -94,7 +94,7 @@ public class ConfirmInventoryImportCommandHandler
         }
         catch
         {
-            await transaction.RollbackAsync(cancellationToken);
+            await transaction.RollbackAsync(CancellationToken.None);
             throw;
         }
     }

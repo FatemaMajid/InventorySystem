@@ -199,12 +199,6 @@ public static class BranchSeeder
             {
                 context.Set<Branch>().Add(branch);
             }
-            else
-            {
-                existing.BranchNameArabic = branch.BranchNameArabic;
-                existing.BranchNameEnglish = branch.BranchNameEnglish;
-                existing.IsActive = branch.IsActive;
-            }
         }
 
         await context.SaveChangesAsync(cancellationToken);

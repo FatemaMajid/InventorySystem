@@ -1,4 +1,4 @@
-﻿using InventorySystem.Application.Common.Localization;
+using InventorySystem.Application.Common.Localization;
 using InventorySystem.Application.Features.FinancialAnalysis.Common.Exceptions;
 using System.Globalization;
 using System.Text;
@@ -24,6 +24,8 @@ public class FinancialExcelParser
         byte[] content,
         CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         if (content.Length == 0)
         {
             throw new FinancialExcelValidationException(LocalizationKeys.Excel.EmptyFile);
@@ -49,12 +51,12 @@ public class FinancialExcelParser
                 FinancialFileType.IncomeStatement =>
                     ParseIncomeStatement(
                         worksheet,
-                        upload.Id),
+                        upload.Id, cancellationToken),
 
                 FinancialFileType.FinancialPosition =>
                     ParseFinancialPosition(
                         worksheet,
-                        upload.Id),
+                        upload.Id, cancellationToken),
 
                 FinancialFileType.Transfer =>
                     await ParseTransferAsync(
@@ -93,7 +95,7 @@ public class FinancialExcelParser
     private static FinancialExcelParseResult
         ParseIncomeStatement(
             IXLWorksheet worksheet,
-            int uploadId)
+            int uploadId, CancellationToken cancellationToken)
     {
         var headerRow =
             FindHeaderRow(
@@ -153,6 +155,7 @@ public class FinancialExcelParser
              rowNumber <= lastRow;
              rowNumber++)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var row =
                 worksheet.Row(rowNumber);
 
@@ -235,7 +238,7 @@ public class FinancialExcelParser
     private static FinancialExcelParseResult
         ParseFinancialPosition(
             IXLWorksheet worksheet,
-            int uploadId)
+            int uploadId, CancellationToken cancellationToken)
     {
         var headerRow =
             FindHeaderRow(
@@ -289,6 +292,7 @@ public class FinancialExcelParser
              rowNumber <= lastRow;
              rowNumber++)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var row =
                 worksheet.Row(rowNumber);
 
@@ -431,6 +435,7 @@ public class FinancialExcelParser
              rowNumber <= lastRow;
              rowNumber++)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var row =
                 worksheet.Row(rowNumber);
 
@@ -704,6 +709,7 @@ public class FinancialExcelParser
              rowNumber <= lastRow;
              rowNumber++)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             var row =
                 worksheet.Row(rowNumber);
 

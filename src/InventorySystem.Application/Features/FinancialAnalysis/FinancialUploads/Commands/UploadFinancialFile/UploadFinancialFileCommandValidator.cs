@@ -34,7 +34,7 @@ public class UploadFinancialFileCommandValidator
 
         RuleFor(x => x.Content)
             .NotNull()
-            .Must(x => x.Length > 0)
+            .Must(x => x is { Length: > 0 })
             .WithMessage(
                 "The uploaded file is empty.");
 

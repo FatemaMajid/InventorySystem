@@ -755,17 +755,6 @@ public static class StoreSeeder
             {
                 context.Set<Store>().Add(allStores);
             }
-            else
-            {
-                existingAllStores.StoreNameArabic =
-                    allStores.StoreNameArabic;
-
-                existingAllStores.StoreNameEnglish =
-                    allStores.StoreNameEnglish;
-
-                existingAllStores.IsActive =
-                    allStores.IsActive;
-            }
         }
 
         // =========================================================
@@ -784,17 +773,6 @@ public static class StoreSeeder
             if (existing == null)
             {
                 context.Set<Store>().Add(store);
-            }
-            else
-            {
-                existing.StoreNameArabic =
-                    store.StoreNameArabic;
-
-                existing.StoreNameEnglish =
-                    store.StoreNameEnglish;
-
-                existing.IsActive =
-                    store.IsActive;
             }
         }
 
