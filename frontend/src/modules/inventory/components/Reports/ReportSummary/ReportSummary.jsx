@@ -1,11 +1,11 @@
-import { useLanguage } from "../../../../../context/LanguageContext";
+import { useLanguage } from "../../../../../context/useLanguage";
 import Icon from "../../../../../components/UI/Icon/Icon";
 import Skeleton from "../../../../../components/UI/Loading/Skeleton/Skeleton";
 
 import styles from "./ReportSummary.module.css";
 
 function ReportSummary({ data, loading = false }) {
-  const { translations, language, direction } = useLanguage();
+  const { translations, direction } = useLanguage();
   const t = translations.reports;
   const summary = data?.summary ?? {};
   const attention = data?.attention ?? {};

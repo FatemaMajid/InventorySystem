@@ -1,4 +1,4 @@
-import Icon from "../../../../components/UI/Icon/Icon";
+
 import styles from "../../screens/Home/FinancialHome.module.css";
 
 export default function FinancialHeader({ t, loading, onRefresh, error }) {

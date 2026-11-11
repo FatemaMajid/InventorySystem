@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useLanguage } from "../../../context/LanguageContext";
+import { useState } from "react";
+import { useLanguage } from "../../../context/useLanguage";
 import Icon from "../../UI/Icon/Icon";
 import styles from "./StoreForm.module.css";
 
@@ -12,7 +12,6 @@ const emptyForm = {
 };
 
 function StoreForm({
-  open,
   store,
   branches = [],
   saving = false,
@@ -22,25 +21,20 @@ function StoreForm({
 }) {
   const { translations, direction } = useLanguage();
   const t = translations.stores;
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] = useState(() =>
+    store
+      ? {
+          storeCode: store.storeCode ?? "",
+          storeNameArabic: store.storeNameArabic ?? "",
+          storeNameEnglish: store.storeNameEnglish ?? "",
+          branchCode: store.branchCode ?? "",
+          isActive: store.isActive !== false,
+        }
+      : emptyForm
+  );
 
-  useEffect(() => {
-    if (!open) return;
 
-    setForm(
-      store
-        ? {
-            storeCode: store.storeCode ?? "",
-            storeNameArabic: store.storeNameArabic ?? "",
-            storeNameEnglish: store.storeNameEnglish ?? "",
-            branchCode: store.branchCode ?? "",
-            isActive: store.isActive !== false,
-          }
-        : emptyForm
-    );
-  }, [open, store]);
 
-  if (!open) return null;
 
   const update = (key, value) => setForm((current) => ({ ...current, [key]: value }));
 

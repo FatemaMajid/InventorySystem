@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useLanguage } from "../../../../context/LanguageContext";
+import { useLanguage } from "../../../../context/useLanguage";
 import { hasPermission } from "../../../../services/permissionService";
 import {
   getFinancialDashboard,
@@ -134,8 +134,45 @@ function FinancialHome() {
     }, [t.loadError]);
 
   useEffect(() => {
-    loadData();
-  }, [loadData]);
+    let active = true;
+
+    const fetchInitialData = async () => {
+      try {
+        const periodsResponse = await getFinancialPeriods();
+        if (!active) return;
+
+        const list = unwrap(periodsResponse) || [];
+        const normalized = Array.isArray(list) ? list : [];
+
+        setPeriods(normalized);
+
+        if (normalized.length > 0) {
+          const current = [...normalized].sort(
+            (a, b) => Number(periodId(b)) - Number(periodId(a))
+          )[0];
+
+          const dashboardResponse = await getFinancialDashboard({
+            periodId: periodId(current),
+            branchId: "all",
+            sections: "sales,profit,cash,debt",
+          });
+
+          if (!active) return;
+          setDashboard(unwrap(dashboardResponse));
+        }
+      } catch (err) {
+        if (active) setError(err?.message || t.loadError);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+
+    fetchInitialData();
+
+    return () => {
+      active = false;
+    };
+  }, [t.loadError]);
 
   const status =
     normalizeStatus(

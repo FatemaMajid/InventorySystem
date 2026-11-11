@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useLanguage } from "../../context/LanguageContext";
+import { useLanguage } from "../../context/useLanguage";
 import { hasPermission } from "../../services/permissionService";
 
 import UserHeader from "../../components/Users/UserHeader/UserHeader";
@@ -93,8 +93,52 @@ function Users() {
     }, [t.loadError]);
 
     useEffect(() => {
-        loadData();
-    }, [loadData]);
+        let active = true;
+
+        Promise.all([getUsers(), getUserOptions()])
+            .then(([usersResponse, optionsResponse]) => {
+                if (!active) return;
+
+                const usersData =
+                    usersResponse?.data ?? usersResponse;
+
+                const optionsData =
+                    optionsResponse?.data ?? optionsResponse;
+
+                setUsers(
+                    Array.isArray(usersData)
+                        ? usersData
+                        : usersData?.items ?? []
+                );
+
+                setRoles(optionsData?.roles ?? []);
+                setPermissions(optionsData?.permissions ?? []);
+                setError("");
+            })
+            .catch((err) => {
+                if (!active) return;
+
+                console.error(
+                    "Failed to load users:",
+                    err
+                );
+
+                setUsers([]);
+
+                setError(
+                    err?.message ||
+                        t.loadError ||
+                        "Failed to load users."
+                );
+            })
+            .finally(() => {
+                if (active) setLoading(false);
+            });
+
+        return () => {
+            active = false;
+        };
+    }, [t.loadError]);
 
     const filteredUsers = useMemo(() => {
         const search =
@@ -153,15 +197,11 @@ function Users() {
         Math.ceil(totalItems / pageSize)
     );
 
-    useEffect(() => {
-        if (currentPage > totalPages) {
-            setCurrentPage(totalPages);
-        }
-    }, [currentPage, totalPages]);
+    const effectivePage = Math.min(currentPage, totalPages);
 
     const paginatedUsers = useMemo(() => {
         const start =
-            (currentPage - 1) * pageSize;
+            (effectivePage - 1) * pageSize;
 
         return filteredUsers.slice(
             start,
@@ -169,7 +209,7 @@ function Users() {
         );
     }, [
         filteredUsers,
-        currentPage,
+        effectivePage,
         pageSize,
     ]);
 
@@ -342,7 +382,7 @@ function Users() {
                 onDelete={removeUser}
                 canEdit={canEdit}
                 canDeactivate={canDeactivate}
-                currentPage={currentPage}
+                currentPage={effectivePage}
                 totalPages={totalPages}
                 pageSize={pageSize}
                 totalItems={totalItems}
@@ -353,16 +393,17 @@ function Users() {
                 }}
             />
 
-            <UserForm
-                open={formOpen}
-                user={editingUser}
-                roles={roles}
-                permissions={permissions}
-                saving={saving}
-                error={formError}
-                onClose={closeForm}
-                onSubmit={saveUser}
-            />
+            {formOpen && (
+                <UserForm
+                    user={editingUser}
+                    roles={roles}
+                    permissions={permissions}
+                    saving={saving}
+                    error={formError}
+                    onClose={closeForm}
+                    onSubmit={saveUser}
+                />
+            )}
         </main>
     );
 }

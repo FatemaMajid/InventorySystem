@@ -67,28 +67,6 @@ const en = {
 
   inventory: {
 
-    inventoryType: 'Inventory Type',
-
-    selectInventoryType:
-      'Select inventory type',
-
-    inventoryTypes: {
-      semiAnnual: 'Semi-Annual Inventory',
-      annual: 'Annual Inventory',
-    },
-
-    beforeInventory: 'Before Inventory',
-
-    beforeInventoryDescription:
-      'Upload the Excel file before starting the inventory.',
-
-    afterInventory: 'After Inventory',
-
-    afterInventoryDescription:
-      'Upload the Excel file after completing the inventory.',
-
-    invalidExcelFile:
-      'Only Excel files are allowed (.xlsx or .xls).',
 
     removeFile: 'Remove file',
 
@@ -125,9 +103,6 @@ const en = {
       annual: 'Annual Inventory',
     },
 
-    requiredColumns: 'Required Columns',
-    requiredColumnsDescription:
-      'Both Excel files must contain the following columns.',
 
     requiredColumnNames: {
       itemCode: 'Item Code',
@@ -350,7 +325,6 @@ const en = {
       items: "items",
       filters: "Filters",
       clear: "Clear",
-      status: "Status",
       search: "Search (Item Code)",
       searchPlaceholder: "Search...",
       category: "Category",

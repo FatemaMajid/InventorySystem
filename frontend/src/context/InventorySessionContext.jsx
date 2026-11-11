@@ -1,6 +1,7 @@
-import { createContext, useContext, useState } from "react";
+import { useState } from "react";
+import { InventorySessionContext } from "./InventorySessionContextValue";
 
-const InventorySessionContext = createContext(null);
+
 
 export function InventorySessionProvider({ children }) {
   const [activeSession, setActiveSession] = useState(null);
@@ -14,16 +15,4 @@ export function InventorySessionProvider({ children }) {
       {children}
     </InventorySessionContext.Provider>
   );
-}
-
-export function useInventorySession() {
-  const context = useContext(InventorySessionContext);
-
-  if (!context) {
-    throw new Error(
-      "useInventorySession must be used inside InventorySessionProvider"
-    );
-  }
-
-  return context;
 }

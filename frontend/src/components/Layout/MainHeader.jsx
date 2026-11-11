@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useLanguage } from "../../context/LanguageContext";
-import { useTheme } from "../../context/ThemeContext";
-import { useAuth } from "../../context/AuthContext";
+import { useLanguage } from "../../context/useLanguage";
+import { useTheme } from "../../context/useTheme";
+import { useAuth } from "../../context/useAuth";
 import Icon from "../UI/Icon/Icon";
 import styles from "./MainHeader.module.css";
 

@@ -1,7 +1,7 @@
 ﻿import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLanguage } from "../../../../context/LanguageContext";
-import { useInventorySession } from "../../context/InventorySessionContext";
+import { useLanguage } from "../../../../context/useLanguage";
+import { useInventorySession } from "../../../../context/useInventorySession";
 import DashboardHeader from "../../components/Dashboard/DashboardHeader/DashboardHeader";
 import KpiCard from "../../components/Dashboard/KpiCard/KpiCard";
 import FinancialSummary from "../../../financial/components/Dashboard/FinancialSummary/FinancialSummary";
@@ -21,14 +21,13 @@ import {
 } from "../../services/dashboardService";
 import styles from "./Dashboard.module.css";
 
-function Dashboard() {
+function DashboardContent({ activeSession }) {
     const navigate = useNavigate();
     const { translations, language } = useLanguage();
-    const { activeSession } = useInventorySession();
     const sessionId = activeSession?.id;
     const t = translations.dashboard;
     const [dashboardData, setDashboardData] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(Boolean(sessionId));
     const [error, setError] = useState("");
     const [exporting, setExporting] = useState("");
 
@@ -59,8 +58,27 @@ function Dashboard() {
     }, [sessionId, t.errors, translations.common.error]);
 
     useEffect(() => {
-        loadDashboard();
-    }, [loadDashboard]);
+        if (!sessionId) return;
+        let active = true;
+
+        getInventoryDashboard(sessionId)
+            .then((response) => {
+                if (!active) return;
+                setDashboardData(response?.data ?? response);
+                setError("");
+            })
+            .catch((err) => {
+                if (!active) return;
+                console.error("Failed to load dashboard:", err);
+                setDashboardData(null);
+                setError(err?.message || t.errors?.loadDashboard || translations.common.error);
+            })
+            .finally(() => {
+                if (active) setLoading(false);
+            });
+
+        return () => { active = false; };
+    }, [sessionId, t.errors?.loadDashboard, translations.common.error]);
 
     const downloadFile = (blob, fileName) => {
         const url = window.URL.createObjectURL(blob);
@@ -363,6 +381,11 @@ function Dashboard() {
             </section>
         </main>
     );
+}
+
+function Dashboard() {
+    const { activeSession } = useInventorySession();
+    return <DashboardContent key={activeSession?.id ?? "no-session"} activeSession={activeSession} />;
 }
 
 export default Dashboard;

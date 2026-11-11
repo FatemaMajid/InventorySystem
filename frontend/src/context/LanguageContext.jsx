@@ -1,7 +1,8 @@
-import { createContext, useContext, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { LanguageContext } from "./LanguageContextValue";
 import { getTranslations } from "../localization/localization";
 
-const LanguageContext = createContext(null);
+
 
 function getInitialLanguage() {
     const savedLanguage = localStorage.getItem("language");
@@ -83,16 +84,4 @@ export function LanguageProvider({ children }) {
             {children}
         </LanguageContext.Provider>
     );
-}
-
-export function useLanguage() {
-    const context = useContext(LanguageContext);
-
-    if (!context) {
-        throw new Error(
-            "useLanguage must be used inside LanguageProvider"
-        );
-    }
-
-    return context;
 }

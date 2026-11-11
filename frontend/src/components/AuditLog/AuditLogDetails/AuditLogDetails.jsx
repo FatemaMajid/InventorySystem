@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLanguage } from "../../../context/LanguageContext";
+import { useLanguage } from "../../../context/useLanguage";
 import auditLogService from "../../../services/auditLogService";
 import Icon from "../../UI/Icon/Icon";
 import styles from "./AuditLogDetails.module.css";
@@ -7,29 +7,30 @@ import styles from "./AuditLogDetails.module.css";
 const AuditLogDetails = ({ log, onClose }) => {
     const { language, translations, formatDateTime } = useLanguage();
     const [details, setDetails] = useState(log);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(Boolean(log?.id));
 
     useEffect(() => {
-        if (!log?.id) {
-            setDetails(null);
-            return;
-        }
+        if (!log?.id) return;
 
-        const loadDetails = async () => {
-            setLoading(true);
+        let active = true;
 
-            try {
-                const response = await auditLogService.getById(log.id);
+        auditLogService.getById(log.id)
+            .then((response) => {
+                if (!active) return;
                 setDetails(response?.data ?? response ?? log);
-            } catch (error) {
+            })
+            .catch((error) => {
+                if (!active) return;
                 console.error("Failed to load audit log details:", error);
                 setDetails(log);
-            } finally {
-                setLoading(false);
-            }
-        };
+            })
+            .finally(() => {
+                if (active) setLoading(false);
+            });
 
-        loadDetails();
+        return () => {
+            active = false;
+        };
     }, [log]);
 
     if (!log) {

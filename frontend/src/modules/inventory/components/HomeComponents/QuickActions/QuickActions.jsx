@@ -1,4 +1,4 @@
-import { useLanguage } from "../../../../../context/LanguageContext";
+import { useLanguage } from "../../../../../context/useLanguage";
 import { useNavigate } from "react-router-dom";
 import Icon from "../../../../../components/UI/Icon/Icon";
 import styles from "./QuickActions.module.css";

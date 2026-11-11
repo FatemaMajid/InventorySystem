@@ -68,28 +68,6 @@ const ar = {
 
   inventory: {
 
-    inventoryType: 'نوع الجرد',
-
-    selectInventoryType:
-      'اختر نوع الجرد',
-
-    inventoryTypes: {
-      semiAnnual: 'الجرد نصف السنوي',
-      annual: 'الجرد السنوي',
-    },
-
-    beforeInventory: 'قبل الجرد',
-
-    beforeInventoryDescription:
-      'ارفع ملف Excel قبل بدء عملية الجرد.',
-
-    afterInventory: 'بعد الجرد',
-
-    afterInventoryDescription:
-      'ارفع ملف Excel بعد إكمال عملية الجرد.',
-
-    invalidExcelFile:
-      'يسمح فقط بملفات Excel بصيغة .xlsx أو .xls.',
 
     removeFile: 'إزالة الملف',
 
@@ -127,9 +105,6 @@ const ar = {
     },
 
 
-    requiredColumns: 'الأعمدة المطلوبة',
-    requiredColumnsDescription:
-      'يجب أن يحتوي كلا ملفي Excel على الأعمدة التالية.',
 
     requiredColumnNames: {
       itemCode: 'رقم الصنف',
@@ -350,7 +325,6 @@ const ar = {
       items: "عنصر",
       filters: "الفلاتر",
       clear: "مسح",
-      status: "الحالة",
       search: "البحث (رقم الصنف )",
       searchPlaceholder: "بحث...",
       category: "التصنيف",

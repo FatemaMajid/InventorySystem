@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useLanguage } from "../../context/LanguageContext";
+import { useLanguage } from "../../context/useLanguage";
 import { hasPermission } from "../../services/permissionService";
 import BranchHeader from "../../components/Branches/BranchHeader/BranchHeader";
 import BranchStats from "../../components/Branches/BranchStats/BranchStats";
@@ -61,8 +61,35 @@ function Branches() {
   }, [t.loadError]);
 
   useEffect(() => {
-    loadBranches();
-  }, [loadBranches]);
+    let active = true;
+
+    getBranches()
+      .then((response) => {
+        if (!active) return;
+
+        const data = response?.data ?? response;
+        setBranches(
+          Array.isArray(data)
+            ? data
+            : data?.items ?? []
+        );
+        setError("");
+      })
+      .catch((err) => {
+        if (!active) return;
+
+        console.error("Failed to load branches:", err);
+        setBranches([]);
+        setError(err?.message || t.loadError);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [t.loadError]);
 
   const filteredBranches = useMemo(() => {
     const search = filters.search.trim().toLowerCase();
@@ -107,20 +134,16 @@ function Branches() {
     Math.ceil(totalItems / pageSize)
   );
 
-  useEffect(() => {
-    if (page > totalPages) {
-      setPage(totalPages);
-    }
-  }, [page, totalPages]);
+  const effectivePage = Math.min(page, totalPages);
 
   const paginatedBranches = useMemo(() => {
-    const start = (page - 1) * pageSize;
+    const start = (effectivePage - 1) * pageSize;
 
     return filteredBranches.slice(
       start,
       start + pageSize
     );
-  }, [filteredBranches, page, pageSize]);
+  }, [filteredBranches, effectivePage, pageSize]);
 
   const stats = useMemo(() => {
     const active = branches.filter(
@@ -270,7 +293,7 @@ function Branches() {
         onEdit={openEdit}
         onDelete={removeBranch}
         canEdit={canEdit}
-        currentPage={page}
+        currentPage={effectivePage}
         totalPages={totalPages}
         pageSize={pageSize}
         totalItems={totalItems}

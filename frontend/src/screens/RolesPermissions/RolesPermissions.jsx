@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useLanguage } from "../../context/LanguageContext";
+import { useLanguage } from "../../context/useLanguage";
 import { hasPermission } from "../../services/permissionService";
 import RolesPermissionsHeader from "../../components/RolesPermissions/RolesPermissionsHeader/RolesPermissionsHeader";
 import RoleStats from "../../components/RolesPermissions/RoleStats/RoleStats";
@@ -93,8 +93,51 @@ function RolesPermissions() {
     }, [selectedRole, t.loadError]);
 
     useEffect(() => {
-        loadData();
-    }, [loadData]);
+        let active = true;
+
+        Promise.all([getRoles(), getPermissions()])
+            .then(([rolesResponse, permissionsResponse]) => {
+                if (!active) return;
+
+                const rolesData = rolesResponse?.data ?? rolesResponse;
+                const permissionsData = permissionsResponse?.data ?? permissionsResponse;
+                const rolesList = Array.isArray(rolesData)
+                    ? rolesData
+                    : rolesData?.items ?? [];
+                const permissionsList = Array.isArray(permissionsData)
+                    ? permissionsData
+                    : permissionsData?.items ?? [];
+
+                setRoles(rolesList);
+                setPermissions(permissionsList);
+                setSelectedRole((current) =>
+                    current && !rolesList.some((role) => role.id === current.id)
+                        ? null
+                        : current
+                );
+                setError("");
+            })
+            .catch((err) => {
+                if (!active) return;
+
+                console.error("Failed to load roles and permissions:", err);
+                setRoles([]);
+                setPermissions([]);
+                setSelectedRole(null);
+                setError(
+                    err?.message ||
+                        t.loadError ||
+                        "Failed to load roles and permissions."
+                );
+            })
+            .finally(() => {
+                if (active) setLoading(false);
+            });
+
+        return () => {
+            active = false;
+        };
+    }, [t.loadError]);
 
     const selectRole = async (role) => {
         try {
@@ -243,15 +286,16 @@ function RolesPermissions() {
                 />
             </div>
 
-            <RoleForm
-                open={formOpen}
-                role={editingRole}
-                permissions={permissions}
-                saving={saving}
-                error={formError}
-                onClose={closeForm}
-                onSubmit={saveRole}
-            />
+            {formOpen && (
+                <RoleForm
+                    role={editingRole}
+                    permissions={permissions}
+                    saving={saving}
+                    error={formError}
+                    onClose={closeForm}
+                    onSubmit={saveRole}
+                />
+            )}
         </main>
     );
 }

@@ -1,6 +1,6 @@
 import Icon from "../../../../../components/UI/Icon/Icon";
 import Skeleton from "../../../../../components/UI/Loading/Skeleton/Skeleton";
-import { useLanguage } from "../../../../../context/LanguageContext";
+import { useLanguage } from "../../../../../context/useLanguage";
 
 import styles from "./KpiCard.module.css";
 

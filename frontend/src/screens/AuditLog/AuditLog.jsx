@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import auditLogService from "../../services/auditLogService";
 import AuditLogHeader from "../../components/AuditLog/AuditLogHeader/AuditLogHeader";
 import AuditLogStats from "../../components/AuditLog/AuditLogStats/AuditLogStats";
@@ -11,7 +11,7 @@ import styles from "./AuditLog.module.css";
 const AuditLog = () => {
     const [logs, setLogs] = useState([]);
     const [stats, setStats] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(20);
     const [totalItems, setTotalItems] = useState(0);
@@ -25,85 +25,91 @@ const AuditLog = () => {
     });
     const [selectedLog, setSelectedLog] = useState(null);
 
-    const fetchLogs = useCallback(async () => {
-        setLoading(true);
-
-        try {
-            const response = await auditLogService.getAll({
-                pageNumber: currentPage,
-                pageSize,
-                userId: filters.user,
-                action: filters.action,
-                entity: filters.entity,
-                dateFrom: filters.dateFrom,
-                dateTo: filters.dateTo
-            });
-
-            const data = response?.data ?? response;
-            const items = data?.items ?? data?.Items ?? [];
-            const total = data?.totalCount ?? data?.TotalCount ?? 0;
-            const pages =
-                data?.totalPages ??
-                data?.TotalPages ??
-                Math.max(1, Math.ceil(total / pageSize));
-
-            setLogs(items);
-            setTotalItems(total);
-            setTotalPages(pages);
-
-            const today = new Date();
-
-            setStats({
-                total,
-                today: items.filter((log) => {
-                    if (!log.createdAt) {
-                        return false;
-                    }
-
-                    const createdAt = new Date(log.createdAt);
-
-                    return (
-                        createdAt.getFullYear() === today.getFullYear() &&
-                        createdAt.getMonth() === today.getMonth() &&
-                        createdAt.getDate() === today.getDate()
-                    );
-                }).length,
-                success: items.filter(
-                    (log) => log.status === "Success"
-                ).length,
-                failed: items.filter(
-                    (log) => log.status === "Failed"
-                ).length
-            });
-        } catch (error) {
-            console.error("Failed to load audit logs:", error);
-            setLogs([]);
-            setTotalItems(0);
-            setTotalPages(1);
-            setStats(null);
-        } finally {
-            setLoading(false);
-        }
-    }, [currentPage, pageSize, filters]);
-
     useEffect(() => {
-        fetchLogs();
-    }, [fetchLogs]);
+        let active = true;
+
+        auditLogService.getAll({
+            pageNumber: currentPage,
+            pageSize,
+            userId: filters.user,
+            action: filters.action,
+            entity: filters.entity,
+            dateFrom: filters.dateFrom,
+            dateTo: filters.dateTo
+        })
+            .then((response) => {
+                if (!active) return;
+
+                const data = response?.data ?? response;
+                const items = data?.items ?? data?.Items ?? [];
+                const total = data?.totalCount ?? data?.TotalCount ?? 0;
+                const pages =
+                    data?.totalPages ??
+                    data?.TotalPages ??
+                    Math.max(1, Math.ceil(total / pageSize));
+
+                setLogs(items);
+                setTotalItems(total);
+                setTotalPages(pages);
+
+                const today = new Date();
+
+                setStats({
+                    total,
+                    today: items.filter((log) => {
+                        if (!log.createdAt) return false;
+
+                        const createdAt = new Date(log.createdAt);
+
+                        return (
+                            createdAt.getFullYear() === today.getFullYear() &&
+                            createdAt.getMonth() === today.getMonth() &&
+                            createdAt.getDate() === today.getDate()
+                        );
+                    }).length,
+                    success: items.filter(
+                        (log) => log.status === "Success"
+                    ).length,
+                    failed: items.filter(
+                        (log) => log.status === "Failed"
+                    ).length
+                });
+            })
+            .catch((error) => {
+                if (!active) return;
+
+                console.error("Failed to load audit logs:", error);
+                setLogs([]);
+                setTotalItems(0);
+                setTotalPages(1);
+                setStats(null);
+            })
+            .finally(() => {
+                if (active) setLoading(false);
+            });
+
+        return () => {
+            active = false;
+        };
+    }, [currentPage, pageSize, filters]);
 
     const handlePageChange = (page) => {
         if (page < 1 || page > totalPages) {
             return;
         }
 
+        setLoading(true);
         setCurrentPage(page);
     };
 
     const handlePageSizeChange = (size) => {
+        setLoading(true);
         setPageSize(Number(size));
         setCurrentPage(1);
     };
 
     const handleFilterChange = (key, value) => {
+        setLoading(true);
         setFilters((current) => ({
             ...current,
             [key]: value
@@ -113,6 +119,7 @@ const AuditLog = () => {
     };
 
     const handleResetFilters = () => {
+        setLoading(true);
         setFilters({
             user: "",
             action: "",
@@ -149,10 +156,13 @@ const AuditLog = () => {
                     onPageSizeChange={handlePageSizeChange}
                 />
             )}
-            <AuditLogDetails
-                log={selectedLog}
-                onClose={() => setSelectedLog(null)}
-            />
+            {selectedLog && (
+                <AuditLogDetails
+                    key={selectedLog.id ?? "no-id"}
+                    log={selectedLog}
+                    onClose={() => setSelectedLog(null)}
+                />
+            )}
         </main>
     );
 };

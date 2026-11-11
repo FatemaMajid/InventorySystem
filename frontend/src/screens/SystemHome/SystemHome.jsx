@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useLanguage } from "../../context/LanguageContext";
+import { useLanguage } from "../../context/useLanguage";
 import { hasPermission } from "../../services/permissionService";
 import Icon from "../../components/UI/Icon/Icon";
 import styles from "./SystemHome.module.css";

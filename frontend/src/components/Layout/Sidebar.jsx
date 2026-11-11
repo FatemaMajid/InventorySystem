@@ -1,6 +1,6 @@
 import { NavLink } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import { useLanguage } from "../../context/LanguageContext";
+import { useAuth } from "../../context/useAuth";
+import { useLanguage } from "../../context/useLanguage";
 import { navigationGroups } from "../Navigation/navigationItems";
 import { hasPermission } from "../../services/permissionService";
 import Icon from "../UI/Icon/Icon";

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useLanguage } from "../../../../../context/LanguageContext";
+import { useLanguage } from "../../../../../context/useLanguage";
 import Icon from "../../../../../components/UI/Icon/Icon";
 import styles from "./SessionFilters.module.css";
 

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useLanguage } from "../../../../../context/LanguageContext";
+import { useLanguage } from "../../../../../context/useLanguage";
 
 // import Icon from "../../../../../components/UI/Icon/Icon";
 import Filters from "./Filters";
@@ -53,7 +53,7 @@ function ComparisonResults({ sessionId }) {
 
   const [totalItems, setTotalItems] = useState(0);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(Boolean(sessionId));
 
   const [error, setError] = useState("");
 
@@ -115,90 +115,39 @@ function ComparisonResults({ sessionId }) {
    * LOAD DATA
    */
   useEffect(() => {
-    if (!sessionId) {
-      setData([]);
-      setTotalItems(0);
-      return;
-    }
+    if (!sessionId) return;
+    let active = true;
 
-    let cancelled = false;
-
-    const loadComparison = async () => {
-      try {
-        setLoading(true);
-        setError("");
-
-        const response =
-          await getInventoryComparison({
-            sessionId,
-            pageNumber: currentPage,
-            pageSize: PAGE_SIZE,
-
-            itemCode: filters.search,
-            itemName: filters.search,
-
-            categoryId:
-              filters.category === "All"
-                ? null
-                : filters.category,
-
-            unitId:
-              filters.unit === "All"
-                ? null
-                : filters.unit,
-
-            status:
-              filters.status === "All"
-                ? ""
-                : filters.status,
-
-            sortBy: "ItemCode",
-            descending: false,
-          });
-
-        if (cancelled) {
-          return;
-        }
-
+    getInventoryComparison({
+      sessionId,
+      pageNumber: currentPage,
+      pageSize: PAGE_SIZE,
+      itemCode: filters.search,
+      itemName: filters.search,
+      categoryId: filters.category === "All" ? null : filters.category,
+      unitId: filters.unit === "All" ? null : filters.unit,
+      status: filters.status === "All" ? "" : filters.status,
+      sortBy: "ItemCode",
+      descending: false,
+    })
+      .then((response) => {
+        if (!active) return;
         setData(response?.items || []);
-
-        setTotalItems(
-          Number(response?.totalCount || 0)
-        );
-      } catch (err) {
-        if (cancelled) {
-          return;
-        }
-
+        setTotalItems(Number(response?.totalCount || 0));
+        setError("");
+      })
+      .catch((err) => {
+        if (!active) return;
         setData([]);
         setTotalItems(0);
+        setError(err?.message || t.error || "Failed to load comparison results.");
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
 
-        setError(
-          err?.message ||
-          t.error ||
-          "Failed to load comparison results."
-        );
-      } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
-      }
-    };
-
-    loadComparison();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [
-    sessionId,
-    currentPage,
-    filters.status,
-    filters.search,
-    filters.category,
-    filters.unit,
-    t.error,
-  ]);
+    return () => { active = false; };
+  }, [sessionId, currentPage, filters.status, filters.search, filters.category, filters.unit, t.error]);
 
   /*
    * PAGINATION
@@ -220,6 +169,7 @@ function ComparisonResults({ sessionId }) {
     field,
     value
   ) => {
+    setLoading(true);
     setFilters((prev) => ({
       ...prev,
       [field]: value,
@@ -229,10 +179,12 @@ function ComparisonResults({ sessionId }) {
   };
 
   const handleApplyFilters = () => {
+    setLoading(true);
     setCurrentPage(1);
   };
 
   const handleClearFilters = () => {
+    setLoading(true);
     setFilters(EMPTY_FILTERS);
     setCurrentPage(1);
   };
@@ -246,6 +198,7 @@ function ComparisonResults({ sessionId }) {
       return;
     }
 
+    setLoading(true);
     setCurrentPage(page);
   };
 

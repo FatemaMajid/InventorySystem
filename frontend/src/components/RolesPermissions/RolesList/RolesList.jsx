@@ -1,4 +1,4 @@
-import { useLanguage } from "../../../context/LanguageContext";
+import { useLanguage } from "../../../context/useLanguage";
 import Icon from "../../UI/Icon/Icon";
 import styles from "./RolesList.module.css";
 

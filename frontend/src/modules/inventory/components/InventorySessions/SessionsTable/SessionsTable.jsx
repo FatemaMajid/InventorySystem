@@ -1,5 +1,5 @@
-import { useLanguage } from "../../../../../context/LanguageContext";
-import { useInventorySession } from "../../../context/InventorySessionContext";
+import { useLanguage } from "../../../../../context/useLanguage";
+import { useInventorySession } from "../../../../../context/useInventorySession";
 import { useNavigate } from "react-router-dom";
 import Icon from "../../../../../components/UI/Icon/Icon";
 import LoadingState from "../../../../../components/UI/Loading/LoadingState/LoadingState";

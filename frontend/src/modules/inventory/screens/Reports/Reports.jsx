@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
-import { useLanguage } from "../../../../context/LanguageContext";
-import { useInventorySession } from "../../context/InventorySessionContext";
+import { useLanguage } from "../../../../context/useLanguage";
+import { useInventorySession } from "../../../../context/useInventorySession";
 
 import { getInventoryDashboard, getInventoryComparison } from "../../services/dashboardService";
 import { exportReport } from "../../services/reportService";
@@ -16,7 +16,7 @@ import ReportTabs from "../../components/Reports/ReportTabs/ReportTabs";
 import ComparisonFilters from "../../components/ComparisonResults/ComparisonFilters/ComparisonFilters";
 import ComparisonTable from "../../components/ComparisonResults/ComparisonTable/ComparisonTable";
 import Pagination from "../../../../components/UI/Pagination/Pagination";
-import LoadingState from "../../../../components/UI/Loading/LoadingState/LoadingState";
+
 import ErrorState from "../../../../components/UI/ErrorState/ErrorState";
 
 import styles from "./Reports.module.css";
@@ -24,9 +24,8 @@ import styles from "./Reports.module.css";
 const DEFAULT_PAGE_SIZE = 20;
 const EMPTY_FILTERS = { search: "", status: "All" };
 
-function Reports() {
+function ReportsContent({ activeSession }) {
   const { translations, language, direction } = useLanguage();
-  const { activeSession } = useInventorySession();
 
   const t = translations.reports;
   const sessionId = activeSession?.id;
@@ -38,7 +37,7 @@ function Reports() {
   const [filters, setFilters] = useState(EMPTY_FILTERS);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
-  const [loadingDashboard, setLoadingDashboard] = useState(false);
+  const [loadingDashboard, setLoadingDashboard] = useState(Boolean(sessionId));
   const [loadingComparison, setLoadingComparison] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [error, setError] = useState("");
@@ -98,27 +97,68 @@ function Reports() {
   }, [sessionId, currentPage, pageSize, filters.search, filters.status, t.error]);
 
   useEffect(() => {
-    loadDashboard();
-  }, [loadDashboard]);
+    if (!sessionId) return;
+    let active = true;
+
+    getInventoryDashboard(sessionId)
+      .then((response) => {
+        if (!active) return;
+        setDashboard(response?.data ?? response);
+        setError("");
+      })
+      .catch((err) => {
+        if (!active) return;
+        setDashboard(null);
+        setError(err?.message || t.error);
+      })
+      .finally(() => {
+        if (active) setLoadingDashboard(false);
+      });
+
+    return () => { active = false; };
+  }, [sessionId, t.error]);
 
   useEffect(() => {
-    if (activeTab === "comparison") {
-      loadComparison();
-    }
-  }, [activeTab, loadComparison]);
+    if (activeTab !== "comparison" || !sessionId) return;
+    let active = true;
 
-  useEffect(() => {
-    setActiveTab("overview");
-    setCurrentPage(1);
-    setFilters(EMPTY_FILTERS);
-  }, [sessionId]);
+    getInventoryComparison({
+      sessionId,
+      pageNumber: currentPage,
+      pageSize,
+      itemCode: filters.search,
+      status: filters.status === "All" ? "" : filters.status,
+      sortBy: "ItemCode",
+      descending: false,
+    })
+      .then((response) => {
+        if (!active) return;
+        const data = response?.data ?? response;
+        setComparison(data?.items ?? []);
+        setTotalItems(Number(data?.totalCount ?? 0));
+        setComparisonError("");
+      })
+      .catch((err) => {
+        if (!active) return;
+        setComparison([]);
+        setTotalItems(0);
+        setComparisonError(err?.message || t.error);
+      })
+      .finally(() => {
+        if (active) setLoadingComparison(false);
+      });
+
+    return () => { active = false; };
+  }, [activeTab, sessionId, currentPage, pageSize, filters.search, filters.status, t.error]);
 
   const handleFilterChange = (field, value) => {
+    setLoadingComparison(true);
     setFilters((current) => ({ ...current, [field]: value }));
     setCurrentPage(1);
   };
 
   const handleClearFilters = () => {
+    setLoadingComparison(true);
     setFilters(EMPTY_FILTERS);
     setCurrentPage(1);
   };
@@ -167,7 +207,7 @@ function Reports() {
         </div>
       )}
 
-      <ReportTabs activeTab={activeTab} onChange={setActiveTab} />
+      <ReportTabs activeTab={activeTab} onChange={(value) => { if (value === "comparison") setLoadingComparison(true); setActiveTab(value); }} />
 
       {activeTab === "overview" ? (
         <ReportOverview data={dashboard} loading={loadingDashboard} />
@@ -194,7 +234,7 @@ function Reports() {
               totalPages={totalPages}
               pageSize={pageSize}
               totalItems={totalItems}
-              onPageChange={setCurrentPage}
+              onPageChange={(value) => { setLoadingComparison(true); setCurrentPage(value); }}
               onPageSizeChange={(size) => {
                 setPageSize(Number(size));
                 setCurrentPage(1);
@@ -205,6 +245,11 @@ function Reports() {
       )}
     </main>
   );
+}
+
+function Reports() {
+  const { activeSession } = useInventorySession();
+  return <ReportsContent key={activeSession?.id ?? "no-session"} activeSession={activeSession} />;
 }
 
 export default Reports;

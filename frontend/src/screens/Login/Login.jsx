@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import { useLanguage } from "../../context/LanguageContext";
+import { useAuth } from "../../context/useAuth";
+import { useLanguage } from "../../context/useLanguage";
 import Icon from "../../components/UI/Icon/Icon";
 import styles from "./Login.module.css";
 

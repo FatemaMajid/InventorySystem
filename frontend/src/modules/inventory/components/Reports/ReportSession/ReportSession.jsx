@@ -1,10 +1,10 @@
-import { useLanguage } from "../../../../../context/LanguageContext";
+import { useLanguage } from "../../../../../context/useLanguage";
 import Icon from "../../../../../components/UI/Icon/Icon";
 
 import styles from "./ReportSession.module.css";
 
 function ReportSession({ data }) {
-  const { translations, language, direction } = useLanguage();
+  const { translations, direction } = useLanguage();
   const t = translations.reports;
 
   if (!data) return null;

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { useLanguage } from "../../../../context/LanguageContext";
+import { useLanguage } from "../../../../context/useLanguage";
 import { getInventorySessions } from "../../services/inventorySessionService";
 import { getBranches, getStores } from "../../../../services/masterDataService";
 import SessionHeader from "../../components/InventorySessions/SessionHeader/SessionHeader";
@@ -32,9 +32,9 @@ function InventorySessions() {
     const [pageSize, setPageSize] = useState(20);
     const [totalItems, setTotalItems] = useState(0);
     const [totalPages, setTotalPages] = useState(1);
-    const [loadingSessions, setLoadingSessions] = useState(false);
-    const [loadingStats, setLoadingStats] = useState(false);
-    const [loadingMasterData, setLoadingMasterData] = useState(false);
+    const [loadingSessions, setLoadingSessions] = useState(true);
+    const [loadingStats, setLoadingStats] = useState(true);
+    const [, setLoadingMasterData] = useState(false);
     const [sessionsError, setSessionsError] = useState("");
     const [masterDataError, setMasterDataError] = useState("");
 
@@ -84,52 +84,6 @@ function InventorySessions() {
         filters,
         t.loadError,
     ]);
-
-    const fetchStats = useCallback(async () => {
-        try {
-            setLoadingStats(true);
-
-            const response = await getInventorySessions({
-                pageNumber: 1,
-                pageSize: 300,
-            });
-
-            const data = response?.data ?? response;
-            const all = data?.items ?? [];
-
-            const limit = new Date();
-
-            limit.setDate(
-                limit.getDate() - 15
-            );
-
-            setStats({
-                total: Number(
-                    data?.totalCount ??
-                    all.length
-                ),
-                active: all.filter(
-                    (session) =>
-                        session.inventoryDate &&
-                        new Date(
-                            session.inventoryDate
-                        ) >= limit
-                ).length,
-                completed: all.filter(
-                    (session) =>
-                        session.status ===
-                        "Completed"
-                ).length,
-            });
-        } catch (error) {
-            console.error(
-                "Failed to load inventory session statistics:",
-                error
-            );
-        } finally {
-            setLoadingStats(false);
-        }
-    }, []);
 
     const fetchMasterData = useCallback(async () => {
         try {
@@ -181,18 +135,82 @@ function InventorySessions() {
     }, []);
 
     useEffect(() => {
-        fetchSessions();
-    }, [fetchSessions]);
+        let active = true;
+        getInventorySessions({ pageNumber: page, pageSize, ...filters })
+            .then((response) => {
+                if (!active) return;
+                const data = response?.data ?? response;
+                const items = data?.items ?? [];
+                const count = Number(data?.totalCount ?? 0);
+                setSessions(items);
+                setTotalItems(count);
+                setTotalPages(data?.totalPages ?? Math.max(1, Math.ceil(count / pageSize)));
+                setSessionsError("");
+            })
+            .catch((error) => {
+                if (!active) return;
+                console.error("Failed to load inventory sessions:", error);
+                setSessions([]);
+                setTotalItems(0);
+                setTotalPages(1);
+                setSessionsError(error?.message || t.loadError);
+            })
+            .finally(() => {
+                if (active) setLoadingSessions(false);
+            });
+        return () => { active = false; };
+    }, [page, pageSize, filters, t.loadError]);
 
     useEffect(() => {
-        fetchStats();
-    }, [fetchStats]);
+        let active = true;
+        getInventorySessions({ pageNumber: 1, pageSize: 300 })
+            .then((response) => {
+                if (!active) return;
+                const data = response?.data ?? response;
+                const all = data?.items ?? [];
+                const limit = new Date();
+                limit.setDate(limit.getDate() - 15);
+                setStats({
+                    total: Number(data?.totalCount ?? all.length),
+                    active: all.filter((session) => session.inventoryDate && new Date(session.inventoryDate) >= limit).length,
+                    completed: all.filter((session) => session.status === "Completed").length,
+                });
+            })
+            .catch((error) => {
+                if (active) console.error("Failed to load inventory session statistics:", error);
+            })
+            .finally(() => {
+                if (active) setLoadingStats(false);
+            });
+        return () => { active = false; };
+    }, []);
 
     useEffect(() => {
-        fetchMasterData();
-    }, [fetchMasterData]);
+        let active = true;
+        Promise.all([getBranches(), getStores()])
+            .then(([branchesResponse, storesResponse]) => {
+                if (!active) return;
+                const branchData = branchesResponse?.data ?? branchesResponse;
+                const storeData = storesResponse?.data ?? storesResponse;
+                setBranches(Array.isArray(branchData) ? branchData : branchData?.items ?? []);
+                setStores(Array.isArray(storeData) ? storeData : storeData?.items ?? []);
+                setMasterDataError("");
+            })
+            .catch((error) => {
+                if (!active) return;
+                console.error("Failed to load inventory session filters:", error);
+                setBranches([]);
+                setStores([]);
+                setMasterDataError(error?.message || "");
+            })
+            .finally(() => {
+                if (active) setLoadingMasterData(false);
+            });
+        return () => { active = false; };
+    }, []);
 
     const handleFiltersChange = (changes) => {
+        setLoadingSessions(true);
         setFilters((previous) => ({
             ...previous,
             ...changes,
@@ -202,6 +220,7 @@ function InventorySessions() {
     };
 
     const handlePageSizeChange = (size) => {
+        setLoadingSessions(true);
         setPageSize(Number(size));
         setPage(1);
     };
@@ -251,7 +270,7 @@ function InventorySessions() {
                             totalPages={totalPages}
                             pageSize={pageSize}
                             totalItems={totalItems}
-                            onPageChange={setPage}
+                            onPageChange={(value) => { setLoadingSessions(true); setPage(value); }}
                             onPageSizeChange={
                                 handlePageSizeChange
                             }

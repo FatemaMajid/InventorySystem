@@ -14,7 +14,7 @@ async function downloadReport(endpoint) {
 
   const blob = await response.blob();
   const disposition = response.headers.get("content-disposition") || "";
-  const match = disposition.match(/filename\*?=(?:UTF-8''|\")?([^;\"]+)/i);
+  const match = disposition.match(/filename\*?=(?:UTF-8''|")?([^;"]+)/i);
   const fileName = match?.[1]
     ? decodeURIComponent(match[1].replaceAll('"', ""))
     : "Inventory_Report";

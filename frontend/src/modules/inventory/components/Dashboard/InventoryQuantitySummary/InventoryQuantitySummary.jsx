@@ -1,5 +1,5 @@
 import Icon from "../../../../../components/UI/Icon/Icon";
-import { useLanguage } from "../../../../../context/LanguageContext";
+import { useLanguage } from "../../../../../context/useLanguage";
 import styles from "./InventoryQuantitySummary.module.css";
 
 function InventoryQuantitySummary({
@@ -9,7 +9,7 @@ function InventoryQuantitySummary({
     quantityIncrease = 0,
     quantityDecrease = 0,
 }) {
-    const { translations, language } = useLanguage();
+    const { translations } = useLanguage();
     const t = translations.dashboard.inventoryQuantity;
 
     const formatNumber = (value) =>

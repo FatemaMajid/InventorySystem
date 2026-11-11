@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { useLanguage } from "../../../../context/LanguageContext";
-import { useInventorySession } from "../../context/InventorySessionContext";
+import { useLanguage } from "../../../../context/useLanguage";
+import { useInventorySession } from "../../../../context/useInventorySession";
 import { getInventoryDashboard } from "../../services/dashboardService";
 import { getAttentionItems } from "../../services/attentionService";
 import { getInventorySessions } from "../../services/inventorySessionService";
@@ -57,6 +57,10 @@ function AttentionItems() {
         ...EMPTY_FILTERS,
         attentionType: selectedAttentionType,
     });
+    const effectiveFilters = useMemo(() => ({
+        ...appliedFilters,
+        attentionType: selectedAttentionType,
+    }), [appliedFilters, selectedAttentionType]);
 
     const [summary, setSummary] = useState(null);
     const [items, setItems] = useState([]);
@@ -82,6 +86,8 @@ function AttentionItems() {
         Math.ceil(totalItems / pageSize)
     );
 
+    const activeSessionId = activeSession?.id;
+
     const loadSessions = useCallback(async () => {
         setLoadingSessions(true);
 
@@ -98,7 +104,7 @@ function AttentionItems() {
             const list = response?.items ?? [];
             setSessions(list);
 
-            const activeId = activeSession?.id;
+            const activeId = activeSessionId;
 
             const preferredId = list.some(
                 (session) => session.id === activeId
@@ -124,25 +130,7 @@ function AttentionItems() {
         } finally {
             setLoadingSessions(false);
         }
-    }, [activeSession?.id, setActiveSession, t.error]);
-
-    const loadSummary = useCallback(async (sessionId) => {
-        if (!sessionId) {
-            setSummary(null);
-            return;
-        }
-
-        setLoadingSummary(true);
-
-        try {
-            const response = await getInventoryDashboard(sessionId);
-            setSummary(response?.attention ?? null);
-        } catch {
-            setSummary(null);
-        } finally {
-            setLoadingSummary(false);
-        }
-    }, []);
+    }, [activeSessionId, setActiveSession, t.error]);
 
     const loadItems = useCallback(
         async (sessionId, currentPage, currentFilters) => {
@@ -178,44 +166,86 @@ function AttentionItems() {
     );
 
     useEffect(() => {
-        loadSessions();
-    }, [loadSessions]);
-
-    useEffect(() => {
-        setFilters((current) => ({
-            ...current,
-            attentionType: selectedAttentionType,
-        }));
-
-        setAppliedFilters((current) => ({
-            ...current,
-            attentionType: selectedAttentionType,
-        }));
-
-        setPage(1);
-    }, [selectedAttentionType]);
+        let active = true;
+        getInventorySessions({
+            pageNumber: 1,
+            pageSize: 300,
+            sortBy: "InventoryDate",
+            descending: true,
+        })
+            .then((response) => {
+                if (!active) return;
+                const list = response?.items ?? [];
+                setSessions(list);
+                const preferredId = list.some((session) => session.id === activeSessionId)
+                    ? activeSessionId
+                    : list[0]?.id ?? "";
+                setSelectedSessionId(preferredId);
+                if (preferredId) {
+                    const preferredSession = list.find((session) => session.id === Number(preferredId));
+                    if (preferredSession) setActiveSession(preferredSession);
+                }
+                setSessionsError("");
+            })
+            .catch(() => {
+                if (!active) return;
+                setSessions([]);
+                setSelectedSessionId("");
+                setSessionsError(t.error);
+            })
+            .finally(() => {
+                if (active) setLoadingSessions(false);
+            });
+        return () => { active = false; };
+    }, [activeSessionId, setActiveSession, t.error]);
 
     useEffect(() => {
         if (!selectedSessionId) return;
+        let active = true;
+        const id = Number(selectedSessionId);
 
-        loadSummary(Number(selectedSessionId));
+        getInventoryDashboard(id)
+            .then((response) => {
+                if (active) setSummary(response?.attention ?? null);
+            })
+            .catch(() => {
+                if (active) setSummary(null);
+            })
+            .finally(() => {
+                if (active) setLoadingSummary(false);
+            });
 
-        loadItems(
-            Number(selectedSessionId),
-            page,
-            appliedFilters
-        );
-    }, [
-        selectedSessionId,
-        page,
-        appliedFilters,
-        loadSummary,
-        loadItems,
-    ]);
+        getAttentionItems({
+            sessionId: id,
+            pageNumber: page,
+            pageSize,
+            itemCode: effectiveFilters.itemCode,
+            attentionType: effectiveFilters.attentionType,
+        })
+            .then((response) => {
+                if (!active) return;
+                setItems(response?.items ?? []);
+                setTotalItems(response?.totalCount ?? 0);
+                setItemsError("");
+            })
+            .catch(() => {
+                if (!active) return;
+                setItems([]);
+                setTotalItems(0);
+                setItemsError(t.error);
+            })
+            .finally(() => {
+                if (active) setLoadingItems(false);
+            });
+
+        return () => { active = false; };
+    }, [selectedSessionId, page, pageSize, effectiveFilters, t.error]);
 
     const handleSessionChange = (sessionId) => {
         const id = Number(sessionId);
 
+        setLoadingSummary(true);
+        setLoadingItems(true);
         setSelectedSessionId(id || "");
         setPage(1);
 
@@ -239,6 +269,7 @@ function AttentionItems() {
     };
 
     const handleFilterChange = (key, value) => {
+        setLoadingItems(true);
         setFilters((current) => ({
             ...current,
             [key]: value,
@@ -272,6 +303,7 @@ function AttentionItems() {
     };
 
     const handleClear = () => {
+        setLoadingItems(true);
         setFilters(EMPTY_FILTERS);
         setAppliedFilters(EMPTY_FILTERS);
         setItemsError("");
@@ -299,7 +331,7 @@ function AttentionItems() {
             />
 
             <AttentionFilters
-                filters={filters}
+                filters={{ ...filters, attentionType: selectedAttentionType }}
                 onChange={handleFilterChange}
                 onClear={handleClear}
             />
@@ -322,7 +354,7 @@ function AttentionItems() {
                     loadItems(
                         Number(selectedSessionId),
                         page,
-                        appliedFilters
+                        effectiveFilters
                     )
                 }
             />
@@ -335,8 +367,9 @@ function AttentionItems() {
                         totalPages={totalPages}
                         pageSize={pageSize}
                         totalItems={totalItems}
-                        onPageChange={setPage}
+                        onPageChange={(value) => { setLoadingItems(true); setPage(value); }}
                         onPageSizeChange={(size) => {
+                            setLoadingItems(true);
                             setPageSize(Number(size));
                             setPage(1);
                         }}

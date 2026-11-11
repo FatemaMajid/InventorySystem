@@ -1,5 +1,5 @@
-import { useLanguage } from "../../../../../context/LanguageContext";
-import { useInventorySession } from "../../../context/InventorySessionContext";
+import { useLanguage } from "../../../../../context/useLanguage";
+import { useInventorySession } from "../../../../../context/useInventorySession";
 import styles from "./ComparisonSummary.module.css";
 
 function ComparisonSummary() {

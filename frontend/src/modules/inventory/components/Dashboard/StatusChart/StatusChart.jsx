@@ -1,4 +1,4 @@
-import { useLanguage } from "../../../../../context/LanguageContext";
+import { useLanguage } from "../../../../../context/useLanguage";
 import styles from "./StatusChart.module.css";
 
 function StatusChart({
@@ -8,7 +8,7 @@ function StatusChart({
   newlyCounted = 0,
   fullyDepleted = 0,
 }) {
-  const { translations, language } = useLanguage();
+  const { translations } = useLanguage();
 
   const t = translations.dashboard.kpiCards;
 

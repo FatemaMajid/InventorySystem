@@ -1,6 +1,6 @@
 ﻿import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useLanguage } from "../../../../context/LanguageContext";
+import { useLanguage } from "../../../../context/useLanguage";
 import { getBranches } from "../../../../services/branchService";
 import {
   exportFinancialDashboard,
@@ -386,12 +386,54 @@ function FinancialAnalysis() {
     ]);
 
   useEffect(() => {
-    loadOptions();
-  }, [loadOptions]);
+    let active = true;
+
+    Promise.all([getFinancialPeriods(), getBranches()])
+      .then(([periodsResponse, branchesResponse]) => {
+        if (!active) return;
+        const periodData = unwrap(periodsResponse) || [];
+        const branchData = unwrap(branchesResponse) || [];
+        const normalizedPeriods = Array.isArray(periodData)
+          ? [...periodData].sort((a, b) => Number(getPeriodId(b)) - Number(getPeriodId(a)))
+          : [];
+        setPeriods(normalizedPeriods);
+        setBranches(Array.isArray(branchData) ? branchData : []);
+        if (normalizedPeriods.length > 0) {
+          setPeriodId((current) => current || String(getPeriodId(normalizedPeriods[0])));
+        }
+        setError("");
+      })
+      .catch((err) => {
+        if (active) setError(err?.message || t.errors.loadOptions);
+      })
+      .finally(() => {
+        if (active) setLoadingOptions(false);
+      });
+
+    return () => { active = false; };
+  }, [t.errors.loadOptions]);
 
   useEffect(() => {
-    loadDashboard();
-  }, [loadDashboard]);
+    if (!periodId) return;
+    let active = true;
+
+    getFinancialDashboard({ periodId, branchId, sections: "all" })
+      .then((response) => {
+        if (!active) return;
+        setDashboard(unwrap(response));
+        setError("");
+      })
+      .catch((err) => {
+        if (!active) return;
+        setDashboard(null);
+        setError(err?.message || t.errors.loadDashboard);
+      })
+      .finally(() => {
+        if (active) setLoadingDashboard(false);
+      });
+
+    return () => { active = false; };
+  }, [periodId, branchId, t.errors.loadDashboard]);
 
   const handleExport =
     async (format) => {
@@ -536,6 +578,7 @@ function FinancialAnalysis() {
             id="financial-period"
             value={periodId}
             onChange={(event) => {
+              setLoadingDashboard(true);
               setPeriodId(
                 event.target.value
               );
@@ -589,11 +632,10 @@ function FinancialAnalysis() {
           <select
             id="financial-branch"
             value={branchId}
-            onChange={(event) =>
-              setBranchId(
-                event.target.value
-              )
-            }
+            onChange={(event) => {
+              setLoadingDashboard(true);
+              setBranchId(event.target.value);
+            }}
           >
             <option value="all">
               {t.allBranches}

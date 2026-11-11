@@ -4,8 +4,8 @@ import {
     useState,
 } from "react";
 
-import { useLanguage } from "../../../../context/LanguageContext";
-import { useInventorySession } from "../../context/InventorySessionContext";
+import { useLanguage } from "../../../../context/useLanguage";
+import { useInventorySession } from "../../../../context/useInventorySession";
 
 import {
     getInventoryComparison,
@@ -27,12 +27,10 @@ const EMPTY_FILTERS = {
     status: "All",
 };
 
-function ComparisonResults() {
+function ComparisonResultsContent({ activeSession }) {
     const { translations, direction } =
         useLanguage();
 
-    const { activeSession } =
-        useInventorySession();
 
     const t =
         translations.dashboard.comparisonResults;
@@ -52,7 +50,7 @@ function ComparisonResults() {
         useState(0);
 
     const [loading, setLoading] =
-        useState(false);
+        useState(Boolean(activeSession?.id));
 
     const [error, setError] =
         useState("");
@@ -135,17 +133,39 @@ function ComparisonResults() {
         ]);
 
     useEffect(() => {
-        loadComparison();
-    }, [loadComparison]);
+        if (!sessionId) return;
+        let active = true;
 
-    useEffect(() => {
-        if (!sessionId) {
-            setCurrentPage(1);
-            setItems([]);
-            setTotalItems(0);
-            setError("");
-        }
-    }, [sessionId]);
+        getInventoryComparison({
+            sessionId,
+            pageNumber: currentPage,
+            pageSize,
+            itemCode: filters.search,
+            itemName: "",
+            status: filters.status === "All" ? "" : filters.status,
+            sortBy: "ItemCode",
+            descending: false,
+        })
+            .then((response) => {
+                if (!active) return;
+                const data = response?.data ?? response;
+                setItems(data?.items ?? []);
+                setTotalItems(Number(data?.totalCount ?? 0));
+                setError("");
+            })
+            .catch((err) => {
+                if (!active) return;
+                console.error("Failed to load comparison results:", err);
+                setItems([]);
+                setTotalItems(0);
+                setError(err?.message || t.loadError || "");
+            })
+            .finally(() => {
+                if (active) setLoading(false);
+            });
+
+        return () => { active = false; };
+    }, [sessionId, currentPage, pageSize, filters.search, filters.status, t.loadError]);
 
     const totalPages = Math.max(
         1,
@@ -158,6 +178,7 @@ function ComparisonResults() {
         field,
         value
     ) => {
+        setLoading(true);
         setFilters((previous) => ({
             ...previous,
             [field]: value,
@@ -167,6 +188,7 @@ function ComparisonResults() {
     };
 
     const handleClearFilters = () => {
+        setLoading(true);
         setFilters({
             ...EMPTY_FILTERS,
         });
@@ -185,12 +207,14 @@ function ComparisonResults() {
             return;
         }
 
+        setLoading(true);
         setCurrentPage(page);
     };
 
     const handlePageSizeChange = (
         size
     ) => {
+        setLoading(true);
         setPageSize(size);
         setCurrentPage(1);
     };
@@ -264,6 +288,11 @@ function ComparisonResults() {
                 )}
         </main>
     );
+}
+
+function ComparisonResults() {
+    const { activeSession } = useInventorySession();
+    return <ComparisonResultsContent key={activeSession?.id ?? "no-session"} activeSession={activeSession} />;
 }
 
 export default ComparisonResults;

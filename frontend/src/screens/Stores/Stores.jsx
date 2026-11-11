@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useLanguage } from "../../context/LanguageContext";
+import { useLanguage } from "../../context/useLanguage";
 import { hasPermission } from "../../services/permissionService";
 import StoreHeader from "../../components/Stores/StoreHeader/StoreHeader";
 import StoreStats from "../../components/Stores/StoreStats/StoreStats";
@@ -53,8 +53,41 @@ function Stores() {
   }, [t.loadError]);
 
   useEffect(() => {
-    loadData();
-  }, [loadData]);
+    let active = true;
+
+    Promise.all([getStores(), getBranches()])
+      .then(([storesResponse, branchesResponse]) => {
+        if (!active) return;
+
+        const storesData = storesResponse?.data ?? storesResponse;
+        const branchesData = branchesResponse?.data ?? branchesResponse;
+
+        setStores(Array.isArray(storesData) ? storesData : storesData?.items ?? []);
+        setBranches(
+          (Array.isArray(branchesData) ? branchesData : branchesData?.items ?? []).sort((a, b) =>
+            String(a.branchCode ?? "").localeCompare(
+              String(b.branchCode ?? ""),
+              undefined,
+              { numeric: true, sensitivity: "base" }
+            )
+          )
+        );
+        setError("");
+      })
+      .catch((err) => {
+        if (!active) return;
+
+        console.error("Failed to load stores:", err);
+        setError(err?.message || t.loadError);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [t.loadError]);
 
   const filteredStores = useMemo(() => {
     const query = filters.search.trim().toLowerCase();
@@ -92,14 +125,13 @@ function Stores() {
   const totalItems = filteredStores.length;
   const totalPages = Math.max(1, Math.ceil(totalItems / pageSize));
 
-  const paginatedStores = useMemo(() => {
-    const start = (currentPage - 1) * pageSize;
-    return filteredStores.slice(start, start + pageSize);
-  }, [filteredStores, currentPage, pageSize]);
+  const effectivePage = Math.min(currentPage, totalPages);
 
-  useEffect(() => {
-    if (currentPage > totalPages) setCurrentPage(totalPages);
-  }, [currentPage, totalPages]);
+  const paginatedStores = useMemo(() => {
+    const start = (effectivePage - 1) * pageSize;
+    return filteredStores.slice(start, start + pageSize);
+  }, [filteredStores, effectivePage, pageSize]);
+
 
   const handleFiltersChange = (nextFilters) => {
     setFilters((current) => ({ ...current, ...nextFilters }));
@@ -230,7 +262,7 @@ function Stores() {
         onEdit={openEdit}
         onDelete={handleDelete}
         canEdit={canEdit}
-        currentPage={currentPage}
+        currentPage={effectivePage}
         totalPages={totalPages}
         pageSize={pageSize}
         totalItems={totalItems}
@@ -238,15 +270,16 @@ function Stores() {
         onPageSizeChange={handlePageSizeChange}
       />
 
-      <StoreForm
-        open={formOpen}
-        store={editingStore}
-        branches={branches}
-        saving={saving}
-        error={formError}
-        onClose={closeForm}
-        onSubmit={handleSubmit}
-      />
+      {formOpen && (
+        <StoreForm
+          store={editingStore}
+          branches={branches}
+          saving={saving}
+          error={formError}
+          onClose={closeForm}
+          onSubmit={handleSubmit}
+        />
+      )}
     </main>
   );
 }

@@ -8,17 +8,17 @@ import SystemStatus from "../../components/HomeComponents/SystemStatus/SystemSta
 import { getHomeDashboard } from "../../services/homeService";
 import { hasPermission } from "../../../../services/permissionService";
 import { getCurrentUser } from "../../../../services/authService";
-import { useInventorySession } from "../../context/InventorySessionContext";
+import { useInventorySession } from "../../../../context/useInventorySession";
 import styles from "./Home.module.css";
 
 function Home() {
     const navigate = useNavigate();
     const { setActiveSession } = useInventorySession();
+    const canViewDashboard = hasPermission("Dashboard.View");
     const [dashboard, setDashboard] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(canViewDashboard);
     const [error, setError] = useState(null);
 
-    const canViewDashboard = hasPermission("Dashboard.View");
     const canCreateInventory = hasPermission("InventorySession.Create");
     const canViewInventorySessions = hasPermission("InventorySession.View");
     const canViewReports = hasPermission("Report.View");
@@ -29,41 +29,23 @@ function Home() {
         currentUser?.role?.toLowerCase() === "manager";
 
     useEffect(() => {
-        if (!canViewDashboard) {
-            setLoading(false);
-            return;
-        }
+        if (!canViewDashboard) return;
+        let active = true;
 
-        let mounted = true;
-
-        async function loadDashboard() {
-            try {
-                setLoading(true);
-                setError(null);
-
-                const response = await getHomeDashboard();
-
-                if (!mounted) return;
-
-                setDashboard(response);
-            } catch (err) {
+        getHomeDashboard()
+            .then((response) => {
+                if (active) setDashboard(response);
+            })
+            .catch((err) => {
+                if (!active) return;
                 console.error("Failed to load home dashboard:", err);
-
-                if (!mounted) return;
-
                 setError(err);
-            } finally {
-                if (mounted) {
-                    setLoading(false);
-                }
-            }
-        }
+            })
+            .finally(() => {
+                if (active) setLoading(false);
+            });
 
-        loadDashboard();
-
-        return () => {
-            mounted = false;
-        };
+        return () => { active = false; };
     }, [canViewDashboard]);
 
     const statistics = dashboard?.statistics ?? {};

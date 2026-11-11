@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLanguage } from "../../../../context/LanguageContext";
-import { useInventorySession } from "../../context/InventorySessionContext";
+import { useLanguage } from "../../../../context/useLanguage";
+import { useInventorySession } from "../../../../context/useInventorySession";
 import { hasPermission } from "../../../../services/permissionService";
 import { getBranches, getStores } from "../../../../services/masterDataService";
 import { previewInventoryFile, confirmInventorySession } from "../../services/inventorySessionService";

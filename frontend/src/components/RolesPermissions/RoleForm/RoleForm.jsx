@@ -1,10 +1,9 @@
-import { useEffect, useState } from "react";
-import { useLanguage } from "../../../context/LanguageContext";
+import { useState } from "react";
+import { useLanguage } from "../../../context/useLanguage";
 import Icon from "../../UI/Icon/Icon";
 import styles from "./RoleForm.module.css";
 
 function RoleForm({
-    open,
     role,
     permissions = [],
     saving = false,
@@ -15,27 +14,15 @@ function RoleForm({
     const { translations, direction } = useLanguage();
     const t = translations.rolesPermissions || {};
 
-    const [form, setForm] = useState({
-        name: "",
-        description: "",
-        permissionIds: [],
-    });
+    const [form, setForm] = useState(() => ({
+        name: role?.name || "",
+        description: role?.description || "",
+        permissionIds: role?.permissionIds || [],
+    }));
 
-    useEffect(() => {
-        if (!open) {
-            return;
-        }
 
-        setForm({
-            name: role?.name || "",
-            description: role?.description || "",
-            permissionIds: role?.permissionIds || [],
-        });
-    }, [open, role]);
 
-    if (!open) {
-        return null;
-    }
+
 
     const change = (field, value) => {
         setForm((previous) => ({

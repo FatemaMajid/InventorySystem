@@ -1,4 +1,4 @@
-import { useLanguage } from "../../../../../context/LanguageContext";
+import { useLanguage } from "../../../../../context/useLanguage";
 
 import LoadingState from "../../../../../components/UI/Loading/LoadingState/LoadingState";
 import EmptyState from "../../../../../components/UI/EmptyState/EmptyState";

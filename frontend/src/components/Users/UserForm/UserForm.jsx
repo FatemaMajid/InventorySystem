@@ -1,10 +1,9 @@
-import { useEffect, useMemo, useState } from "react";
-import { useLanguage } from "../../../context/LanguageContext";
+import { useMemo, useState } from "react";
+import { useLanguage } from "../../../context/useLanguage";
 import Icon from "../../UI/Icon/Icon";
 import styles from "./UserForm.module.css";
 
 function UserForm({
-    open,
     user,
     roles = [],
     permissions = [],
@@ -15,12 +14,30 @@ function UserForm({
 }) {
     const { translations, direction } = useLanguage();
     const t = translations.users;
-    const [form, setForm] = useState({
-        username: "",
-        password: "",
-        role: "",
-        permissions: [],
-        isActive: true,
+    const [form, setForm] = useState(() => {
+        const selectedRole = roles.find(
+            (role) =>
+                role.name?.toLowerCase() === user?.role?.toLowerCase()
+        );
+
+        const rolePermissions = selectedRole?.permissionIds?.length
+            ? permissions
+                .filter((permission) =>
+                    selectedRole.permissionIds.includes(permission.id)
+                )
+                .map((permission) => permission.code)
+            : [];
+
+        return {
+            username: user?.username || "",
+            password: "",
+            role: user?.role || "",
+            permissions:
+                user?.permissions?.length > 0
+                    ? user.permissions
+                    : rolePermissions,
+            isActive: user?.isActive ?? true,
+        };
     });
 
     const getRolePermissions = (role) => {
@@ -35,29 +52,7 @@ function UserForm({
             .map((permission) => permission.code);
     };
 
-    useEffect(() => {
-        if (!open) {
-            return;
-        }
 
-        const selectedRole = roles.find(
-            (role) =>
-                role.name?.toLowerCase() === user?.role?.toLowerCase()
-        );
-
-        const rolePermissions = getRolePermissions(selectedRole);
-
-        setForm({
-            username: user?.username || "",
-            password: "",
-            role: user?.role || "",
-            permissions:
-                user?.permissions?.length > 0
-                    ? user.permissions
-                    : rolePermissions,
-            isActive: user?.isActive ?? true,
-        });
-    }, [open, user, roles, permissions]);
 
     const groupedPermissions = useMemo(() => {
         return permissions.reduce((groups, permission) => {
@@ -73,9 +68,7 @@ function UserForm({
         }, {});
     }, [permissions]);
 
-    if (!open) {
-        return null;
-    }
+
 
     const change = (field, value) => {
         setForm((previous) => ({

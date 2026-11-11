@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useLanguage } from "../../../context/LanguageContext";
+import { useState } from "react";
+import { useLanguage } from "../../../context/useLanguage";
 import Icon from "../../UI/Icon/Icon";
 
 import styles from "./BranchForm.module.css";
@@ -23,23 +23,20 @@ function BranchForm({
   const { translations, direction } = useLanguage();
   const t = translations.branches;
 
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] = useState(() =>
+    branch
+      ? {
+          branchCode: branch.branchCode || "",
+          branchNameArabic: branch.branchNameArabic || "",
+          branchNameEnglish: branch.branchNameEnglish || "",
+          address: branch.address || "",
+          phone: branch.phone || "",
+          isActive: branch.isActive ?? true,
+        }
+      : emptyForm
+  );
 
-  useEffect(() => {
-    if (branch) {
-      setForm({
-        branchCode: branch.branchCode || "",
-        branchNameArabic: branch.branchNameArabic || "",
-        branchNameEnglish: branch.branchNameEnglish || "",
-        address: branch.address || "",
-        phone: branch.phone || "",
-        isActive: branch.isActive ?? true,
-      });
-      return;
-    }
 
-    setForm(emptyForm);
-  }, [branch]);
 
   const change = (field, value) => {
     setForm((current) => ({

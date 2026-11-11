@@ -1,4 +1,4 @@
-import { useLanguage } from "../../../../context/LanguageContext";
+import { useLanguage } from "../../../../context/useLanguage";
 import Spinner from "../Spinner/Spinner";
 import styles from "./LoadingState.module.css";
 
